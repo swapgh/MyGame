@@ -12,6 +12,8 @@ target/vscode-classes/
 
 .idea/
 .DS_Store
+.agents/
+skills-lock.json
 
 logs/**/*
 !logs/
@@ -21,4 +23,3 @@ logs/**/*
 !logs/world/.gitkeep
 !logs/client/
 !logs/client/.gitkeep
-

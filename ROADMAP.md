@@ -2,9 +2,9 @@
 
 ## Current Status
 
-Completed: Phase 0
+Completed: Phases 0-1
 
-Current stage: Phase 1
+Current stage: Phase 2
 
 This file is the working plan for the project so we can track progress without cluttering the GitHub front page.
 
@@ -12,7 +12,7 @@ This file is the working plan for the project so we can track progress without c
 
 1. [x] Phase 0: skeleton
    Gradle multi-module setup, empty source folders, `.gitignore`, and `README`. No gameplay implementation yet.
-2. [ ] Phase 1: shared protocol
+2. [x] Phase 1: shared protocol
    Packets, opcodes, math (`Vec2`/`Vec3`), `GameClock`, and `Result`. The contract between client and server, with no game logic yet.
 3. [ ] Phase 2: auth server
    Socket server, login/register, password hashing, session tokens, PostgreSQL integration, and account/character DAOs. A test client can connect and log in.
