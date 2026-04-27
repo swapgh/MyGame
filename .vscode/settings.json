@@ -1,0 +1,15 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.import.gradle.enabled": true,
+    "java.project.outputPath": "target/vscode-classes",
+    "files.exclude": {
+        "**/.gradle": true,
+        "**/build": true,
+        "**/target": true
+    },
+    "search.exclude": {
+        "**/.gradle": true,
+        "**/build": true,
+        "**/target": true
+    }
+}

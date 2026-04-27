@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Gradle: Build",
+            "type": "shell",
+            "command": "./gradlew build",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "problemMatcher": [
+                "$javac"
+            ]
+        },
+        {
+            "label": "Gradle: Clean",
+            "type": "shell",
+            "command": "./gradlew clean",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Gradle: Projects",
+            "type": "shell",
+            "command": "./gradlew projects",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
