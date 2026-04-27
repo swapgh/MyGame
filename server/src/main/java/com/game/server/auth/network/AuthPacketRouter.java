@@ -9,15 +9,12 @@ import java.util.Optional;
 
 /**
  * Routes authentication packets to handlers based on packet type.
- *
  * @since 0.1.0
  */
 public final class AuthPacketRouter {
     private final Map<Class<? extends Packet>, AuthPacketHandler> handlers = new HashMap<>();
-
     /**
      * Registers a handler for the provided packet type.
-     *
      * @param packetType the packet class to match
      * @param handler the handler invoked for matching packets
      * @param <T> the packet type
@@ -25,10 +22,8 @@ public final class AuthPacketRouter {
     public <T extends Packet> void register(Class<T> packetType, AuthPacketHandler handler) {
         handlers.put(packetType, handler);
     }
-
     /**
      * Routes a packet to a registered handler when one exists.
-     *
      * @param connection the connection that produced the packet
      * @param packet the packet to route
      * @return {@code true} if a handler was found and invoked
@@ -42,10 +37,8 @@ public final class AuthPacketRouter {
         handler.handle(connection, packet);
         return true;
     }
-
     /**
      * Returns the registered handler for a packet type, if present.
-     *
      * @param packetType the packet class to look up
      * @return the registered handler, if any
      */

@@ -13,34 +13,28 @@ import java.util.List;
 
 /**
  * Simple line-based codec for early auth server packet exchange.
- *
  * <p>The format is intentionally minimal and dependency-free:
  * {@code OPCODE|field1|field2|...}. Escaping is not supported yet, so this codec is suitable only
  * for the current early-phase test flow.</p>
- *
  * @since 0.1.0
  */
 public final class AuthPacketCodec {
     /**
      * Decodes a line of input into a shared packet.
-     *
      * @param line the incoming protocol line
      * @return the decoded packet
      */
     public Packet decode(String line) {
         String[] parts = line.split("\\|", -1);
         String opcode = parts[0];
-
         return switch (opcode) {
             case "LOGIN_REQUEST" -> new LoginRequestPacket(require(parts, 1), require(parts, 2));
             case "REGISTER_REQUEST" -> new RegisterRequestPacket(require(parts, 1), require(parts, 2));
             default -> new ErrorPacket("UNKNOWN_OPCODE", "Unsupported opcode: " + opcode);
         };
     }
-
     /**
      * Encodes a shared packet into a line of output.
-     *
      * @param packet the packet to encode
      * @return the encoded protocol line
      */

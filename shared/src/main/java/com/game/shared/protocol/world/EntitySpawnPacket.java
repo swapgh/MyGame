@@ -5,13 +5,11 @@ import com.game.shared.protocol.Packet;
 
 /**
  * Placeholder packet describing an entity spawn event.
- *
  * @since 0.1.0
  */
 public record EntitySpawnPacket() implements Packet {
     /**
      * Returns the opcode associated with this packet type.
-     *
      * @return the entity spawn opcode
      */
     @Override

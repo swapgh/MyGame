@@ -14,10 +14,8 @@ import java.util.concurrent.Executors;
 
 /**
  * Minimal TCP bootstrap for the authentication server.
- *
  * <p>This phase binds the listening socket and owns the packet router. The connection accept loop
  * and packet decoding are added in later Phase 2 steps.</p>
- *
  * @since 0.1.0
  */
 public final class AuthSocketServer implements AutoCloseable {
@@ -26,10 +24,8 @@ public final class AuthSocketServer implements AutoCloseable {
     private final ExecutorService clientExecutor = Executors.newCachedThreadPool();
     private ServerSocket serverSocket;
     private Thread acceptThread;
-
     /**
      * Creates a socket server bootstrap for the provided config.
-     *
      * @param config the auth server config
      * @param packetRouter the packet router used by future connection handling
      */
@@ -37,10 +33,8 @@ public final class AuthSocketServer implements AutoCloseable {
         this.config = config;
         this.packetRouter = packetRouter;
     }
-
     /**
      * Binds the underlying TCP socket if it is not already running.
-     *
      * @throws IOException if the socket cannot be opened or bound
      */
     public void start() throws IOException {
@@ -52,28 +46,22 @@ public final class AuthSocketServer implements AutoCloseable {
         serverSocket.bind(new InetSocketAddress(config.host(), config.port()));
         acceptThread = Thread.ofVirtual().name("auth-accept-loop").start(this::acceptLoop);
     }
-
     /**
      * Returns whether the listening socket is currently bound and open.
-     *
      * @return {@code true} if the auth socket server is running
      */
     public boolean isRunning() {
         return serverSocket != null && serverSocket.isBound() && !serverSocket.isClosed();
     }
-
     /**
      * Returns the packet router owned by this server bootstrap.
-     *
      * @return the auth packet router
      */
     public AuthPacketRouter packetRouter() {
         return packetRouter;
     }
-
     /**
      * Keeps the current thread alive while the server socket remains open.
-     *
      * @param pollInterval the delay between socket state checks
      * @throws InterruptedException if the waiting thread is interrupted
      */
@@ -82,7 +70,6 @@ public final class AuthSocketServer implements AutoCloseable {
             Thread.sleep(pollInterval.toMillis());
         }
     }
-
     private void acceptLoop() {
         while (isRunning()) {
             try {
@@ -95,7 +82,6 @@ public final class AuthSocketServer implements AutoCloseable {
             }
         }
     }
-
     private void handleClient(Socket socket) {
         try {
             AuthConnection connection = AuthConnection.open(socket);

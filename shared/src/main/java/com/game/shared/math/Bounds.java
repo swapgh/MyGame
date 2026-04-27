@@ -2,7 +2,6 @@ package com.game.shared.math;
 
 /**
  * Immutable 2D axis-aligned bounds shared by client and server code.
- *
  * @param x the left position
  * @param y the top position
  * @param width the bounds width
@@ -12,7 +11,6 @@ package com.game.shared.math;
 public record Bounds(float x, float y, float width, float height) {
     /**
      * Returns whether the provided point lies inside these bounds.
-     *
      * @param point the point to test
      * @return {@code true} if the point is inside these bounds
      */
@@ -22,10 +20,8 @@ public record Bounds(float x, float y, float width, float height) {
                 && point.y() >= y
                 && point.y() <= y + height;
     }
-
     /**
      * Returns whether these bounds overlap another bounds instance.
-     *
      * @param other the other bounds to test
      * @return {@code true} if the bounds intersect
      */

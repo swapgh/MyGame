@@ -2,7 +2,6 @@ package com.game.server.auth;
 
 /**
  * Basic configuration required to boot the authentication server.
- *
  * @param name the logical server name
  * @param host the bind host
  * @param port the bind port

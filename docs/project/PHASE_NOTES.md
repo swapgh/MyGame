@@ -64,7 +64,7 @@ Done for the current milestone, with development-mode caveats still noted below.
 
 ### Current Status
 
-Not started.
+started.
 
 ### Summary
 

@@ -8,7 +8,6 @@ import com.game.shared.util.Validation;
 
 /**
  * Coordinates the early registration flow.
- *
  * @since 0.1.0
  */
 public final class RegistrationService {
@@ -18,7 +17,6 @@ public final class RegistrationService {
 
     /**
      * Creates a registration service with its validator dependency.
-     *
      * @param accountDao the account dao
      * @param accountValidator the account validator
      * @param passwordHasher the password hasher
@@ -35,7 +33,6 @@ public final class RegistrationService {
 
     /**
      * Validates registration inputs.
-     *
      * @param username the username to validate
      * @param password the password to validate
      * @return the first failing validation or success when both inputs are acceptable
@@ -57,7 +54,6 @@ public final class RegistrationService {
 
     /**
      * Registers a new account when validation succeeds.
-     *
      * @param username the requested username
      * @param password the requested password
      * @return the persisted account or a validation error

@@ -5,4 +5,4 @@ database:
   name: game
   schema: public
   username: game
-  password: change-me
+  password: game

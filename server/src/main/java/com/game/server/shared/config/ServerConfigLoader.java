@@ -2,6 +2,7 @@ package com.game.server.shared.config;
 
 import com.game.server.auth.AuthServerConfig;
 import com.game.server.shared.database.DatabaseConfig;
+import com.game.server.world.WorldServerConfig;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,20 +13,16 @@ import java.util.Map;
 
 /**
  * Minimal configuration loader for the simple YAML-style config files used in early phases.
- *
  * <p>This loader intentionally supports only the current flat key-value shape under a single
  * {@code server:} section, which keeps Phase 2 dependency-free until a richer config stack is
  * justified.</p>
- *
  * @since 0.1.0
  */
 public final class ServerConfigLoader {
     private ServerConfigLoader() {
     }
-
     /**
      * Loads an authentication server config from disk.
-     *
      * @param path the config file path
      * @return the parsed auth server config
      * @throws IOException if the file cannot be read
@@ -38,10 +35,23 @@ public final class ServerConfigLoader {
                 Integer.parseInt(require(values, "port"))
         );
     }
-
+    /**
+     * Loads a {@link WorldServerConfig} from the YAML file at the given path.
+     * @param path the path to the world server YAML config
+     * @return the parsed world server config
+     * @throws IOException if the file cannot be read or is malformed
+     */
+    public static WorldServerConfig loadWorldServerConfig(Path path) throws IOException {
+        Map<String, String> values = readServerSection(path);
+        return new WorldServerConfig(
+                require(values, "name"),
+                require(values, "host"),
+                Integer.parseInt(require(values, "port")),
+                Integer.parseInt(require(values, "ticksPerSecond"))
+        );
+    }
     /**
      * Loads a database config from disk.
-     *
      * @param path the config file path
      * @return the parsed database config
      * @throws IOException if the file cannot be read

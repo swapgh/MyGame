@@ -13,10 +13,8 @@ import java.util.Optional;
 
 /**
  * Coordinates the high-level login flow for the auth server.
- *
  * <p>In this early Phase 2 version the service focuses on session issuance and shared shape. DAO
  * integration and real account validation are added in later steps.</p>
- *
  * @since 0.1.0
  */
 public final class LoginService {
@@ -29,7 +27,6 @@ public final class LoginService {
 
     /**
      * Creates a login service with the required collaborators.
-     *
      * @param accountDao the account dao
      * @param banDao the ban dao
      * @param passwordHasher the password hasher
@@ -52,10 +49,8 @@ public final class LoginService {
         this.tokenService = tokenService;
         this.sessionStore = sessionStore;
     }
-
     /**
      * Issues a new session when a login attempt is accepted.
-     *
      * @param clientKey the client identifier used for rate limiting
      * @param username the username supplied by the client
      * @param password the raw password supplied by the client

@@ -33,10 +33,8 @@ import java.time.Duration;
 
 /**
  * Phase 2 entry point for bootstrapping the authentication server.
- *
  * <p>At this stage the class only validates configuration loading and startup wiring. Networking,
  * authentication flow, and persistence are added in later Phase 2 steps.</p>
- *
  * @since 0.1.0
  */
 public final class AuthServerMain {
@@ -45,10 +43,8 @@ public final class AuthServerMain {
 
     private AuthServerMain() {
     }
-
     /**
      * Loads the authentication server configuration and reports the startup target.
-     *
      * @param args optional first argument overriding the config file path
      * @throws IOException if the config file cannot be read
      * @throws InterruptedException if the server wait loop is interrupted
@@ -75,7 +71,6 @@ public final class AuthServerMain {
             socketServer.awaitShutdown(Duration.ofSeconds(1));
         }
     }
-
     private static AuthDatabase createAuthDatabase(DatabaseConfig databaseConfig) {
         DatabasePool databasePool = new DatabasePool(databaseConfig);
         TransactionManager transactionManager = new TransactionManager();
@@ -84,7 +79,6 @@ public final class AuthServerMain {
         BanDao banDao = new InMemoryBanDao();
         return new AuthDatabase(databasePool, transactionManager, accountDao, characterDao, banDao);
     }
-
     private static AuthApplication createAuthApplication(AuthDatabase authDatabase) {
         PasswordHasher passwordHasher = new PasswordHasher();
         LoginRateLimiter loginRateLimiter = new LoginRateLimiter();
@@ -122,7 +116,6 @@ public final class AuthServerMain {
                 characterDeleteService
         );
     }
-
     private static void seedDevelopmentData(AuthDatabase authDatabase, PasswordHasher passwordHasher) {
         AccountDao accountDao = authDatabase.accountDao();
         CharacterDao characterDao = authDatabase.characterDao();
@@ -134,10 +127,8 @@ public final class AuthServerMain {
             characterDao.save(new CharacterRecord(0L, devAccount.id(), "DevKnight"));
         }
     }
-
     /**
      * Small bootstrap bundle for auth application collaborators.
-     *
      * @param authDatabase the auth database bundle
      * @param passwordHasher the password hasher
      * @param loginRateLimiter the login rate limiter

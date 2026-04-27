@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * In-memory account dao used while auth persistence is being scaffolded.
- *
  * @since 0.1.0
  */
 public final class InMemoryAccountDao implements AccountDao {
@@ -17,7 +16,6 @@ public final class InMemoryAccountDao implements AccountDao {
 
     /**
      * Finds an account by username.
-     *
      * @param username the account username
      * @return the matching account, if present
      */
@@ -29,10 +27,8 @@ public final class InMemoryAccountDao implements AccountDao {
         }
         return Optional.ofNullable(accountsById.get(accountId));
     }
-
     /**
      * Finds an account by id.
-     *
      * @param accountId the account id
      * @return the matching account, if present
      */
@@ -40,10 +36,8 @@ public final class InMemoryAccountDao implements AccountDao {
     public Optional<AccountRecord> findById(long accountId) {
         return Optional.ofNullable(accountsById.get(accountId));
     }
-
     /**
      * Saves an account record.
-     *
      * @param account the account to persist
      * @return the persisted account
      */

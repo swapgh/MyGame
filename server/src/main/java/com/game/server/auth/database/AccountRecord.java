@@ -2,7 +2,6 @@ package com.game.server.auth.database;
 
 /**
  * Basic account persistence model for auth storage.
- *
  * @param id the account id
  * @param username the unique account username
  * @param passwordHash the stored password hash

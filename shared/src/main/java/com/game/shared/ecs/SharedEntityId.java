@@ -2,7 +2,6 @@ package com.game.shared.ecs;
 
 /**
  * Shared entity identifier used when client and server refer to the same entity.
- *
  * @param value the unique entity identifier
  * @since 0.1.0
  */

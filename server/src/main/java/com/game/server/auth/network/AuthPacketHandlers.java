@@ -16,19 +16,15 @@ import com.game.shared.util.Result;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.util.List;
-
 /**
  * Registers and executes authentication packet handlers for the current auth server bootstrap.
- *
  * @since 0.1.0
  */
 public final class AuthPacketHandlers {
     private AuthPacketHandlers() {
     }
-
     /**
      * Registers the currently supported auth packet handlers.
-     *
      * @param router the auth packet router
      * @param application the auth application collaborators
      */

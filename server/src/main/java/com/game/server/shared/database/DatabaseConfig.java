@@ -2,7 +2,6 @@ package com.game.server.shared.database;
 
 /**
  * Basic database connection settings used by server-side persistence code.
- *
  * @param engine the database engine name
  * @param host the database host
  * @param port the database port

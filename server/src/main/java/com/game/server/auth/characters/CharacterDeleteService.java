@@ -8,7 +8,6 @@ import java.util.Optional;
 
 /**
  * Deletes characters owned by an account.
- *
  * @since 0.1.0
  */
 public final class CharacterDeleteService {
@@ -16,7 +15,6 @@ public final class CharacterDeleteService {
 
     /**
      * Creates a character deletion service.
-     *
      * @param characterDao the character dao
      */
     public CharacterDeleteService(CharacterDao characterDao) {
@@ -25,7 +23,6 @@ public final class CharacterDeleteService {
 
     /**
      * Deletes a character when it belongs to the provided account.
-     *
      * @param accountId the owning account id
      * @param characterId the character id to delete
      * @return a success result or a human-readable failure

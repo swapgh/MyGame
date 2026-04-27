@@ -4,7 +4,6 @@ import java.time.Instant;
 
 /**
  * Represents an authenticated session issued by the auth server.
- *
  * @param token the session token
  * @param accountId the authenticated account identifier
  * @param createdAt the creation timestamp

@@ -9,16 +9,13 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * In-memory character dao used while auth persistence is being scaffolded.
- *
  * @since 0.1.0
  */
 public final class InMemoryCharacterDao implements CharacterDao {
     private final AtomicLong sequence = new AtomicLong(1L);
     private final ConcurrentMap<Long, CharacterRecord> charactersById = new ConcurrentHashMap<>();
-
     /**
      * Returns all characters owned by an account.
-     *
      * @param accountId the owning account id
      * @return the owned characters
      */
@@ -32,10 +29,8 @@ public final class InMemoryCharacterDao implements CharacterDao {
         }
         return characters;
     }
-
     /**
      * Finds a character by id.
-     *
      * @param characterId the character id
      * @return the matching character, if present
      */
@@ -43,10 +38,8 @@ public final class InMemoryCharacterDao implements CharacterDao {
     public Optional<CharacterRecord> findById(long characterId) {
         return Optional.ofNullable(charactersById.get(characterId));
     }
-
     /**
      * Saves a character record.
-     *
      * @param character the character to persist
      * @return the persisted character
      */
@@ -57,10 +50,8 @@ public final class InMemoryCharacterDao implements CharacterDao {
         charactersById.put(characterId, persisted);
         return persisted;
     }
-
     /**
      * Deletes a character record by id.
-     *
      * @param characterId the character id to delete
      * @return {@code true} if a character was removed
      */

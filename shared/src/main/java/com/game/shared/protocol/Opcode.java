@@ -2,23 +2,18 @@ package com.game.shared.protocol;
 
 /**
  * Enumerates the message types currently planned for the shared protocol.
- *
  * @since 0.1.0
  */
 public enum Opcode {
-    LOGIN_REQUEST,
-    LOGIN_RESPONSE,
-    REGISTER_REQUEST,
-    REGISTER_RESPONSE,
+    LOGIN_REQUEST,LOGIN_RESPONSE,
+    REGISTER_REQUEST,REGISTER_RESPONSE,
     CHARACTER_LIST,
-    ENTER_WORLD,
+    ENTER_WORLD, ENTER_WORLD_ACK,
     WORLD_SNAPSHOT,
-    ENTITY_SPAWN,
-    ENTITY_DESPAWN,
-    ENTITY_MOVE,
+    ENTITY_SPAWN,ENTITY_DESPAWN,ENTITY_MOVE,
     CHAT_MESSAGE,
-    ATTACK,
-    DAMAGE,
+    ATTACK,DAMAGE,
     INVENTORY_UPDATE,
+    WORLD_PING,
     ERROR
 }

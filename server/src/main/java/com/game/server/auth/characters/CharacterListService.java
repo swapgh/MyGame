@@ -7,7 +7,6 @@ import java.util.List;
 
 /**
  * Returns the characters owned by an account.
- *
  * @since 0.1.0
  */
 public final class CharacterListService {
@@ -15,7 +14,6 @@ public final class CharacterListService {
 
     /**
      * Creates a character list service.
-     *
      * @param characterDao the character dao
      */
     public CharacterListService(CharacterDao characterDao) {
@@ -24,7 +22,6 @@ public final class CharacterListService {
 
     /**
      * Returns all characters belonging to an account.
-     *
      * @param accountId the owning account id
      * @return the account characters
      */

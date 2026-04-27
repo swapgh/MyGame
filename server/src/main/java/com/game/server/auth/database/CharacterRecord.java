@@ -2,7 +2,6 @@ package com.game.server.auth.database;
 
 /**
  * Basic character persistence model owned by an account.
- *
  * @param id the character id
  * @param accountId the owning account id
  * @param name the character name

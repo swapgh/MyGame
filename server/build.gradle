@@ -7,7 +7,13 @@ dependencies {
     implementation "org.postgresql:postgresql:42.7.4"
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
 }
-
+task worldServerJar(type: Jar) {
+    archiveBaseName = 'world-server'
+    manifest {
+        attributes 'Main-Class': 'com.game.server.world.WorldServerMain'
+    }
+    from sourceSets.main.output
+}
 application {
     mainClass = "com.game.server.auth.AuthServerMain"
 }

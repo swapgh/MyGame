@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 /**
  * Minimal success-or-failure container used in shared code without external dependencies.
- *
  * @param <T> the success value type
  * @param <E> the error value type
  * @since 0.1.0
@@ -18,10 +17,8 @@ public final class Result<T, E> {
         this.value = value;
         this.error = error;
     }
-
     /**
      * Creates a successful result containing a value.
-     *
      * @param value the success value
      * @param <T> the success value type
      * @param <E> the error value type
@@ -30,10 +27,8 @@ public final class Result<T, E> {
     public static <T, E> Result<T, E> success(T value) {
         return new Result<>(Objects.requireNonNull(value, "value"), null);
     }
-
     /**
      * Creates a failed result containing an error.
-     *
      * @param error the failure value
      * @param <T> the success value type
      * @param <E> the error value type
@@ -42,28 +37,22 @@ public final class Result<T, E> {
     public static <T, E> Result<T, E> failure(E error) {
         return new Result<>(null, Objects.requireNonNull(error, "error"));
     }
-
     /**
      * Returns {@code true} when this result contains a value.
-     *
      * @return {@code true} if this result is successful
      */
     public boolean isSuccess() {
         return error == null;
     }
-
     /**
      * Returns {@code true} when this result contains an error.
-     *
      * @return {@code true} if this result is a failure
      */
     public boolean isFailure() {
         return error != null;
     }
-
     /**
      * Returns the successful value or throws if this result is a failure.
-     *
      * @return the successful value
      * @throws IllegalStateException if this result is a failure
      */
@@ -73,10 +62,8 @@ public final class Result<T, E> {
         }
         return value;
     }
-
     /**
      * Returns the failure value or throws if this result is a success.
-     *
      * @return the failure value
      * @throws IllegalStateException if this result is a success
      */
@@ -86,10 +73,8 @@ public final class Result<T, E> {
         }
         return error;
     }
-
     /**
      * Maps a successful value while preserving any failure unchanged.
-     *
      * @param mapper the mapper applied to the success value
      * @param <R> the mapped success value type
      * @return a mapped success result or the original failure

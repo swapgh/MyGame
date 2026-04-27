@@ -3,18 +3,14 @@ package com.game.server.auth.characters;
 import com.game.server.auth.database.CharacterDao;
 import com.game.server.auth.database.CharacterRecord;
 import com.game.shared.util.Result;
-
 /**
  * Creates new characters for an account.
- *
  * @since 0.1.0
  */
 public final class CharacterCreateService {
     private final CharacterDao characterDao;
-
     /**
      * Creates a character creation service.
-     *
      * @param characterDao the character dao
      */
     public CharacterCreateService(CharacterDao characterDao) {
@@ -23,7 +19,6 @@ public final class CharacterCreateService {
 
     /**
      * Creates a character when the requested name is valid.
-     *
      * @param accountId the owning account id
      * @param characterName the requested character name
      * @return the persisted character or a validation error
