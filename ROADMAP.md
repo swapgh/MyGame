@@ -2,9 +2,9 @@
 
 ## Current Status
 
-Completed: Phases 0-1
+Completed: Phases 0-2
 
-Current stage: Phase 2
+Current stage: Phase 3
 
 This file is the working plan for the project so we can track progress without cluttering the GitHub front page.
 
@@ -14,7 +14,7 @@ This file is the working plan for the project so we can track progress without c
    Gradle multi-module setup, empty source folders, `.gitignore`, and `README`. No gameplay implementation yet.
 2. [x] Phase 1: shared protocol
    Packets, opcodes, math (`Vec2`/`Vec3`), `GameClock`, and `Result`. The contract between client and server, with no game logic yet.
-3. [ ] Phase 2: auth server
+3. [x] Phase 2: auth server
    Socket server, login/register, password hashing, session tokens, PostgreSQL integration, and account/character DAOs. A test client can connect and log in.
 4. [ ] Phase 3: world server skeleton
    Game loop, ECS core (`EntityManager`, `ComponentStore`, `GameSystem`), and basic map loading. The server runs and ticks, but the world is empty.

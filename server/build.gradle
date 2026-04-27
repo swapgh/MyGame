@@ -1,8 +1,13 @@
 plugins {
-    id "java"
+    id "application"
 }
 
 dependencies {
     implementation project(":shared")
+    implementation "org.postgresql:postgresql:42.7.4"
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+}
+
+application {
+    mainClass = "com.game.server.auth.AuthServerMain"
 }

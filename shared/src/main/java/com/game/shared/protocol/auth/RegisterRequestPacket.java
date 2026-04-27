@@ -4,11 +4,13 @@ import com.game.shared.protocol.Opcode;
 import com.game.shared.protocol.Packet;
 
 /**
- * Placeholder account registration packet.
+ * Account registration request packet.
  *
+ * @param username the requested account username
+ * @param password the requested raw password
  * @since 0.1.0
  */
-public record RegisterRequestPacket() implements Packet {
+public record RegisterRequestPacket(String username, String password) implements Packet {
     /**
      * Returns the opcode associated with this packet type.
      *
