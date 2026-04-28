@@ -12,13 +12,18 @@ import com.game.client.app.GameClient;
  * @since 0.1.0
  */
 public final class ClientUiRenderer {
+
     /**
      * Draws the shared background and framing panels.
      *
-     * @param gameClient the owning client
+     * @param gameClient  the owning client
      * @param accentPhase a small animation phase value
      */
     public void renderBackdrop(GameClient gameClient, float accentPhase) {
+        SpriteBatch batch = gameClient.spriteBatch();
+        if (batch.isDrawing()) {
+            batch.end();
+        }
         float width = gameClient.uiCamera().viewportWidth;
         float height = gameClient.uiCamera().viewportHeight;
 
@@ -49,12 +54,16 @@ public final class ClientUiRenderer {
      * Draws a framed content panel.
      *
      * @param gameClient the owning client
-     * @param x panel x
-     * @param y panel y
-     * @param width panel width
-     * @param height panel height
+     * @param x          panel x
+     * @param y          panel y
+     * @param width      panel width
+     * @param height     panel height
      */
     public void renderPanel(GameClient gameClient, float x, float y, float width, float height) {
+        SpriteBatch batch = gameClient.spriteBatch();
+        if (batch.isDrawing()) {
+            batch.end();
+        }
         ShapeRenderer shapeRenderer = gameClient.shapeRenderer();
         shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -64,47 +73,47 @@ public final class ClientUiRenderer {
         shapeRenderer.rect(x, y + height - 4f, width, 4f);
         shapeRenderer.rect(x, y, width, 2f);
         shapeRenderer.end();
+        batch.begin();
     }
 
     /**
      * Draws a section heading block.
      *
      * @param gameClient the owning client
-     * @param eyebrow small top label
-     * @param title main heading
-     * @param subtitle optional subtitle
+     * @param eyebrow    small top label
+     * @param title      main heading
+     * @param subtitle   optional subtitle
      */
     public void renderHero(GameClient gameClient, String eyebrow, String title, String subtitle) {
+        UiFont f = gameClient.uiFont();
         SpriteBatch batch = gameClient.spriteBatch();
-        drawText(gameClient.font(), batch, eyebrow.toUpperCase(), 96f, 642f, 0.85f, ClientUiPalette.TEXT_ACCENT);
-        drawText(gameClient.font(), batch, title, 96f, 596f, 1.7f, ClientUiPalette.TEXT_PRIMARY);
-        drawText(gameClient.font(), batch, subtitle, 96f, 552f, 0.95f, ClientUiPalette.TEXT_MUTED);
+        drawText(f.small, batch, eyebrow.toUpperCase(), 96f, 642f, ClientUiPalette.TEXT_ACCENT);
+        drawText(f.title, batch, title,                 96f, 596f, ClientUiPalette.TEXT_PRIMARY);
+        drawText(f.body,  batch, subtitle,              96f, 552f, ClientUiPalette.TEXT_MUTED);
     }
 
     /**
      * Draws a field line with focus styling.
      *
      * @param gameClient the owning client
-     * @param label field label
-     * @param value field value
-     * @param x content x
-     * @param y content y
-     * @param focused whether the field is focused
+     * @param label      field label
+     * @param value      field value
+     * @param x          content x
+     * @param y          content y
+     * @param focused    whether the field is focused
      */
-    public void renderField(GameClient gameClient, String label, String value, float x, float y, boolean focused) {
+    public void renderField(GameClient gameClient, String label, String value,
+                            float x, float y, boolean focused) {
         renderPanel(gameClient, x - 16f, y - 34f, 500f, 52f);
-        drawText(gameClient.font(), gameClient.spriteBatch(), label, x, y + 10f, 0.8f, ClientUiPalette.TEXT_MUTED);
-        drawText(
-                gameClient.font(),
-                gameClient.spriteBatch(),
+        UiFont f = gameClient.uiFont();
+        SpriteBatch batch = gameClient.spriteBatch();
+        drawText(f.small, batch, label, x, y + 10f, ClientUiPalette.TEXT_MUTED);
+        drawText(f.body, batch,
                 value.isBlank() ? " " : value,
-                x,
-                y - 10f,
-                1.05f,
-                focused ? ClientUiPalette.TEXT_PRIMARY : ClientUiPalette.TEXT_ACCENT
-        );
+                x, y - 10f,
+                focused ? ClientUiPalette.TEXT_PRIMARY : ClientUiPalette.TEXT_ACCENT);
         if (focused) {
-            drawText(gameClient.font(), gameClient.spriteBatch(), "ACTIVE", x + 360f, y + 10f, 0.75f, ClientUiPalette.TEXT_WARNING);
+            drawText(f.small, batch, "ACTIVE", x + 360f, y + 10f, ClientUiPalette.TEXT_WARNING);
         }
     }
 
@@ -112,68 +121,55 @@ public final class ClientUiRenderer {
      * Draws a muted information line.
      *
      * @param gameClient the owning client
-     * @param text the text
-     * @param x position x
-     * @param y position y
+     * @param text       the text
+     * @param x          position x
+     * @param y          position y
      */
     public void renderInfo(GameClient gameClient, String text, float x, float y) {
-        drawText(gameClient.font(), gameClient.spriteBatch(), text, x, y, 0.9f, ClientUiPalette.TEXT_MUTED);
+        drawText(gameClient.uiFont().small, gameClient.spriteBatch(),
+                text, x, y, ClientUiPalette.TEXT_MUTED);
     }
 
     /**
      * Draws a stronger status line.
      *
      * @param gameClient the owning client
-     * @param text the text
-     * @param x position x
-     * @param y position y
-     * @param color status color
+     * @param text       the text
+     * @param x          position x
+     * @param y          position y
+     * @param color      status color
      */
     public void renderStatus(GameClient gameClient, String text, float x, float y, Color color) {
-        drawText(gameClient.font(), gameClient.spriteBatch(), text, x, y, 0.95f, color);
+        drawText(gameClient.uiFont().body, gameClient.spriteBatch(), text, x, y, color);
     }
 
     /**
      * Draws a list row.
      *
      * @param gameClient the owning client
-     * @param text row text
-     * @param x row x
-     * @param y row y
-     * @param selected whether selected
+     * @param text       row text
+     * @param x          row x
+     * @param y          row y
+     * @param selected   whether selected
      */
     public void renderListRow(GameClient gameClient, String text, float x, float y, boolean selected) {
         if (selected) {
             renderPanel(gameClient, x - 16f, y - 26f, 520f, 44f);
         }
-        drawText(
-                gameClient.font(),
-                gameClient.spriteBatch(),
-                text,
-                x,
-                y,
-                1.0f,
-                selected ? ClientUiPalette.TEXT_PRIMARY : ClientUiPalette.TEXT_MUTED
-        );
+        drawText(gameClient.uiFont().body, gameClient.spriteBatch(), text, x, y,
+                selected ? ClientUiPalette.TEXT_PRIMARY : ClientUiPalette.TEXT_MUTED);
     }
 
-    private static void drawText(
-            BitmapFont font,
-            SpriteBatch batch,
-            String text,
-            float x,
-            float y,
-            float scale,
-            Color color
-    ) {
-        float previousScaleX = font.getData().scaleX;
-        float previousScaleY = font.getData().scaleY;
-        Color previousColor = font.getColor().cpy();
-        font.getData().setScale(scale);
+    // -------------------------------------------------------------------------
+    // Internal helpers
+    // -------------------------------------------------------------------------
+
+    private static void drawText(BitmapFont font, SpriteBatch batch,
+                                 String text, float x, float y, Color color) {
+        Color previous = font.getColor().cpy();
         font.setColor(color);
         font.draw(batch, text, x, y);
-        font.getData().setScale(previousScaleX, previousScaleY);
-        font.setColor(previousColor);
+        font.setColor(previous);
     }
 
     private static Color withAlpha(Color color, float alpha) {

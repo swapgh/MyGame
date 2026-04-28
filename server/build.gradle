@@ -6,6 +6,7 @@ dependencies {
     implementation project(":shared")
     implementation "org.postgresql:postgresql:42.7.4"
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 task worldServerJar(type: Jar) {
     archiveBaseName = 'world-server'
@@ -14,7 +15,9 @@ task worldServerJar(type: Jar) {
     }
     from sourceSets.main.output
 }
-
+tasks.named("test") {
+    useJUnitPlatform()
+}
 tasks.register("runAuthServer", JavaExec) {
     group = "application"
     description = "Runs the auth server bootstrap."

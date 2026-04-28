@@ -3,13 +3,18 @@ plugins {
 }
 
 def gdxVersion = "1.14.0"
+def lwjglVersion = "3.3.4"
 
 dependencies {
     implementation project(":shared")
     implementation "com.badlogicgames.gdx:gdx:${gdxVersion}"
     runtimeOnly "com.badlogicgames.gdx:gdx-platform:${gdxVersion}:natives-desktop"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:${gdxVersion}"
+    implementation "com.badlogicgames.gdx:gdx-freetype:${gdxVersion}"
+    runtimeOnly "com.badlogicgames.gdx:gdx-freetype-platform:${gdxVersion}:natives-desktop"
+    runtimeOnly platform("org.lwjgl:lwjgl-bom:${lwjglVersion}")
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
 tasks.register("runClient", JavaExec) {
@@ -20,7 +25,9 @@ tasks.register("runClient", JavaExec) {
     workingDir = rootProject.projectDir
     jvmArgs = ["--enable-native-access=ALL-UNNAMED"]
 }
-
+tasks.named("test") {
+    useJUnitPlatform()
+}
 application {
     mainClass = "com.game.client.app.ClientMain"
     applicationDefaultJvmArgs = ["--enable-native-access=ALL-UNNAMED"]
