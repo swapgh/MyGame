@@ -4,6 +4,7 @@ import com.game.server.world.WorldServerMain.WorldApplication;
 import com.game.shared.protocol.world.ChatMessagePacket;
 import com.game.shared.protocol.world.EnterWorldPacket;
 import com.game.shared.protocol.error.ErrorPacket;
+import com.game.shared.protocol.world.WorldSnapshotPacket;
 
 import java.io.IOException;
 import java.net.SocketAddress;
@@ -34,17 +35,18 @@ public final class WorldPacketHandlers {
             //EnterWorldPacket packet
     ) throws IOException {
         SocketAddress remote = connection.socket().getRemoteSocketAddress();
-        int entityCount = application.entityManager().count();
-        int zoneCount = application.zoneLoader().count();
+        int entityCount = application.worldContext().entityManager().count();
+        int zoneCount = application.worldContext().zoneLoader().count();
+        int connectionCount = application.connectionManager().count();
         System.out.printf(
-                "ENTER_WORLD from %s (character: %s, token: %s) — %d entities alive, %d zones loaded%n",
+                "ENTER_WORLD from %s — %d entities alive, %d zones loaded, %d connection(s), tick=%d%n",
                 remote,
                 entityCount,
-                zoneCount
+                zoneCount,
+                connectionCount,
+                application.gameLoop().clock().tick()
         );
-        // Phase 4 will validate the session token and spawn the player entity.
-        // For now, just acknowledge so the client knows it connected.
-        connection.send(new ErrorPacket("NOT_IMPLEMENTED", "World entry not yet implemented"));
+        connection.send(new WorldSnapshotPacket());
     }
     private static void handleChat(
             WorldConnection connection,

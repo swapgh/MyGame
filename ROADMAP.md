@@ -2,9 +2,9 @@
 
 ## Current Status
 
-Completed: Phases 0-2
+Completed: Phases 0-3
 
-Current stage: Phase 3
+Current stage: Phase 4
 
 This file is the working plan for the project so we can track progress without cluttering the GitHub front page.
 
@@ -16,7 +16,7 @@ This file is the working plan for the project so we can track progress without c
    Packets, opcodes, math (`Vec2`/`Vec3`), `GameClock`, and `Result`. The contract between client and server, with no game logic yet.
 3. [x] Phase 2: auth server
    Socket server, login/register, password hashing, session tokens, PostgreSQL integration, and account/character DAOs. A test client can connect and log in.
-4. [ ] Phase 3: world server skeleton
+4. [x] Phase 3: world server skeleton
    Game loop, ECS core (`EntityManager`, `ComponentStore`, `GameSystem`), and basic map loading. The server runs and ticks, but the world is empty.
 5. [ ] Phase 4: client skeleton
    LibGDX window, `ScreenManager`, login flow, character select, and world entry. The world is still minimal.

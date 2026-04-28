@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 public final class WorldSocketServer implements AutoCloseable {
     private final WorldServerConfig config;
     private final WorldPacketRouter packetRouter;
+    private final WorldConnectionManager connectionManager;
     private final ExecutorService clientExecutor = Executors.newCachedThreadPool();
     private ServerSocket serverSocket;
     private Thread acceptThread;
@@ -28,9 +29,14 @@ public final class WorldSocketServer implements AutoCloseable {
      * @param config       the world server config
      * @param packetRouter the packet router for connection handling
      */
-    public WorldSocketServer(WorldServerConfig config, WorldPacketRouter packetRouter) {
+    public WorldSocketServer(
+            WorldServerConfig config,
+            WorldPacketRouter packetRouter,
+            WorldConnectionManager connectionManager
+    ) {
         this.config = config;
         this.packetRouter = packetRouter;
+        this.connectionManager = connectionManager;
     }
     /**
      * Binds the underlying TCP socket if it is not already running.
@@ -85,6 +91,7 @@ public final class WorldSocketServer implements AutoCloseable {
     private void handleClient(Socket socket) {
         try {
             WorldConnection connection = WorldConnection.open(socket);
+            connectionManager.register(connection);
             try {
                 for (String line = connection.readLine(); line != null; line = connection.readLine()) {
                     Packet packet = connection.packetCodec().decode(line);
@@ -94,6 +101,7 @@ public final class WorldSocketServer implements AutoCloseable {
                     }
                 }
             } finally {
+                connectionManager.unregister(connection.id());
                 connection.close();
             }
         } catch (Exception exception) {

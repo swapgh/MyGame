@@ -4,6 +4,7 @@ import com.game.shared.protocol.Packet;
 import com.game.shared.protocol.error.ErrorPacket;
 import com.game.shared.protocol.world.ChatMessagePacket;
 import com.game.shared.protocol.world.EnterWorldPacket;
+import com.game.shared.protocol.world.WorldSnapshotPacket;
 /**
  * Simple line-based codec for the world server, using the same pipe-delimited
  * {@code OPCODE|field1|field2|...} format as {@code AuthPacketCodec}.
@@ -30,6 +31,9 @@ public final class WorldPacketCodec {
      * @return the encoded protocol line
      */
     public String encode(Packet packet) {
+        if (packet instanceof WorldSnapshotPacket) {
+            return "WORLD_SNAPSHOT";
+        }
         if (packet instanceof ErrorPacket error) {
             return String.join("|", "ERROR", error.code(), error.message());
         }

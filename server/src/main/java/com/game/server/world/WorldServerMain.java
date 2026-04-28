@@ -2,11 +2,16 @@ package com.game.server.world;
 
 import com.game.server.world.ecs.EntityManager;
 import com.game.server.world.ecs.SystemRegistry;
-import com.game.server.world.loop.GameLoop;
+import com.game.server.world.ecs.WorldContext;
+import com.game.server.world.loop.WorldGameLoop;
+import com.game.server.world.map.MapLoader;
+import com.game.server.world.map.World;
 import com.game.server.world.map.ZoneLoader;
+import com.game.server.world.network.WorldConnectionManager;
 import com.game.server.world.network.WorldPacketHandlers;
 import com.game.server.world.network.WorldPacketRouter;
 import com.game.server.world.network.WorldSocketServer;
+import com.game.server.world.systems.EmptyWorldSystem;
 import com.game.server.shared.config.ServerConfigLoader;
 import com.game.shared.time.TickRate;
 import java.io.IOException;
@@ -36,32 +41,38 @@ public final class WorldServerMain {
 
         EntityManager entityManager = new EntityManager();
         SystemRegistry systemRegistry = new SystemRegistry();
+        systemRegistry.register(new EmptyWorldSystem());
         TickRate tickRate = new TickRate(config.ticksPerSecond());
-        GameLoop gameLoop = new GameLoop(tickRate, entityManager, systemRegistry);
+        WorldGameLoop gameLoop = new WorldGameLoop(tickRate, entityManager, systemRegistry);
 
         ZoneLoader zoneLoader = new ZoneLoader();
         zoneLoader.load();
+        MapLoader mapLoader = new MapLoader(16);
+        World world = mapLoader.loadWorld(zoneLoader);
+        WorldContext worldContext = new WorldContext(entityManager, systemRegistry, zoneLoader, world);
 
         WorldPacketRouter packetRouter = new WorldPacketRouter();
+        WorldConnectionManager connectionManager = new WorldConnectionManager();
         WorldApplication application = new WorldApplication(
-                entityManager,
-                systemRegistry,
+                worldContext,
                 gameLoop,
-                zoneLoader
+                packetRouter,
+                connectionManager
         );
         WorldPacketHandlers.register(packetRouter, application);
 
         gameLoop.start();
 
-        try (WorldSocketServer socketServer = new WorldSocketServer(config, packetRouter)) {
+        try (WorldSocketServer socketServer = new WorldSocketServer(config, packetRouter, connectionManager)) {
             socketServer.start();
             System.out.printf(
-                    "World server ready: %s listening on %s:%d at %d ticks/s — %d zone(s) loaded%n",
+                    "World server ready: %s listening on %s:%d at %d ticks/s — %d zone(s) loaded, %d area grid(s)%n",
                     config.name(),
                     config.host(),
                     config.port(),
                     config.ticksPerSecond(),
-                    zoneLoader.count()
+                    worldContext.zoneLoader().count(),
+                    worldContext.world().zoneCount()
             );
             socketServer.awaitShutdown(Duration.ofSeconds(1));
         } finally {
@@ -70,17 +81,17 @@ public final class WorldServerMain {
     }
     /**
      * Bootstrap bundle for world application collaborators.
-     * @param entityManager  the shared entity manager
-     * @param systemRegistry the ordered system registry
+     * @param worldContext   the shared world context
      * @param gameLoop       the fixed-timestep game loop
-     * @param zoneLoader     the loaded zone registry
+     * @param packetRouter   the world packet router
+     * @param connectionManager the world connection manager
      * @since 0.1.0
      */
     public record WorldApplication(
-            EntityManager entityManager,
-            SystemRegistry systemRegistry,
-            GameLoop gameLoop,
-            ZoneLoader zoneLoader
+            WorldContext worldContext,
+            WorldGameLoop gameLoop,
+            WorldPacketRouter packetRouter,
+            WorldConnectionManager connectionManager
     ) {
     }
 }

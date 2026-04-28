@@ -14,6 +14,21 @@ task worldServerJar(type: Jar) {
     }
     from sourceSets.main.output
 }
+
+tasks.register("runAuthServer", JavaExec) {
+    group = "application"
+    description = "Runs the auth server bootstrap."
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.game.server.auth.AuthServerMain"
+}
+
+tasks.register("runWorldServer", JavaExec) {
+    group = "application"
+    description = "Runs the world server bootstrap."
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.game.server.world.WorldServerMain"
+}
+
 application {
     mainClass = "com.game.server.auth.AuthServerMain"
 }

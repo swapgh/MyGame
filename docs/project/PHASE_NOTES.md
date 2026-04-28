@@ -64,12 +64,20 @@ Done for the current milestone, with development-mode caveats still noted below.
 
 ### Current Status
 
-started.
+Done for the current skeleton milestone.
 
 ### Summary
 
-- Next target after auth
-- Will add world bootstrap, tick loop, ECS base, and empty map/world structure
+- World server bootstrap added
+- Fixed-tick world loop and ECS core added
+- TCP world socket shell added
+- Basic zone and map loading added
+- Empty world snapshot flow added
+
+### Notes
+
+- The world intentionally runs empty for now.
+- Player spawning, movement, and replication belong to later phases.
 
 ## Phase 4: Client Skeleton
 
