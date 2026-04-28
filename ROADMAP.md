@@ -2,9 +2,9 @@
 
 ## Current Status
 
-Completed: Phases 0-4
+Completed: Phases 0-5
 
-Current stage: Phase 5
+Current stage: Phase 6
 
 This file is the working plan for the project so we can track progress without cluttering the GitHub front page.
 
@@ -20,7 +20,7 @@ This file is the working plan for the project so we can track progress without c
    Game loop, ECS core (`EntityManager`, `ComponentStore`, `GameSystem`), and basic map loading. The server runs and ticks, but the world is empty.
 5. [x] Phase 4: client skeleton
    LibGDX window, `ScreenManager`, login flow, character select, and world entry. The world is still minimal.
-6. [ ] Phase 5: player in the world
+6. [x] Phase 5: player in the world
    Movement system, collision, snapshot system, client prediction, and interpolation. A placeholder square moves smoothly and other entities appear.
 7. [ ] Phase 6: combat
    Attack commands, damage formula, health components, and death/respawn.

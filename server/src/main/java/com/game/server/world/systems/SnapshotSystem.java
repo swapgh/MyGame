@@ -1,0 +1,64 @@
+package com.game.server.world.systems;
+
+import com.game.server.world.components.TransformComponent;
+import com.game.server.world.components.VelocityComponent;
+import com.game.server.world.ecs.EntityManager;
+import com.game.server.world.ecs.GameSystem;
+import com.game.server.world.network.WorldConnection;
+import com.game.server.world.network.WorldConnectionManager;
+import com.game.shared.ecs.SharedEntityId;
+import com.game.shared.protocol.world.EntitySpawnPacket;
+import com.game.shared.protocol.world.WorldSnapshotPacket;
+import com.game.shared.time.GameClock;
+
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * Broadcasts authoritative world snapshots to connected clients.
+ *
+ * @since 0.1.0
+ */
+public final class SnapshotSystem implements GameSystem {
+    private final WorldConnectionManager connectionManager;
+
+    /**
+     * Creates a snapshot broadcaster for active world connections.
+     *
+     * @param connectionManager the active connection manager
+     */
+    public SnapshotSystem(WorldConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
+
+    /**
+     * Broadcasts a fresh snapshot to each connected client.
+     *
+     * @param entities the shared entity manager for this tick
+     * @param clock the current game clock snapshot
+     */
+    @Override
+    public void tick(EntityManager entities, GameClock clock) {
+        var velocities = entities.storeOf(VelocityComponent.class);
+        List<EntitySpawnPacket> entityStates = entities.storeOf(TransformComponent.class).all().stream()
+                .map(entry -> new EntitySpawnPacket(
+                        new SharedEntityId(entry.getKey().value()),
+                        entry.getValue().position(),
+                        velocities.get(entry.getKey())
+                                .map(VelocityComponent::velocity)
+                                .orElse(com.game.shared.math.Vec2.ZERO)
+                ))
+                .toList();
+
+        for (WorldConnection connection : connectionManager.all()) {
+            SharedEntityId playerEntityId = connectionManager.findPlayerEntityId(connection.id())
+                    .map(entityId -> new SharedEntityId(entityId.value()))
+                    .orElse(new SharedEntityId(0L));
+            try {
+                connection.send(new WorldSnapshotPacket(clock.tick(), playerEntityId, entityStates));
+            } catch (IOException exception) {
+                System.err.printf("Failed to send snapshot to %s: %s%n", connection.id(), exception.getMessage());
+            }
+        }
+    }
+}

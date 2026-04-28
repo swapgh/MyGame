@@ -10,9 +10,6 @@ import com.game.shared.protocol.auth.RegisterRequestPacket;
 import com.game.shared.protocol.auth.RegisterResponsePacket;
 import com.game.shared.protocol.error.ErrorPacket;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Simple line-based codec for early auth server packet exchange.
  * <p>The format is intentionally minimal and dependency-free:

@@ -1,5 +1,7 @@
 package com.game.server.world.network;
 
+import com.game.server.world.ecs.EntityId;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -14,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class WorldConnectionManager {
     private final Map<UUID, WorldConnection> connections = new ConcurrentHashMap<>();
+    private final Map<UUID, EntityId> playerEntitiesByConnectionId = new ConcurrentHashMap<>();
 
     /**
      * Registers a new active connection.
@@ -31,6 +34,7 @@ public final class WorldConnectionManager {
      */
     public void unregister(UUID connectionId) {
         connections.remove(connectionId);
+        playerEntitiesByConnectionId.remove(connectionId);
     }
 
     /**
@@ -59,5 +63,35 @@ public final class WorldConnectionManager {
      */
     public int count() {
         return connections.size();
+    }
+
+    /**
+     * Associates a connection with its player entity.
+     *
+     * @param connectionId the connection id
+     * @param entityId the player entity id
+     */
+    public void bindPlayerEntity(UUID connectionId, EntityId entityId) {
+        playerEntitiesByConnectionId.put(connectionId, entityId);
+    }
+
+    /**
+     * Finds the player entity for a connection.
+     *
+     * @param connectionId the connection id
+     * @return the player entity id, if present
+     */
+    public Optional<EntityId> findPlayerEntityId(UUID connectionId) {
+        return Optional.ofNullable(playerEntitiesByConnectionId.get(connectionId));
+    }
+
+    /**
+     * Removes and returns the player entity bound to a connection.
+     *
+     * @param connectionId the connection id
+     * @return the removed player entity id, if present
+     */
+    public Optional<EntityId> releasePlayerEntityId(UUID connectionId) {
+        return Optional.ofNullable(playerEntitiesByConnectionId.remove(connectionId));
     }
 }

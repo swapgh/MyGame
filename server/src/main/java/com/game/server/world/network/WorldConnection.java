@@ -1,7 +1,6 @@
 package com.game.server.world.network;
 
 import com.game.shared.protocol.Packet;
-import com.game.shared.protocol.PacketSerializer;
 
 import java.io.BufferedReader;
 import java.io.IOException;

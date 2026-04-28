@@ -23,7 +23,6 @@ public final class AuthSocketServer implements AutoCloseable {
     private final AuthPacketRouter packetRouter;
     private final ExecutorService clientExecutor = Executors.newCachedThreadPool();
     private ServerSocket serverSocket;
-    private Thread acceptThread;
     /**
      * Creates a socket server bootstrap for the provided config.
      * @param config the auth server config
@@ -44,7 +43,7 @@ public final class AuthSocketServer implements AutoCloseable {
 
         serverSocket = new ServerSocket();
         serverSocket.bind(new InetSocketAddress(config.host(), config.port()));
-        acceptThread = Thread.ofVirtual().name("auth-accept-loop").start(this::acceptLoop);
+        Thread.ofVirtual().name("auth-accept-loop").start(this::acceptLoop);
     }
     /**
      * Returns whether the listening socket is currently bound and open.

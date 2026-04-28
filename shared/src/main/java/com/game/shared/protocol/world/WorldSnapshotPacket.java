@@ -2,12 +2,22 @@ package com.game.shared.protocol.world;
 
 import com.game.shared.protocol.Opcode;
 import com.game.shared.protocol.Packet;
+import com.game.shared.ecs.SharedEntityId;
+
+import java.util.List;
 
 /**
- * Placeholder snapshot packet for world state replication.
+ * Snapshot packet for world state replication.
+ * @param serverTick the authoritative world tick
+ * @param playerEntityId the local player's entity id
+ * @param entities the visible entity states
  * @since 0.1.0
  */
-public record WorldSnapshotPacket() implements Packet {
+public record WorldSnapshotPacket(
+        long serverTick,
+        SharedEntityId playerEntityId,
+        List<EntitySpawnPacket> entities
+) implements Packet {
     /**
      * Returns the opcode associated with this packet type.
      * @return the world snapshot opcode

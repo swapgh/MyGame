@@ -11,7 +11,10 @@ import com.game.server.world.network.WorldConnectionManager;
 import com.game.server.world.network.WorldPacketHandlers;
 import com.game.server.world.network.WorldPacketRouter;
 import com.game.server.world.network.WorldSocketServer;
+import com.game.server.world.systems.CollisionSystem;
 import com.game.server.world.systems.EmptyWorldSystem;
+import com.game.server.world.systems.MovementSystem;
+import com.game.server.world.systems.SnapshotSystem;
 import com.game.server.shared.config.ServerConfigLoader;
 import com.game.shared.time.TickRate;
 import java.io.IOException;
@@ -41,6 +44,10 @@ public final class WorldServerMain {
 
         EntityManager entityManager = new EntityManager();
         SystemRegistry systemRegistry = new SystemRegistry();
+        WorldConnectionManager connectionManager = new WorldConnectionManager();
+        systemRegistry.register(new MovementSystem());
+        systemRegistry.register(new CollisionSystem());
+        systemRegistry.register(new SnapshotSystem(connectionManager));
         systemRegistry.register(new EmptyWorldSystem());
         TickRate tickRate = new TickRate(config.ticksPerSecond());
         WorldGameLoop gameLoop = new WorldGameLoop(tickRate, entityManager, systemRegistry);
@@ -52,7 +59,6 @@ public final class WorldServerMain {
         WorldContext worldContext = new WorldContext(entityManager, systemRegistry, zoneLoader, world);
 
         WorldPacketRouter packetRouter = new WorldPacketRouter();
-        WorldConnectionManager connectionManager = new WorldConnectionManager();
         WorldApplication application = new WorldApplication(
                 worldContext,
                 gameLoop,
@@ -63,7 +69,12 @@ public final class WorldServerMain {
 
         gameLoop.start();
 
-        try (WorldSocketServer socketServer = new WorldSocketServer(config, packetRouter, connectionManager)) {
+        try (WorldSocketServer socketServer = new WorldSocketServer(
+                config,
+                packetRouter,
+                connectionManager,
+                entityManager
+        )) {
             socketServer.start();
             System.out.printf(
                     "World server ready: %s listening on %s:%d at %d ticks/s — %d zone(s) loaded, %d area grid(s)%n",

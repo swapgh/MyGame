@@ -60,10 +60,10 @@ public final class LoadingScreen implements Screen {
     private void startWorldEntry() {
         Thread worldThread = new Thread(() -> {
             try {
-                WorldClient.WorldEntryResult result = gameClient.worldClient().enterWorld();
+                WorldClient.WorldEntryResult result = gameClient.worldClient().enterWorld(characterName);
                 Gdx.app.postRunnable(() -> {
                     if (result.success()) {
-                        screenManager.showGame(characterName);
+                        screenManager.showGame(characterName, result.snapshot().playerEntityId());
                     } else {
                         screenManager.showError("World entry failed: " + result.message());
                     }

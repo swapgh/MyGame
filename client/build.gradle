@@ -18,8 +18,10 @@ tasks.register("runClient", JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.game.client.ClientMain"
     workingDir = rootProject.projectDir
+    jvmArgs = ["--enable-native-access=ALL-UNNAMED"]
 }
 
 application {
     mainClass = "com.game.client.ClientMain"
+    applicationDefaultJvmArgs = ["--enable-native-access=ALL-UNNAMED"]
 }

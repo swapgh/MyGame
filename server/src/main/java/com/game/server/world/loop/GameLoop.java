@@ -21,6 +21,7 @@ public final class GameLoop {
      * @param entityManager the shared entity manager
      * @param systemRegistry the ordered system registry to tick each iteration
      */
+    @Deprecated(since = "0.1.0")
     public GameLoop(TickRate tickRate, EntityManager entityManager, SystemRegistry systemRegistry) {
         this.delegate = new WorldGameLoop(tickRate, entityManager, systemRegistry);
     }
@@ -28,6 +29,7 @@ public final class GameLoop {
     /**
      * Starts the game loop on a dedicated virtual thread.
      */
+    @Deprecated(since = "0.1.0")
     public void start() {
         delegate.start();
     }
@@ -37,6 +39,7 @@ public final class GameLoop {
      *
      * @throws InterruptedException if interrupted while waiting
      */
+    @Deprecated(since = "0.1.0")
     public void stop() throws InterruptedException {
         delegate.stop();
     }
@@ -46,6 +49,7 @@ public final class GameLoop {
      *
      * @return {@code true} if the loop is active
      */
+    @Deprecated(since = "0.1.0")
     public boolean isRunning() {
         return delegate.isRunning();
     }
@@ -55,6 +59,7 @@ public final class GameLoop {
      *
      * @return the current game clock
      */
+    @Deprecated(since = "0.1.0")
     public GameClock clock() {
         return delegate.clock();
     }
@@ -64,6 +69,7 @@ public final class GameLoop {
      *
      * @return the last completed world tick
      */
+    @Deprecated(since = "0.1.0")
     public WorldTick lastTick() {
         return delegate.lastTick();
     }

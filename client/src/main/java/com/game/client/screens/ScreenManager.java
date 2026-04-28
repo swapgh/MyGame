@@ -2,6 +2,7 @@ package com.game.client.screens;
 
 import com.game.client.app.ClientState;
 import com.game.client.app.GameClient;
+import com.game.shared.ecs.SharedEntityId;
 
 import java.util.List;
 
@@ -65,9 +66,9 @@ public final class ScreenManager {
      *
      * @param characterName the active character name
      */
-    public void showGame(String characterName) {
+    public void showGame(String characterName, SharedEntityId playerEntityId) {
         gameClient.stateMachine().transitionTo(ClientState.IN_WORLD);
-        switchTo(new GameScreen(gameClient, this, characterName));
+        switchTo(new GameScreen(gameClient, this, characterName, playerEntityId));
     }
 
     /**

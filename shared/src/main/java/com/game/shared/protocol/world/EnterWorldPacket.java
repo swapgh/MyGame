@@ -4,10 +4,11 @@ import com.game.shared.protocol.Opcode;
 import com.game.shared.protocol.Packet;
 
 /**
- * Placeholder packet for entering the world server.
+ * Packet requesting entry into the world server with a selected character.
+ * @param characterName the selected character name
  * @since 0.1.0
  */
-public record EnterWorldPacket() implements Packet {
+public record EnterWorldPacket(String characterName) implements Packet {
     /**
      * Returns the opcode associated with this packet type.
      * @return the enter world opcode

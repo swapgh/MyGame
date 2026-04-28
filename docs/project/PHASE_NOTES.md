@@ -100,11 +100,19 @@ Done for the current skeleton milestone.
 
 ### Current Status
 
-Not started.
+Done for the current early gameplay milestone.
 
 ### Summary
 
-- Placeholder player movement, replication, prediction, and interpolation
+- Server-authoritative movement, simple collision, and world snapshots added
+- Placeholder square now moves through the server instead of being static
+- Basic client prediction, reconciliation, and remote interpolation added
+- Multiple connected entities appear and disconnect cleanup works
+
+### Notes
+
+- Movement is intentionally simple and bounded to a test area for now.
+- Phase 6 will build on this foundation for combat and health state.
 
 ## Phase 6: Combat
 

@@ -1,6 +1,8 @@
 package com.game.server.world.network;
 
 import com.game.server.world.WorldServerConfig;
+import com.game.server.world.ecs.EntityManager;
+import com.game.server.world.ecs.EntityId;
 import com.game.shared.protocol.Packet;
 import com.game.shared.protocol.error.ErrorPacket;
 
@@ -21,9 +23,9 @@ public final class WorldSocketServer implements AutoCloseable {
     private final WorldServerConfig config;
     private final WorldPacketRouter packetRouter;
     private final WorldConnectionManager connectionManager;
+    private final EntityManager entityManager;
     private final ExecutorService clientExecutor = Executors.newCachedThreadPool();
     private ServerSocket serverSocket;
-    private Thread acceptThread;
     /**
      * Creates a socket server bootstrap for the provided config.
      * @param config       the world server config
@@ -32,11 +34,13 @@ public final class WorldSocketServer implements AutoCloseable {
     public WorldSocketServer(
             WorldServerConfig config,
             WorldPacketRouter packetRouter,
-            WorldConnectionManager connectionManager
+            WorldConnectionManager connectionManager,
+            EntityManager entityManager
     ) {
         this.config = config;
         this.packetRouter = packetRouter;
         this.connectionManager = connectionManager;
+        this.entityManager = entityManager;
     }
     /**
      * Binds the underlying TCP socket if it is not already running.
@@ -48,7 +52,7 @@ public final class WorldSocketServer implements AutoCloseable {
         }
         serverSocket = new ServerSocket();
         serverSocket.bind(new InetSocketAddress(config.host(), config.port()));
-        acceptThread = Thread.ofVirtual().name("world-accept-loop").start(this::acceptLoop);
+        Thread.ofVirtual().name("world-accept-loop").start(this::acceptLoop);
     }
     /**
      * Returns whether the listening socket is currently bound and open.
@@ -101,6 +105,10 @@ public final class WorldSocketServer implements AutoCloseable {
                     }
                 }
             } finally {
+                EntityId playerEntityId = connectionManager.releasePlayerEntityId(connection.id()).orElse(null);
+                if (playerEntityId != null && entityManager.isAlive(playerEntityId)) {
+                    entityManager.destroy(playerEntityId);
+                }
                 connectionManager.unregister(connection.id());
                 connection.close();
             }

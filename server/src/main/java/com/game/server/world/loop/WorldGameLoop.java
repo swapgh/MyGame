@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 0.1.0
  */
 public final class WorldGameLoop {
-    private final TickRate tickRate;
     private final EntityManager entityManager;
     private final SystemRegistry systemRegistry;
     private final TickScheduler tickScheduler;
@@ -31,7 +30,6 @@ public final class WorldGameLoop {
      * @param systemRegistry the ordered system registry to tick each iteration
      */
     public WorldGameLoop(TickRate tickRate, EntityManager entityManager, SystemRegistry systemRegistry) {
-        this.tickRate = tickRate;
         this.entityManager = entityManager;
         this.systemRegistry = systemRegistry;
         this.tickScheduler = new TickScheduler(tickRate);
