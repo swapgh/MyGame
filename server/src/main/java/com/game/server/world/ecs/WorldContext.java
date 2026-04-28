@@ -3,6 +3,7 @@ package com.game.server.world.ecs;
 import com.game.server.world.definitions.LootTableDefinition;
 import com.game.server.world.definitions.NpcDefinition;
 import com.game.server.world.definitions.NpcSpawnEntry;
+import com.game.server.world.definitions.ItemDefinition;
 import com.game.server.world.map.World;
 import com.game.server.world.map.ZoneLoader;
 
@@ -19,6 +20,7 @@ import java.util.Map;
  * @param npcDefinitions loaded NPC definitions
  * @param npcSpawnEntries loaded NPC spawn entries
  * @param lootTables loaded loot tables
+ * @param itemDefinitions loaded item definitions
  * @since 0.1.0
  */
 public record WorldContext(
@@ -28,6 +30,7 @@ public record WorldContext(
         World world,
         Map<String, NpcDefinition> npcDefinitions,
         List<NpcSpawnEntry> npcSpawnEntries,
-        Map<String, LootTableDefinition> lootTables
+        Map<String, LootTableDefinition> lootTables,
+        Map<String, ItemDefinition> itemDefinitions
 ) {
 }

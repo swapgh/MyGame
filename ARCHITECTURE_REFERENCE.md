@@ -35,7 +35,7 @@ Examples:
 - Server `HealthComponent`: real gameplay health used to resolve combat
 - Client `HealthBarComponent`: display-only information used to draw UI
 - Server `CollisionSystem`: decides legal movement
-- Client `InterpolationSystem`: smooths visual movement between snapshots
+- Client `PositionInterpolator`: smooths visual movement between snapshots
 
 ## Current Repo Shape
 
@@ -68,10 +68,10 @@ Socket and packet flow.
 
 Examples:
 
-- `AuthClient`
-- `WorldClient`
-- `ServerConnection`
-- packet codecs and routers
+- `network/auth/AuthClient`
+- `network/world/WorldClient`
+- `network/socket/ServerConnection`
+- packet codecs and routers in focused subpackages
 
 ### `client/input`
 
@@ -110,7 +110,6 @@ Examples:
 - `PredictionComponent`
 - `RenderableComponent`
 - `NameplateComponent`
-- `WorldEntityRenderState`
 
 ### `client/systems`
 
@@ -118,11 +117,23 @@ Client-side processing of visual state.
 
 Examples:
 
-- `SnapshotApplySystem`
-- `InterpolationSystem`
 - `PredictionSystem`
 - `RenderSystem`
 - `HudSystem`
+
+This package should stay for broad client gameplay/render pipelines.
+Highly specific snapshot replication helpers can live in `client/sync`.
+
+### `client/sync`
+
+Snapshot replication, interpolation, reconciliation, and prediction-facing world state.
+
+Examples:
+
+- `WorldSyncState`
+- `EntitySyncState`
+- `SnapshotApplier`
+- `PositionInterpolator`
 
 ### `client/ui`
 
@@ -130,9 +141,29 @@ HUD, widgets, screen navigation, and UI helpers.
 
 Examples:
 
-- `ScreenManager`
-- `WorldHudRenderer`
+- `ScreenController`
 - future UI managers and widgets
+
+### `client/controller`
+
+Screen action controllers and user-triggered orchestration helpers.
+
+Examples:
+
+- `controller/auth/LoginController`
+- `controller/auth/RegisterController`
+- `controller/auth/CharacterSelectController`
+- `controller/world/WorldEntryController`
+
+### `client/render`
+
+Rendering helpers, palettes, HUD drawing, and visual chrome.
+
+Examples:
+
+- `WorldHudRenderer`
+- `ClientUiRenderer`
+- `ClientUiPalette`
 
 ### `client/screens`
 
@@ -140,13 +171,39 @@ Actual LibGDX screens.
 
 These should orchestrate behavior, not contain all logic forever.
 
-### `client/world`
+Recommended subpackages as the client grows:
 
-Client-side world models, snapshot-derived state, tile/map helpers.
+- `screens/auth`
+- `screens/menu`
+- `screens/world`
+
+### `server/world/definitions`
+
+Definition types and identifiers.
 
 Examples:
 
-- `WorldViewModel`
+- `NpcDefinition`
+- `LootTableDefinition`
+- `ItemDefinition`
+
+### `server/world/definitions/loaders`
+
+Small focused loaders for JSON-backed world data.
+
+Examples:
+
+- `NpcDefinitionLoader`
+- `NpcSpawnEntryLoader`
+- `LootTableLoader`
+- `ItemDefinitionLoader`
+
+### `client/world`
+
+Client-side map, zone, and spatial world helpers.
+
+Examples:
+
 - future map or zone view classes
 
 ## Server Folder Intent

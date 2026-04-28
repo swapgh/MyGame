@@ -36,6 +36,8 @@ public final class InputManager {
         return new WorldInputFrame(
                 keyboardInput.movementDirection(),
                 keyboardInput.attackRequested(),
+                keyboardInput.pickupRequested(),
+                keyboardInput.equipSlotIndex(),
                 keyboardInput.disconnectRequested()
         );
     }

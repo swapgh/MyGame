@@ -7,7 +7,12 @@ import com.game.server.world.config.WorldServerConfig;
 import com.game.server.world.definitions.LootTableDefinition;
 import com.game.server.world.definitions.NpcDefinition;
 import com.game.server.world.definitions.NpcSpawnEntry;
-import com.game.server.world.definitions.WorldDefinitionLoader;
+import com.game.server.world.definitions.ItemDefinition;
+import com.game.server.world.definitions.loaders.ItemDefinitionLoader;
+import com.game.server.world.definitions.loaders.LootTableLoader;
+import com.game.server.world.definitions.loaders.NpcDefinitionLoader;
+import com.game.server.world.definitions.loaders.NpcSpawnEntryLoader;
+import com.game.server.world.inventory.InventoryService;
 import com.game.server.world.loop.WorldGameLoop;
 import com.game.server.world.factories.NpcFactory;
 import com.game.server.world.map.MapLoader;
@@ -44,6 +49,7 @@ public final class WorldServerMain {
     private static final Path NPC_DEFINITIONS_PATH = Path.of("data", "npcs", "npc-definitions.json");
     private static final Path NPC_SPAWN_TABLES_PATH = Path.of("data", "npcs", "spawn-tables.json");
     private static final Path LOOT_TABLES_PATH = Path.of("data", "items", "loot-tables.json");
+    private static final Path ITEM_DEFINITIONS_PATH = Path.of("data", "items", "item-definitions.json");
 
     private WorldServerMain() {
     }
@@ -56,10 +62,11 @@ public final class WorldServerMain {
     public static void main(String[] args) throws IOException, InterruptedException {
         Path configPath = args.length > 0 ? Path.of(args[0]) : DEFAULT_CONFIG_PATH;
         WorldServerConfig config = ServerConfigLoader.loadWorldServerConfig(configPath);
-        WorldDefinitionLoader definitionLoader = new WorldDefinitionLoader();
-        Map<String, NpcDefinition> npcDefinitions = definitionLoader.loadNpcDefinitions(NPC_DEFINITIONS_PATH);
-        List<NpcSpawnEntry> npcSpawnEntries = definitionLoader.loadNpcSpawnEntries(NPC_SPAWN_TABLES_PATH);
-        Map<String, LootTableDefinition> lootTables = definitionLoader.loadLootTables(LOOT_TABLES_PATH);
+        Map<String, NpcDefinition> npcDefinitions = new NpcDefinitionLoader().load(NPC_DEFINITIONS_PATH);
+        List<NpcSpawnEntry> npcSpawnEntries = new NpcSpawnEntryLoader().load(NPC_SPAWN_TABLES_PATH);
+        Map<String, LootTableDefinition> lootTables = new LootTableLoader().load(LOOT_TABLES_PATH);
+        Map<String, ItemDefinition> itemDefinitions = new ItemDefinitionLoader().load(ITEM_DEFINITIONS_PATH);
+        InventoryService inventoryService = new InventoryService(itemDefinitions);
 
         EntityManager entityManager = new EntityManager();
         SystemRegistry systemRegistry = new SystemRegistry();
@@ -68,7 +75,7 @@ public final class WorldServerMain {
         systemRegistry.register(new CollisionSystem());
         systemRegistry.register(new NpcAiSystem());
         systemRegistry.register(new CombatSystem());
-        systemRegistry.register(new LootDropSystem());
+        systemRegistry.register(new LootDropSystem(itemDefinitions));
         systemRegistry.register(new RespawnSystem());
         systemRegistry.register(new SnapshotSystem(connectionManager));
         systemRegistry.register(new EmptyWorldSystem());
@@ -86,7 +93,8 @@ public final class WorldServerMain {
                 world,
                 npcDefinitions,
                 npcSpawnEntries,
-                lootTables
+                lootTables,
+                itemDefinitions
         );
         spawnInitialNpcs(entityManager, worldContext);
 
@@ -95,7 +103,8 @@ public final class WorldServerMain {
                 worldContext,
                 gameLoop,
                 packetRouter,
-                connectionManager
+                connectionManager,
+                inventoryService
         );
         WorldPacketHandlers.register(packetRouter, application);
 
@@ -151,13 +160,15 @@ public final class WorldServerMain {
      * @param gameLoop       the fixed-timestep game loop
      * @param packetRouter   the world packet router
      * @param connectionManager the world connection manager
+     * @param inventoryService the authoritative inventory service
      * @since 0.1.0
      */
     public record WorldApplication(
             WorldContext worldContext,
             WorldGameLoop gameLoop,
             WorldPacketRouter packetRouter,
-            WorldConnectionManager connectionManager
+            WorldConnectionManager connectionManager,
+            InventoryService inventoryService
     ) {
     }
 }

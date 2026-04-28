@@ -10,9 +10,12 @@ import com.game.server.world.components.TransformComponent;
 import com.game.server.world.ecs.ComponentStore;
 import com.game.server.world.ecs.EntityId;
 import com.game.server.world.ecs.EntityManager;
+import com.game.server.world.definitions.ItemDefinition;
 import com.game.server.world.ecs.GameSystem;
 import com.game.shared.math.Vec2;
 import com.game.shared.time.GameClock;
+
+import java.util.Map;
 
 /**
  * Spawns simple world loot entities when NPCs die.
@@ -20,6 +23,17 @@ import com.game.shared.time.GameClock;
  * @since 0.1.0
  */
 public final class LootDropSystem implements GameSystem {
+    private final Map<String, ItemDefinition> itemDefinitions;
+
+    /**
+     * Creates a loot drop system backed by item definitions.
+     *
+     * @param itemDefinitions loaded item definitions
+     */
+    public LootDropSystem(Map<String, ItemDefinition> itemDefinitions) {
+        this.itemDefinitions = Map.copyOf(itemDefinitions);
+    }
+
     @Override
     public void tick(EntityManager entities, GameClock clock) {
         ComponentStore<NpcComponent> npcs = entities.storeOf(NpcComponent.class);
@@ -54,12 +68,16 @@ public final class LootDropSystem implements GameSystem {
             EntityId lootEntityId = entities.create();
             String itemId = loot.drops().getFirst();
             entities.put(lootEntityId, new TransformComponent(transform.position().add(new Vec2(14.0f, 0.0f))));
-            entities.put(lootEntityId, new DroppedLootComponent(itemId, formatDisplayName(itemId), entry.getValue().definitionId()));
+            entities.put(lootEntityId, new DroppedLootComponent(itemId, resolveDisplayName(itemId), entry.getValue().definitionId()));
             lootDropStates.put(npcId, new LootDropStateComponent(true));
         }
     }
 
-    private static String formatDisplayName(String itemId) {
+    private String resolveDisplayName(String itemId) {
+        ItemDefinition definition = itemDefinitions.get(itemId);
+        if (definition != null) {
+            return definition.name();
+        }
         return itemId.replace('_', ' ');
     }
 }

@@ -116,9 +116,9 @@ Done for the current early gameplay milestone.
 
 ## Phase 6: Combat
 
-### Current Status
+### Status
 
-Not started.
+Done.
 
 ### Summary
 
@@ -126,9 +126,9 @@ Not started.
 
 ## Phase 7: NPCs
 
-### Current Status
+### Status
 
-Not started.
+Done.
 
 ### Summary
 
@@ -136,13 +136,15 @@ Not started.
 
 ## Phase 8: Inventory And Items
 
-### Current Status
+### Status
 
-Not started.
+Done for the current gameplay milestone.
 
 ### Summary
 
-- Item definitions, inventory, pickups, and equipment
+- Item definitions and item bonus data added
+- Player inventory, loot pickup, and equipment flow added
+- Inventory updates now sync from world server to client HUD
 
 ## Phase 9: Quests
 

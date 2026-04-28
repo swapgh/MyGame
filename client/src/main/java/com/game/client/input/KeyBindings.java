@@ -14,6 +14,15 @@ import com.badlogic.gdx.Input;
  * @param altMoveUp alternate move-up key
  * @param altMoveDown alternate move-down key
  * @param attack the attack key
+ * @param pickupLoot the loot pickup key
+ * @param equipSlot1 inventory slot 1 equip key
+ * @param equipSlot2 inventory slot 2 equip key
+ * @param equipSlot3 inventory slot 3 equip key
+ * @param equipSlot4 inventory slot 4 equip key
+ * @param equipSlot5 inventory slot 5 equip key
+ * @param equipSlot6 inventory slot 6 equip key
+ * @param equipSlot7 inventory slot 7 equip key
+ * @param equipSlot8 inventory slot 8 equip key
  * @param disconnect the disconnect key
  * @since 0.1.0
  */
@@ -27,6 +36,15 @@ public record KeyBindings(
         int altMoveUp,
         int altMoveDown,
         int attack,
+        int pickupLoot,
+        int equipSlot1,
+        int equipSlot2,
+        int equipSlot3,
+        int equipSlot4,
+        int equipSlot5,
+        int equipSlot6,
+        int equipSlot7,
+        int equipSlot8,
         int disconnect
 ) {
     /**
@@ -45,6 +63,15 @@ public record KeyBindings(
                 Input.Keys.UP,
                 Input.Keys.DOWN,
                 Input.Keys.SPACE,
+                Input.Keys.E,
+                Input.Keys.NUM_1,
+                Input.Keys.NUM_2,
+                Input.Keys.NUM_3,
+                Input.Keys.NUM_4,
+                Input.Keys.NUM_5,
+                Input.Keys.NUM_6,
+                Input.Keys.NUM_7,
+                Input.Keys.NUM_8,
                 Input.Keys.ESCAPE
         );
     }

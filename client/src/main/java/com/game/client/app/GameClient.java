@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.game.client.network.auth.AuthClient;
+import com.game.client.network.world.WorldClient;
 import com.game.client.settings.ClientConfig;
-import com.game.client.network.AuthClient;
-import com.game.client.network.WorldClient;
-import com.game.client.ui.ScreenManager;
+import com.game.client.ui.ScreenController;
 
 /**
  * Root LibGDX game object for the desktop client.
@@ -27,7 +27,7 @@ public final class GameClient extends Game {
     private SpriteBatch spriteBatch;
     private BitmapFont font;
     private ShapeRenderer shapeRenderer;
-    private ScreenManager screenManager;
+    private ScreenController screenController;
     private Thread shutdownHookThread;
 
     /**
@@ -54,8 +54,8 @@ public final class GameClient extends Game {
         shapeRenderer = new ShapeRenderer();
         uiCamera.setToOrtho(false, 1280f, 720f);
 
-        screenManager = new ScreenManager(this);
-        screenManager.showLogin();
+        screenController = new ScreenController(this);
+        screenController.showLogin();
 
         shutdownHookThread = new Thread(new ClientShutdownHook(this), "client-shutdown-hook");
         Runtime.getRuntime().addShutdownHook(shutdownHookThread);
@@ -80,8 +80,8 @@ public final class GameClient extends Game {
     public void dispose() {
         shutdownNetworking();
 
-        if (screenManager != null) {
-            screenManager.dispose();
+        if (screenController != null) {
+            screenController.dispose();
         }
         if (shapeRenderer != null) {
             shapeRenderer.dispose();
@@ -146,12 +146,12 @@ public final class GameClient extends Game {
     }
 
     /**
-     * Returns the screen manager.
+     * Returns the screen controller.
      *
-     * @return the screen manager
+     * @return the screen controller
      */
-    public ScreenManager screenManager() {
-        return screenManager;
+    public ScreenController screenController() {
+        return screenController;
     }
 
     /**

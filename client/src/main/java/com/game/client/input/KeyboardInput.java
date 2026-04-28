@@ -54,6 +54,48 @@ public final class KeyboardInput {
     }
 
     /**
+     * Returns whether a loot pickup was requested this frame.
+     *
+     * @return {@code true} when pickup was just pressed
+     */
+    public boolean pickupRequested() {
+        return justPressed(keyBindings.pickupLoot());
+    }
+
+    /**
+     * Returns the inventory slot requested for equip, or {@code -1}.
+     *
+     * @return the zero-based equip slot index
+     */
+    public int equipSlotIndex() {
+        if (justPressed(keyBindings.equipSlot1())) {
+            return 0;
+        }
+        if (justPressed(keyBindings.equipSlot2())) {
+            return 1;
+        }
+        if (justPressed(keyBindings.equipSlot3())) {
+            return 2;
+        }
+        if (justPressed(keyBindings.equipSlot4())) {
+            return 3;
+        }
+        if (justPressed(keyBindings.equipSlot5())) {
+            return 4;
+        }
+        if (justPressed(keyBindings.equipSlot6())) {
+            return 5;
+        }
+        if (justPressed(keyBindings.equipSlot7())) {
+            return 6;
+        }
+        if (justPressed(keyBindings.equipSlot8())) {
+            return 7;
+        }
+        return -1;
+    }
+
+    /**
      * Returns whether a disconnect was requested this frame.
      *
      * @return {@code true} when the disconnect key was just pressed

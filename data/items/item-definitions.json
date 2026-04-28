@@ -1,2 +1,30 @@
-[]
-
+[
+  {
+    "id": "slime_gel",
+    "name": "Slime Gel",
+    "equipmentSlot": "",
+    "baseDamageBonus": 0,
+    "attackRangeBonus": 0.0
+  },
+  {
+    "id": "cloudy_core",
+    "name": "Cloudy Core",
+    "equipmentSlot": "TRINKET",
+    "baseDamageBonus": 2,
+    "attackRangeBonus": 8.0
+  },
+  {
+    "id": "wolf_pelt",
+    "name": "Wolf Pelt",
+    "equipmentSlot": "ARMOR",
+    "baseDamageBonus": 1,
+    "attackRangeBonus": 0.0
+  },
+  {
+    "id": "sharp_fang",
+    "name": "Sharp Fang",
+    "equipmentSlot": "WEAPON",
+    "baseDamageBonus": 4,
+    "attackRangeBonus": 12.0
+  }
+]

@@ -2,9 +2,9 @@
 
 ## Current Status
 
-Completed: Phases 0-6
+Completed: Phases 0-8
 
-Current stage: Phase 7
+Current stage: Phase 9
 
 This file is the working plan for the project so we can track progress without cluttering the GitHub front page.
 
@@ -24,11 +24,11 @@ This file is the working plan for the project so we can track progress without c
    Movement system, collision, snapshot system, client prediction, and interpolation. A placeholder square moves smoothly and other entities appear.
 7. [x] Phase 6: combat
    Attack commands, damage formula, health components, and death/respawn.
-8. [ ] Phase 7: NPCs
+8. [x] Phase 7: NPCs
    NPC definitions, AI system, spawn tables, and loot drops.
-9. [ ] Phase 8: inventory and items
+9. [x] Phase 8: inventory and items
    Item definitions, inventory component, loot pickup, and equipment.
 10. [ ] Phase 9: quests
-    Quest definitions, progress tracking, and rewards.
+   Quest definitions, progress tracking, and rewards.
 11. [ ] Phase 10: polish
     Sprites replacing squares, animations, audio, UI windows, and minimap.
