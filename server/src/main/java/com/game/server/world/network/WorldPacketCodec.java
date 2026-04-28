@@ -1,8 +1,9 @@
 package com.game.server.world.network;
 
-import com.game.shared.protocol.Packet;
+import com.game.shared.protocol.core.Packet;
 import com.game.shared.ecs.SharedEntityId;
 import com.game.shared.protocol.error.ErrorPacket;
+import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.ChatMessagePacket;
 import com.game.shared.protocol.world.EntityMovePacket;
 import com.game.shared.protocol.world.EntitySpawnPacket;
@@ -33,6 +34,9 @@ public final class WorldPacketCodec {
                     decodeVec(require(parts, 2)),
                     decodeVec(require(parts, 3))
             );
+            case "ATTACK" -> new AttackPacket(
+                    new SharedEntityId(Long.parseLong(require(parts, 1)))
+            );
             case "CHAT_MESSAGE" -> new ChatMessagePacket();
             default -> new ErrorPacket("UNKNOWN_OPCODE", "Unsupported opcode: " + opcode);
         };
@@ -51,7 +55,11 @@ public final class WorldPacketCodec {
                             Float.toString(entity.position().x()),
                             Float.toString(entity.position().y()),
                             Float.toString(entity.velocity().x()),
-                            Float.toString(entity.velocity().y())
+                            Float.toString(entity.velocity().y()),
+                            Integer.toString(entity.currentHealth()),
+                            Integer.toString(entity.maxHealth()),
+                            Boolean.toString(entity.alive()),
+                            Long.toString(entity.respawnTicksRemaining())
                     ))
                     .reduce((left, right) -> left + ";" + right)
                     .orElse("");
@@ -113,13 +121,17 @@ public final class WorldPacketCodec {
             String[] encodedEntities = parts[3].split(";", -1);
             for (String encodedEntity : encodedEntities) {
                 String[] entityParts = encodedEntity.split(",", -1);
-                if (entityParts.length != 5) {
+                if (entityParts.length != 9) {
                     throw new IllegalArgumentException("Malformed entity snapshot: " + encodedEntity);
                 }
                 entities.add(new EntitySpawnPacket(
                         new SharedEntityId(Long.parseLong(entityParts[0])),
                         new Vec2(Float.parseFloat(entityParts[1]), Float.parseFloat(entityParts[2])),
-                        new Vec2(Float.parseFloat(entityParts[3]), Float.parseFloat(entityParts[4]))
+                        new Vec2(Float.parseFloat(entityParts[3]), Float.parseFloat(entityParts[4])),
+                        Integer.parseInt(entityParts[5]),
+                        Integer.parseInt(entityParts[6]),
+                        Boolean.parseBoolean(entityParts[7]),
+                        Long.parseLong(entityParts[8])
                 ));
             }
         }

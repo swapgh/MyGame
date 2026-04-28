@@ -1,7 +1,7 @@
 package com.game.server.auth.network;
 
-import com.game.server.auth.AuthServerConfig;
-import com.game.shared.protocol.Packet;
+import com.game.server.auth.config.AuthServerConfig;
+import com.game.shared.protocol.core.Packet;
 import com.game.shared.protocol.error.ErrorPacket;
 
 import java.io.IOException;

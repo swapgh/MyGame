@@ -1,8 +1,9 @@
-package com.game.server.auth;
+package com.game.server.auth.app;
 
 import com.game.server.auth.characters.CharacterCreateService;
 import com.game.server.auth.characters.CharacterDeleteService;
 import com.game.server.auth.characters.CharacterListService;
+import com.game.server.auth.config.AuthServerConfig;
 import com.game.server.auth.database.AccountDao;
 import com.game.server.auth.database.AccountRecord;
 import com.game.server.auth.database.AuthDatabase;
@@ -14,7 +15,7 @@ import com.game.server.auth.database.InMemoryBanDao;
 import com.game.server.auth.database.InMemoryCharacterDao;
 import com.game.server.auth.login.LoginRateLimiter;
 import com.game.server.auth.login.LoginService;
-import com.game.server.auth.login.PasswordHasher;
+import com.game.server.auth.security.PasswordHasher;
 import com.game.server.auth.network.AuthPacketHandlers;
 import com.game.server.auth.network.AuthPacketRouter;
 import com.game.server.auth.network.AuthSocketServer;

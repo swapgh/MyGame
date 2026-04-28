@@ -5,12 +5,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
+import com.game.client.input.TextInputBuffer;
 import com.game.client.network.AuthClient;
+import com.game.client.ui.ScreenManager;
 
 import java.io.IOException;
 
 /**
- * Minimal login screen for the Phase 4 desktop flow.
+ * Minimal login screen for the desktop flow.
  *
  * @since 0.1.0
  */
@@ -67,7 +69,7 @@ public final class LoginScreen extends InputAdapter implements Screen {
         gameClient.uiCamera().update();
         gameClient.spriteBatch().setProjectionMatrix(gameClient.uiCamera().combined);
         gameClient.spriteBatch().begin();
-        gameClient.font().draw(gameClient.spriteBatch(), "OOT Client - Phase 4", 80f, 640f);
+        gameClient.font().draw(gameClient.spriteBatch(), "OOT Client", 80f, 640f);
         gameClient.font().draw(gameClient.spriteBatch(), "Login Screen", 80f, 590f);
         gameClient.font().draw(gameClient.spriteBatch(), "Auth: " + gameClient.clientConfig().authHost() + ":" + gameClient.clientConfig().authPort(), 80f, 540f);
         gameClient.font().draw(gameClient.spriteBatch(), "World: " + gameClient.clientConfig().worldHost() + ":" + gameClient.clientConfig().worldPort(), 80f, 510f);

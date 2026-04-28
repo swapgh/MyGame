@@ -1,13 +1,13 @@
-package com.game.client;
+package com.game.client.app;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.game.client.app.GameClient;
+import com.game.client.settings.ClientConfig;
 
 import java.io.IOException;
 
 /**
- * Desktop entry point for the Phase 4 client skeleton.
+ * Desktop entry point for the desktop client.
  *
  * @since 0.1.0
  */

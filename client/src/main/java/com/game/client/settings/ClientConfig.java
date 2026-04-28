@@ -1,4 +1,4 @@
-package com.game.client;
+package com.game.client.settings;
 
 import java.io.IOException;
 import java.nio.file.Files;

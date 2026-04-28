@@ -1,4 +1,4 @@
-package com.game.shared.protocol;
+package com.game.shared.protocol.core;
 
 /**
  * Serializes and deserializes shared packet payloads.

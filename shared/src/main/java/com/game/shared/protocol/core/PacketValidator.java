@@ -1,4 +1,4 @@
-package com.game.shared.protocol;
+package com.game.shared.protocol.core;
 
 import com.game.shared.util.Validation;
 

@@ -1,8 +1,8 @@
 package com.game.server.shared.config;
 
-import com.game.server.auth.AuthServerConfig;
+import com.game.server.auth.config.AuthServerConfig;
 import com.game.server.shared.database.DatabaseConfig;
-import com.game.server.world.WorldServerConfig;
+import com.game.server.world.config.WorldServerConfig;
 
 import java.io.IOException;
 import java.nio.file.Files;

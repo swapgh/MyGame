@@ -1,7 +1,7 @@
 package com.game.client.app;
 
 /**
- * High-level client flow states used by the Phase 4 screen skeleton.
+ * High-level client flow states used by the client screens.
  *
  * @since 0.1.0
  */

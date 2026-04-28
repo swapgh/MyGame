@@ -5,14 +5,16 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
+import com.game.client.input.TextInputBuffer;
 import com.game.client.network.AuthClient;
+import com.game.client.ui.ScreenManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Minimal character selection screen for the Phase 4 client flow.
+ * Minimal character selection screen for the client flow.
  *
  * @since 0.1.0
  */

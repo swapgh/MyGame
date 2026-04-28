@@ -1,6 +1,6 @@
 package com.game.client.network;
 
-import com.game.client.ClientConfig;
+import com.game.client.settings.ClientConfig;
 import com.game.shared.protocol.auth.CharacterCreateResponsePacket;
 import com.game.shared.protocol.auth.CharacterListPacket;
 import com.game.shared.protocol.auth.LoginResponsePacket;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Minimal auth client for the Phase 4 login and character select flow.
+ * Minimal auth client for the login and character select flow.
  *
  * @since 0.1.0
  */

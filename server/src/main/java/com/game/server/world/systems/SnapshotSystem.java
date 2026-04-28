@@ -1,5 +1,7 @@
 package com.game.server.world.systems;
 
+import com.game.server.world.components.HealthComponent;
+import com.game.server.world.components.RespawnComponent;
 import com.game.server.world.components.TransformComponent;
 import com.game.server.world.components.VelocityComponent;
 import com.game.server.world.ecs.EntityManager;
@@ -40,13 +42,22 @@ public final class SnapshotSystem implements GameSystem {
     @Override
     public void tick(EntityManager entities, GameClock clock) {
         var velocities = entities.storeOf(VelocityComponent.class);
+        var healths = entities.storeOf(HealthComponent.class);
+        var respawns = entities.storeOf(RespawnComponent.class);
         List<EntitySpawnPacket> entityStates = entities.storeOf(TransformComponent.class).all().stream()
                 .map(entry -> new EntitySpawnPacket(
                         new SharedEntityId(entry.getKey().value()),
                         entry.getValue().position(),
                         velocities.get(entry.getKey())
                                 .map(VelocityComponent::velocity)
-                                .orElse(com.game.shared.math.Vec2.ZERO)
+                                .orElse(com.game.shared.math.Vec2.ZERO),
+                        healths.get(entry.getKey()).map(HealthComponent::currentHealth).orElse(1),
+                        healths.get(entry.getKey()).map(HealthComponent::maxHealth).orElse(1),
+                        healths.get(entry.getKey()).map(HealthComponent::alive).orElse(true),
+                        respawns.get(entry.getKey())
+                                .filter(RespawnComponent::waitingForRespawn)
+                                .map(respawn -> Math.max(0L, respawn.respawnTick() - clock.tick()))
+                                .orElse(0L)
                 ))
                 .toList();
 

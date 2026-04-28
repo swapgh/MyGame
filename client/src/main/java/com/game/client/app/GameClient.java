@@ -6,13 +6,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.game.client.ClientConfig;
+import com.game.client.settings.ClientConfig;
 import com.game.client.network.AuthClient;
 import com.game.client.network.WorldClient;
-import com.game.client.screens.ScreenManager;
+import com.game.client.ui.ScreenManager;
 
 /**
- * Root LibGDX game object for the Phase 4 desktop client.
+ * Root LibGDX game object for the desktop client.
  *
  * @since 0.1.0
  */

@@ -1,4 +1,4 @@
-package com.game.shared.protocol;
+package com.game.shared.protocol.core;
 
 /**
  * Enumerates the message types currently planned for the shared protocol.

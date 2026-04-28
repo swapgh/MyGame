@@ -1,7 +1,7 @@
 package com.game.shared.protocol.world;
 
-import com.game.shared.protocol.Opcode;
-import com.game.shared.protocol.Packet;
+import com.game.shared.protocol.core.Opcode;
+import com.game.shared.protocol.core.Packet;
 
 /**
  * Packet requesting entry into the world server with a selected character.

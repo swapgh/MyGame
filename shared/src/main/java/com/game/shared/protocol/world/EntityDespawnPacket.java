@@ -1,7 +1,7 @@
 package com.game.shared.protocol.world;
 
-import com.game.shared.protocol.Opcode;
-import com.game.shared.protocol.Packet;
+import com.game.shared.protocol.core.Opcode;
+import com.game.shared.protocol.core.Packet;
 
 /**
  * Placeholder packet describing an entity despawn event.

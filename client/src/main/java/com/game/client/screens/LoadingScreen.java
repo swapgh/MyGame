@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
 import com.game.client.network.WorldClient;
+import com.game.client.ui.ScreenManager;
 
 import java.io.IOException;
 

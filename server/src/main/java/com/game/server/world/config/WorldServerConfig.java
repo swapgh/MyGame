@@ -1,4 +1,4 @@
-package com.game.server.world;
+package com.game.server.world.config;
 
 /**
  * Basic configuration required to boot the world server.

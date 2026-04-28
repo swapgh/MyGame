@@ -16,12 +16,12 @@ tasks.register("runClient", JavaExec) {
     group = "application"
     description = "Runs the desktop LibGDX client."
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.game.client.ClientMain"
+    mainClass = "com.game.client.app.ClientMain"
     workingDir = rootProject.projectDir
     jvmArgs = ["--enable-native-access=ALL-UNNAMED"]
 }
 
 application {
-    mainClass = "com.game.client.ClientMain"
+    mainClass = "com.game.client.app.ClientMain"
     applicationDefaultJvmArgs = ["--enable-native-access=ALL-UNNAMED"]
 }

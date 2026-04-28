@@ -5,11 +5,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
+import com.game.client.input.TextInputBuffer;
+import com.game.client.ui.ScreenManager;
 
 import java.io.IOException;
 
 /**
- * Minimal registration screen for the Phase 4 client skeleton.
+ * Minimal registration screen for the client.
  *
  * @since 0.1.0
  */

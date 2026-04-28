@@ -10,7 +10,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Thin line-oriented socket wrapper used by the Phase 4 client flow.
+ * Thin line-oriented socket wrapper used by the client flow.
  *
  * @since 0.1.0
  */

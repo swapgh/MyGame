@@ -1,8 +1,9 @@
 package com.game.client.network;
 
-import com.game.client.ClientConfig;
+import com.game.client.settings.ClientConfig;
 import com.game.shared.ecs.SharedEntityId;
 import com.game.shared.math.Vec2;
+import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.EntityMovePacket;
 import com.game.shared.protocol.world.WorldSnapshotPacket;
 
@@ -10,7 +11,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * World client handling early Phase 5 movement and snapshot flow.
+ * World client handling movement, combat, and snapshot flow.
  *
  * @since 0.1.0
  */
@@ -98,6 +99,21 @@ public final class WorldClient implements AutoCloseable {
     }
 
     /**
+     * Sends a one-shot attack request for the local player.
+     *
+     * @param playerEntityId the local player entity id
+     * @throws IOException if sending fails
+     */
+    public void sendAttack(SharedEntityId playerEntityId) throws IOException {
+        ServerConnection connection = activeConnection;
+        if (connection == null || !connection.isOpen()) {
+            return;
+        }
+
+        connection.sendLine(packetCodec.encode(new AttackPacket(playerEntityId)));
+    }
+
+    /**
      * Closes the active world connection if one exists.
      */
     @Override
@@ -142,7 +158,7 @@ public final class WorldClient implements AutoCloseable {
     }
 
     /**
-     * World entry result for the early Phase 5 movement flow.
+     * World entry result for the current world flow.
      *
      * @param success whether world entry succeeded
      * @param message the result message

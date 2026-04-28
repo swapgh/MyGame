@@ -1,4 +1,4 @@
-package com.game.client.screens;
+package com.game.client.input;
 
 /**
  * Small keyboard text buffer for the temporary Phase 4 client UI.

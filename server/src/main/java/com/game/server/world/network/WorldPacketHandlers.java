@@ -1,11 +1,17 @@
 package com.game.server.world.network;
 
-import com.game.server.world.WorldServerMain.WorldApplication;
+import com.game.server.world.app.WorldServerMain.WorldApplication;
+import com.game.server.world.components.AttackIntentComponent;
+import com.game.server.world.components.CombatStateComponent;
+import com.game.server.world.components.CombatStatsComponent;
+import com.game.server.world.components.HealthComponent;
 import com.game.server.world.components.PlayerComponent;
+import com.game.server.world.components.RespawnComponent;
 import com.game.server.world.components.TransformComponent;
 import com.game.server.world.components.VelocityComponent;
 import com.game.server.world.ecs.EntityId;
 import com.game.shared.math.Vec2;
+import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.ChatMessagePacket;
 import com.game.shared.protocol.world.EntityMovePacket;
 import com.game.shared.protocol.world.EnterWorldPacket;
@@ -34,6 +40,8 @@ public final class WorldPacketHandlers {
                 handleEnterWorld(connection, application, (EnterWorldPacket) packet));
         router.register(EntityMovePacket.class, (connection, packet) ->
                 handleMove(connection, application, (EntityMovePacket) packet));
+        router.register(AttackPacket.class, (connection, packet) ->
+                handleAttack(connection, application, (AttackPacket) packet));
         router.register(ChatMessagePacket.class, (connection, packet) ->
                 handleChat(connection, application));
     }
@@ -71,12 +79,41 @@ public final class WorldPacketHandlers {
             return;
         }
 
+        HealthComponent health = application.worldContext().entityManager().get(entityId, HealthComponent.class).orElse(null);
+        RespawnComponent respawn = application.worldContext().entityManager().get(entityId, RespawnComponent.class).orElse(null);
+        if (health == null || respawn == null || !health.alive() || respawn.waitingForRespawn()) {
+            application.worldContext().entityManager().put(entityId, new VelocityComponent(Vec2.ZERO));
+            return;
+        }
+
         Vec2 direction = packet.velocity();
         if (direction.lengthSquared() > 1.0f) {
             direction = direction.normalized();
         }
         Vec2 movementVelocity = direction.scale(180.0f);
         application.worldContext().entityManager().put(entityId, new VelocityComponent(movementVelocity));
+    }
+
+    private static void handleAttack(
+            WorldConnection connection,
+            WorldApplication application,
+            AttackPacket packet
+    ) {
+        EntityId entityId = application.connectionManager().findPlayerEntityId(connection.id()).orElse(null);
+        if (entityId == null || entityId.value() != packet.attackerEntityId().value()) {
+            return;
+        }
+
+        HealthComponent health = application.worldContext().entityManager().get(entityId, HealthComponent.class).orElse(null);
+        RespawnComponent respawn = application.worldContext().entityManager().get(entityId, RespawnComponent.class).orElse(null);
+        if (health == null || respawn == null || !health.alive() || respawn.waitingForRespawn()) {
+            return;
+        }
+
+        application.worldContext().entityManager().put(
+                entityId,
+                new AttackIntentComponent(application.gameLoop().clock().tick())
+        );
     }
     private static void handleChat(
             WorldConnection connection,
@@ -99,6 +136,13 @@ public final class WorldPacketHandlers {
         application.worldContext().entityManager().put(entityId, new TransformComponent(new Vec2(spawnX, spawnY)));
         application.worldContext().entityManager().put(entityId, new VelocityComponent(Vec2.ZERO));
         application.worldContext().entityManager().put(entityId, new PlayerComponent(packet.characterName()));
+        application.worldContext().entityManager().put(entityId, new HealthComponent(100, 100));
+        application.worldContext().entityManager().put(entityId, new CombatStatsComponent(18, 90.0f, 10L));
+        application.worldContext().entityManager().put(entityId, new CombatStateComponent(-100L));
+        application.worldContext().entityManager().put(
+                entityId,
+                new RespawnComponent(new Vec2(spawnX, spawnY), 60L, -1L)
+        );
         application.connectionManager().bindPlayerEntity(connection.id(), entityId);
         return entityId;
     }
@@ -114,7 +158,24 @@ public final class WorldPacketHandlers {
                         application.worldContext().entityManager()
                                 .get(entry.getKey(), VelocityComponent.class)
                                 .map(VelocityComponent::velocity)
-                                .orElse(Vec2.ZERO)
+                                .orElse(Vec2.ZERO),
+                        application.worldContext().entityManager()
+                                .get(entry.getKey(), HealthComponent.class)
+                                .map(HealthComponent::currentHealth)
+                                .orElse(1),
+                        application.worldContext().entityManager()
+                                .get(entry.getKey(), HealthComponent.class)
+                                .map(HealthComponent::maxHealth)
+                                .orElse(1),
+                        application.worldContext().entityManager()
+                                .get(entry.getKey(), HealthComponent.class)
+                                .map(HealthComponent::alive)
+                                .orElse(true),
+                        application.worldContext().entityManager()
+                                .get(entry.getKey(), RespawnComponent.class)
+                                .filter(RespawnComponent::waitingForRespawn)
+                                .map(respawn -> Math.max(0L, respawn.respawnTick() - application.gameLoop().clock().tick()))
+                                .orElse(0L)
                 ))
                 .toList();
         return new WorldSnapshotPacket(

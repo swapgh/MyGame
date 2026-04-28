@@ -2,7 +2,7 @@ package com.game.server.auth.registration;
 
 import com.game.server.auth.database.AccountDao;
 import com.game.server.auth.database.AccountRecord;
-import com.game.server.auth.login.PasswordHasher;
+import com.game.server.auth.security.PasswordHasher;
 import com.game.shared.util.Result;
 import com.game.shared.util.Validation;
 

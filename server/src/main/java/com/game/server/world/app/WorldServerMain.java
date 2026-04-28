@@ -1,8 +1,9 @@
-package com.game.server.world;
+package com.game.server.world.app;
 
 import com.game.server.world.ecs.EntityManager;
 import com.game.server.world.ecs.SystemRegistry;
 import com.game.server.world.ecs.WorldContext;
+import com.game.server.world.config.WorldServerConfig;
 import com.game.server.world.loop.WorldGameLoop;
 import com.game.server.world.map.MapLoader;
 import com.game.server.world.map.World;
@@ -12,8 +13,10 @@ import com.game.server.world.network.WorldPacketHandlers;
 import com.game.server.world.network.WorldPacketRouter;
 import com.game.server.world.network.WorldSocketServer;
 import com.game.server.world.systems.CollisionSystem;
+import com.game.server.world.systems.CombatSystem;
 import com.game.server.world.systems.EmptyWorldSystem;
 import com.game.server.world.systems.MovementSystem;
+import com.game.server.world.systems.RespawnSystem;
 import com.game.server.world.systems.SnapshotSystem;
 import com.game.server.shared.config.ServerConfigLoader;
 import com.game.shared.time.TickRate;
@@ -47,6 +50,8 @@ public final class WorldServerMain {
         WorldConnectionManager connectionManager = new WorldConnectionManager();
         systemRegistry.register(new MovementSystem());
         systemRegistry.register(new CollisionSystem());
+        systemRegistry.register(new CombatSystem());
+        systemRegistry.register(new RespawnSystem());
         systemRegistry.register(new SnapshotSystem(connectionManager));
         systemRegistry.register(new EmptyWorldSystem());
         TickRate tickRate = new TickRate(config.ticksPerSecond());

@@ -1,4 +1,4 @@
-package com.game.server.auth.login;
+package com.game.server.auth.security;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

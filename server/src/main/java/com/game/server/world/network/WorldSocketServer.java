@@ -1,9 +1,9 @@
 package com.game.server.world.network;
 
-import com.game.server.world.WorldServerConfig;
+import com.game.server.world.config.WorldServerConfig;
 import com.game.server.world.ecs.EntityManager;
 import com.game.server.world.ecs.EntityId;
-import com.game.shared.protocol.Packet;
+import com.game.shared.protocol.core.Packet;
 import com.game.shared.protocol.error.ErrorPacket;
 
 import java.io.IOException;

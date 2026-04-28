@@ -1,6 +1,6 @@
 package com.game.server.auth.network;
 
-import com.game.shared.protocol.Packet;
+import com.game.shared.protocol.core.Packet;
 import com.game.shared.protocol.auth.CharacterCreateRequestPacket;
 import com.game.shared.protocol.auth.CharacterCreateResponsePacket;
 import com.game.shared.protocol.auth.CharacterListPacket;

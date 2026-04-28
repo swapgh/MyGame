@@ -1,13 +1,20 @@
-package com.game.client.screens;
+package com.game.client.ui;
 
 import com.game.client.app.ClientState;
 import com.game.client.app.GameClient;
+import com.game.client.screens.CharacterSelectScreen;
+import com.game.client.screens.ErrorScreen;
+import com.game.client.screens.GameScreen;
+import com.game.client.screens.LoadingScreen;
+import com.game.client.screens.LoginScreen;
+import com.game.client.screens.RegisterScreen;
+import com.game.client.screens.SettingsScreen;
 import com.game.shared.ecs.SharedEntityId;
 
 import java.util.List;
 
 /**
- * Creates and swaps the small set of Phase 4 client screens.
+ * Creates and swaps the client screens.
  *
  * @since 0.1.0
  */

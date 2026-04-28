@@ -1,4 +1,4 @@
-package com.game.shared.protocol;
+package com.game.shared.protocol.core;
 
 /**
  * Base contract for every packet exchanged between client and server.

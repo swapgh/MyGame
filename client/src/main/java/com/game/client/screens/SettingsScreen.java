@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
+import com.game.client.ui.ScreenManager;
 
 /**
  * Placeholder settings screen for the Phase 4 client skeleton.

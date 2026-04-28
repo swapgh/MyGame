@@ -1,11 +1,11 @@
 package com.game.server.auth.network;
 
-import com.game.server.auth.AuthServerMain.AuthApplication;
+import com.game.server.auth.app.AuthServerMain.AuthApplication;
 import com.game.server.auth.database.CharacterRecord;
 import com.game.server.auth.characters.CharacterListService;
 import com.game.server.auth.login.LoginResult;
 import com.game.server.auth.sessions.AuthSession;
-import com.game.shared.protocol.Packet;
+import com.game.shared.protocol.core.Packet;
 import com.game.shared.protocol.auth.CharacterCreateRequestPacket;
 import com.game.shared.protocol.auth.CharacterCreateResponsePacket;
 import com.game.shared.protocol.auth.CharacterListPacket;

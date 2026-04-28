@@ -3,6 +3,7 @@ package com.game.server.auth.login;
 import com.game.server.auth.database.AccountDao;
 import com.game.server.auth.database.AccountRecord;
 import com.game.server.auth.database.BanDao;
+import com.game.server.auth.security.PasswordHasher;
 import com.game.server.auth.sessions.AuthSession;
 import com.game.server.auth.sessions.AuthSessionStore;
 import com.game.server.auth.sessions.SessionTokenService;

@@ -1,6 +1,6 @@
 package com.game.server.world.network;
 
-import com.game.shared.protocol.Packet;
+import com.game.shared.protocol.core.Packet;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.game.server.auth;
+package com.game.server.auth.config;
 
 /**
  * Basic configuration required to boot the authentication server.

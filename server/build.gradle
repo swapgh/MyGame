@@ -10,7 +10,7 @@ dependencies {
 task worldServerJar(type: Jar) {
     archiveBaseName = 'world-server'
     manifest {
-        attributes 'Main-Class': 'com.game.server.world.WorldServerMain'
+        attributes 'Main-Class': 'com.game.server.world.app.WorldServerMain'
     }
     from sourceSets.main.output
 }
@@ -19,7 +19,7 @@ tasks.register("runAuthServer", JavaExec) {
     group = "application"
     description = "Runs the auth server bootstrap."
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.game.server.auth.AuthServerMain"
+    mainClass = "com.game.server.auth.app.AuthServerMain"
     workingDir = rootProject.projectDir
 }
 
@@ -27,10 +27,10 @@ tasks.register("runWorldServer", JavaExec) {
     group = "application"
     description = "Runs the world server bootstrap."
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.game.server.world.WorldServerMain"
+    mainClass = "com.game.server.world.app.WorldServerMain"
     workingDir = rootProject.projectDir
 }
 
 application {
-    mainClass = "com.game.server.auth.AuthServerMain"
+    mainClass = "com.game.server.auth.app.AuthServerMain"
 }
