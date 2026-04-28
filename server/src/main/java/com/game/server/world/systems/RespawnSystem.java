@@ -1,6 +1,7 @@
 package com.game.server.world.systems;
 
 import com.game.server.world.components.HealthComponent;
+import com.game.server.world.components.LootDropStateComponent;
 import com.game.server.world.components.RespawnComponent;
 import com.game.server.world.components.TransformComponent;
 import com.game.server.world.components.VelocityComponent;
@@ -22,6 +23,7 @@ public final class RespawnSystem implements GameSystem {
     public void tick(EntityManager entities, GameClock clock) {
         ComponentStore<RespawnComponent> respawns = entities.storeOf(RespawnComponent.class);
         ComponentStore<HealthComponent> healths = entities.storeOf(HealthComponent.class);
+        ComponentStore<LootDropStateComponent> lootDropStates = entities.storeOf(LootDropStateComponent.class);
         ComponentStore<TransformComponent> transforms = entities.storeOf(TransformComponent.class);
         ComponentStore<VelocityComponent> velocities = entities.storeOf(VelocityComponent.class);
 
@@ -39,6 +41,9 @@ public final class RespawnSystem implements GameSystem {
             healths.put(entry.getKey(), new HealthComponent(health.maxHealth(), health.maxHealth()));
             transforms.put(entry.getKey(), new TransformComponent(respawn.spawnPosition()));
             velocities.put(entry.getKey(), new VelocityComponent(Vec2.ZERO));
+            if (lootDropStates.has(entry.getKey())) {
+                lootDropStates.put(entry.getKey(), new LootDropStateComponent(false));
+            }
             respawns.put(
                     entry.getKey(),
                     new RespawnComponent(respawn.spawnPosition(), respawn.respawnDelayTicks(), -1L)

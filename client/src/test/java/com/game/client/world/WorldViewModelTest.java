@@ -3,6 +3,7 @@ package com.game.client.world;
 import com.game.client.components.WorldEntityRenderState;
 import com.game.shared.ecs.SharedEntityId;
 import com.game.shared.math.Vec2;
+import com.game.shared.protocol.world.EntityType;
 import com.game.shared.protocol.world.EntitySpawnPacket;
 import com.game.shared.protocol.world.WorldSnapshotPacket;
 import org.junit.jupiter.api.Test;
@@ -23,15 +24,15 @@ class WorldViewModelTest {
                 10L,
                 new SharedEntityId(1L),
                 List.of(
-                        new EntitySpawnPacket(new SharedEntityId(1L), new Vec2(100.0f, 100.0f), Vec2.ZERO, 100, 100, true, 0L),
-                        new EntitySpawnPacket(new SharedEntityId(2L), new Vec2(150.0f, 100.0f), Vec2.ZERO, 80, 100, true, 0L)
+                        new EntitySpawnPacket(new SharedEntityId(1L), new Vec2(100.0f, 100.0f), Vec2.ZERO, EntityType.PLAYER, "DevKnight", 100, 100, true, 0L),
+                        new EntitySpawnPacket(new SharedEntityId(2L), new Vec2(150.0f, 100.0f), Vec2.ZERO, EntityType.NPC, "Training Slime", 80, 100, true, 0L)
                 )
         );
         WorldSnapshotPacket secondSnapshot = new WorldSnapshotPacket(
                 11L,
                 new SharedEntityId(1L),
                 List.of(
-                        new EntitySpawnPacket(new SharedEntityId(1L), new Vec2(100.0f, 100.0f), Vec2.ZERO, 100, 100, true, 0L)
+                        new EntitySpawnPacket(new SharedEntityId(1L), new Vec2(100.0f, 100.0f), Vec2.ZERO, EntityType.PLAYER, "DevKnight", 100, 100, true, 0L)
                 )
         );
 
@@ -48,7 +49,7 @@ class WorldViewModelTest {
         WorldSnapshotPacket snapshot = new WorldSnapshotPacket(
                 25L,
                 new SharedEntityId(1L),
-                List.of(new EntitySpawnPacket(new SharedEntityId(1L), new Vec2(40.0f, 50.0f), Vec2.ZERO, 100, 100, true, 0L))
+                List.of(new EntitySpawnPacket(new SharedEntityId(1L), new Vec2(40.0f, 50.0f), Vec2.ZERO, EntityType.PLAYER, "DevKnight", 100, 100, true, 0L))
         );
 
         assertTrue(viewModel.applySnapshot(snapshot));
@@ -62,8 +63,8 @@ class WorldViewModelTest {
                 30L,
                 new SharedEntityId(1L),
                 List.of(
-                        new EntitySpawnPacket(new SharedEntityId(1L), new Vec2(0.0f, 0.0f), Vec2.ZERO, 100, 100, true, 0L),
-                        new EntitySpawnPacket(new SharedEntityId(2L), new Vec2(10.0f, 0.0f), Vec2.ZERO, 0, 100, false, 18L)
+                        new EntitySpawnPacket(new SharedEntityId(1L), new Vec2(0.0f, 0.0f), Vec2.ZERO, EntityType.PLAYER, "DevKnight", 100, 100, true, 0L),
+                        new EntitySpawnPacket(new SharedEntityId(2L), new Vec2(10.0f, 0.0f), Vec2.ZERO, EntityType.NPC, "Training Slime", 0, 100, false, 18L)
                 )
         );
 
@@ -74,6 +75,7 @@ class WorldViewModelTest {
                 .findFirst()
                 .orElse(null);
         assertNotNull(remote);
+        assertEquals(EntityType.NPC, remote.entityType());
         assertFalse(remote.alive());
         assertEquals(18L, remote.respawnTicksRemaining());
         assertEquals(0, remote.currentHealth());

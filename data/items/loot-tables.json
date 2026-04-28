@@ -1,2 +1,10 @@
-[]
-
+[
+  {
+    "id": "slime-basic",
+    "drops": ["slime_gel", "cloudy_core"]
+  },
+  {
+    "id": "wolf-basic",
+    "drops": ["wolf_pelt", "sharp_fang"]
+  }
+]

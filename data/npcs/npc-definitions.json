@@ -1,2 +1,24 @@
-[]
-
+[
+  {
+    "id": "training-slime",
+    "name": "Training Slime",
+    "maxHealth": 40,
+    "baseDamage": 6,
+    "attackRange": 50.0,
+    "attackCooldownTicks": 18,
+    "moveSpeed": 55.0,
+    "aggroRange": 170.0,
+    "lootTableId": "slime-basic"
+  },
+  {
+    "id": "field-wolf",
+    "name": "Field Wolf",
+    "maxHealth": 65,
+    "baseDamage": 10,
+    "attackRange": 65.0,
+    "attackCooldownTicks": 14,
+    "moveSpeed": 85.0,
+    "aggroRange": 220.0,
+    "lootTableId": "wolf-basic"
+  }
+]

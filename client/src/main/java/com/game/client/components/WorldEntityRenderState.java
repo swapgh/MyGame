@@ -1,6 +1,7 @@
 package com.game.client.components;
 
 import com.game.shared.math.Vec2;
+import com.game.shared.protocol.world.EntityType;
 
 /**
  * Client-side render state for one replicated world entity.
@@ -12,6 +13,8 @@ public final class WorldEntityRenderState {
     private Vec2 displayPosition;
     private Vec2 targetPosition;
     private Vec2 velocity;
+    private EntityType entityType;
+    private String displayName;
     private int currentHealth;
     private int maxHealth;
     private boolean alive;
@@ -34,6 +37,8 @@ public final class WorldEntityRenderState {
             Vec2 displayPosition,
             Vec2 targetPosition,
             Vec2 velocity,
+            EntityType entityType,
+            String displayName,
             int currentHealth,
             int maxHealth,
             boolean alive,
@@ -43,6 +48,8 @@ public final class WorldEntityRenderState {
         this.displayPosition = displayPosition;
         this.targetPosition = targetPosition;
         this.velocity = velocity;
+        this.entityType = entityType;
+        this.displayName = displayName;
         this.currentHealth = currentHealth;
         this.maxHealth = maxHealth;
         this.alive = alive;
@@ -59,6 +66,14 @@ public final class WorldEntityRenderState {
 
     public int currentHealth() {
         return currentHealth;
+    }
+
+    public EntityType entityType() {
+        return entityType;
+    }
+
+    public String displayName() {
+        return displayName;
     }
 
     public int maxHealth() {
@@ -96,6 +111,8 @@ public final class WorldEntityRenderState {
     public void syncFromSnapshot(
             Vec2 targetPosition,
             Vec2 velocity,
+            EntityType entityType,
+            String displayName,
             int currentHealth,
             int maxHealth,
             boolean alive,
@@ -103,6 +120,8 @@ public final class WorldEntityRenderState {
     ) {
         this.targetPosition = targetPosition;
         this.velocity = velocity;
+        this.entityType = entityType;
+        this.displayName = displayName;
         this.currentHealth = currentHealth;
         this.maxHealth = maxHealth;
         this.alive = alive;

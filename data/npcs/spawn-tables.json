@@ -1,2 +1,22 @@
-[]
-
+[
+  {
+    "zoneId": 1,
+    "npcId": "training-slime",
+    "count": 2,
+    "spawnX": 520.0,
+    "spawnY": 300.0,
+    "spacing": 60.0,
+    "respawnDelayTicks": 140,
+    "roamRadius": 90.0
+  },
+  {
+    "zoneId": 1,
+    "npcId": "field-wolf",
+    "count": 1,
+    "spawnX": 760.0,
+    "spawnY": 420.0,
+    "spacing": 40.0,
+    "respawnDelayTicks": 180,
+    "roamRadius": 140.0
+  }
+]

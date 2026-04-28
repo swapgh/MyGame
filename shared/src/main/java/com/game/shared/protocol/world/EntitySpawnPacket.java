@@ -10,6 +10,8 @@ import com.game.shared.math.Vec2;
  * @param entityId the shared entity id
  * @param position the current world position
  * @param velocity the current world velocity
+ * @param entityType the high-level kind of entity
+ * @param displayName the display name for UI and debugging
  * @param currentHealth the entity's current health
  * @param maxHealth the entity's maximum health
  * @param alive whether the entity is currently alive
@@ -20,6 +22,8 @@ public record EntitySpawnPacket(
         SharedEntityId entityId,
         Vec2 position,
         Vec2 velocity,
+        EntityType entityType,
+        String displayName,
         int currentHealth,
         int maxHealth,
         boolean alive,

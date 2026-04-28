@@ -2,9 +2,9 @@
 
 ## Current Status
 
-Completed: Phases 0-5
+Completed: Phases 0-6
 
-Current stage: Phase 6
+Current stage: Phase 7
 
 This file is the working plan for the project so we can track progress without cluttering the GitHub front page.
 
@@ -22,7 +22,7 @@ This file is the working plan for the project so we can track progress without c
    LibGDX window, `ScreenManager`, login flow, character select, and world entry. The world is still minimal.
 6. [x] Phase 5: player in the world
    Movement system, collision, snapshot system, client prediction, and interpolation. A placeholder square moves smoothly and other entities appear.
-7. [ ] Phase 6: combat
+7. [x] Phase 6: combat
    Attack commands, damage formula, health components, and death/respawn.
 8. [ ] Phase 7: NPCs
    NPC definitions, AI system, spawn tables, and loot drops.

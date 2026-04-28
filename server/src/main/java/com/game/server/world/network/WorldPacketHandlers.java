@@ -4,13 +4,16 @@ import com.game.server.world.app.WorldServerMain.WorldApplication;
 import com.game.server.world.components.AttackIntentComponent;
 import com.game.server.world.components.CombatStateComponent;
 import com.game.server.world.components.CombatStatsComponent;
+import com.game.server.world.components.DroppedLootComponent;
 import com.game.server.world.components.HealthComponent;
+import com.game.server.world.components.NpcComponent;
 import com.game.server.world.components.PlayerComponent;
 import com.game.server.world.components.RespawnComponent;
 import com.game.server.world.components.TransformComponent;
 import com.game.server.world.components.VelocityComponent;
 import com.game.server.world.ecs.EntityId;
 import com.game.shared.math.Vec2;
+import com.game.shared.protocol.world.EntityType;
 import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.ChatMessagePacket;
 import com.game.shared.protocol.world.EntityMovePacket;
@@ -159,6 +162,8 @@ public final class WorldPacketHandlers {
                                 .get(entry.getKey(), VelocityComponent.class)
                                 .map(VelocityComponent::velocity)
                                 .orElse(Vec2.ZERO),
+                        resolveEntityType(application, entry.getKey()),
+                        resolveDisplayName(application, entry.getKey()),
                         application.worldContext().entityManager()
                                 .get(entry.getKey(), HealthComponent.class)
                                 .map(HealthComponent::currentHealth)
@@ -183,5 +188,26 @@ public final class WorldPacketHandlers {
                 new com.game.shared.ecs.SharedEntityId(playerEntityId.value()),
                 entities
         );
+    }
+
+    private static EntityType resolveEntityType(WorldApplication application, EntityId entityId) {
+        if (application.worldContext().entityManager().has(entityId, PlayerComponent.class)) {
+            return EntityType.PLAYER;
+        }
+        if (application.worldContext().entityManager().has(entityId, NpcComponent.class)) {
+            return EntityType.NPC;
+        }
+        if (application.worldContext().entityManager().has(entityId, DroppedLootComponent.class)) {
+            return EntityType.LOOT;
+        }
+        return EntityType.UNKNOWN;
+    }
+
+    private static String resolveDisplayName(WorldApplication application, EntityId entityId) {
+        return application.worldContext().entityManager().get(entityId, PlayerComponent.class)
+                .map(PlayerComponent::characterName)
+                .or(() -> application.worldContext().entityManager().get(entityId, NpcComponent.class).map(NpcComponent::displayName))
+                .or(() -> application.worldContext().entityManager().get(entityId, DroppedLootComponent.class).map(DroppedLootComponent::displayName))
+                .orElse("Entity");
     }
 }

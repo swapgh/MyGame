@@ -43,9 +43,13 @@ public final class WorldHudRenderer {
             long playerEntityId
     ) {
         for (WorldEntityRenderState renderState : entities) {
-            String label = renderState.alive()
-                    ? renderState.currentHealth() + "/" + renderState.maxHealth() + " HP"
-                    : "Respawn " + renderState.respawnTicksRemaining();
+            String label = switch (renderState.entityType()) {
+                case LOOT -> "Loot: " + renderState.displayName();
+                case NPC, PLAYER -> renderState.alive()
+                        ? renderState.displayName() + " " + renderState.currentHealth() + "/" + renderState.maxHealth() + " HP"
+                        : renderState.displayName() + " respawn " + renderState.respawnTicksRemaining();
+                default -> renderState.displayName();
+            };
             gameClient.font().setColor(renderState.entityId() == playerEntityId ? Color.WHITE : Color.SALMON);
             gameClient.font().draw(
                     gameClient.spriteBatch(),

@@ -13,6 +13,7 @@ import com.game.client.ui.ScreenManager;
 import com.game.client.ui.WorldHudRenderer;
 import com.game.client.world.WorldViewModel;
 import com.game.shared.ecs.SharedEntityId;
+import com.game.shared.protocol.world.EntityType;
 
 import java.io.IOException;
 
@@ -111,6 +112,10 @@ public final class GameScreen implements Screen {
         for (WorldEntityRenderState renderState : viewModel.renderStates()) {
             if (renderState.entityId() == playerEntityId.value()) {
                 shapeRenderer.setColor(Color.WHITE);
+            } else if (renderState.entityType() == EntityType.LOOT) {
+                shapeRenderer.setColor(Color.GOLD);
+            } else if (renderState.entityType() == EntityType.NPC) {
+                shapeRenderer.setColor(renderState.alive() ? Color.SCARLET : Color.GRAY);
             } else if (!renderState.alive()) {
                 shapeRenderer.setColor(Color.GRAY);
             } else {

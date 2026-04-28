@@ -3,6 +3,7 @@ package com.game.client.network;
 import com.game.shared.ecs.SharedEntityId;
 import com.game.shared.math.Vec2;
 import com.game.shared.protocol.world.AttackPacket;
+import com.game.shared.protocol.world.EntityType;
 import com.game.shared.protocol.world.EntityMovePacket;
 import com.game.shared.protocol.world.EntitySpawnPacket;
 import com.game.shared.protocol.world.WorldSnapshotPacket;
@@ -66,17 +67,19 @@ public final class WorldPacketCodec {
         if (!parts[3].isBlank()) {
             for (String encodedEntity : parts[3].split(";", -1)) {
                 String[] entityParts = encodedEntity.split(",", -1);
-                if (entityParts.length != 9) {
+                if (entityParts.length != 11) {
                     throw new IllegalArgumentException("Malformed entity snapshot: " + encodedEntity);
                 }
                 entities.add(new EntitySpawnPacket(
                         new SharedEntityId(Long.parseLong(entityParts[0])),
                         new Vec2(Float.parseFloat(entityParts[1]), Float.parseFloat(entityParts[2])),
                         new Vec2(Float.parseFloat(entityParts[3]), Float.parseFloat(entityParts[4])),
-                        Integer.parseInt(entityParts[5]),
-                        Integer.parseInt(entityParts[6]),
-                        Boolean.parseBoolean(entityParts[7]),
-                        Long.parseLong(entityParts[8])
+                        EntityType.valueOf(entityParts[5]),
+                        entityParts[6],
+                        Integer.parseInt(entityParts[7]),
+                        Integer.parseInt(entityParts[8]),
+                        Boolean.parseBoolean(entityParts[9]),
+                        Long.parseLong(entityParts[10])
                 ));
             }
         }
