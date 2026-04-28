@@ -3,7 +3,7 @@ package com.game.client.network.world;
 import com.game.client.network.socket.GameClientSocket;
 import com.game.client.network.socket.ServerConnection;
 import com.game.client.settings.ClientConfig;
-import com.game.shared.ecs.SharedEntityId;
+import com.game.shared.ids.SharedEntityId;
 import com.game.shared.math.Vec2;
 import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.EquipItemPacket;

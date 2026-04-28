@@ -1,249 +1,157 @@
 # Architecture Reference
 
-This file is a guide for where code should generally live.
+This is the single structure reference for the project.
 
-It is a reference, not a strict rulebook.
+It describes:
 
-Some classes already in the repo are temporary, experimental, or simplified for the current phase. They can stay for now if they help us move forward, but new work should try to follow this structure unless there is a good reason not to.
+- where code should live
+- how data folders are used
+- when a class should be split
+- the target compact structure we want to preserve
 
-## Runtime Baseline
+## Rules For Splitting Classes
 
-- Build tool: Gradle
-- Java version: JDK 25 toolchain
-- Architecture: `shared` + `server` + `client`
-- Server model: authoritative ECS
-- Client model: visual ECS + prediction
-- Protocol contract: `shared` module
-- Data files: JSON/YAML first
-- Database: PostgreSQL
-- Networking: TCP first, UDP later only if it becomes necessary
+### Screen
 
-## Ownership Rules
+Split a screen if:
 
-- `shared`: protocol, math, time, ids, pure utility code shared by server and client
-- `server`: authoritative world state, combat, movement, collision, persistence, NPC AI, rules
-- `client`: input, prediction, interpolation, rendering, UI, visual-only entity state
+- it contains business logic or direct service calls
+- it owns state beyond what is visible
+- it grows beyond roughly 150 lines of render or layout logic
 
-## Important Distinction
+Rule:
 
-Client `components` and `systems` are allowed.
+- a screen should draw and delegate
 
-They are not authoritative gameplay logic.
+Example:
 
-Examples:
+- `GameScreen` should not permanently own world orchestration, input handling, and rendering logic all at once
+- move non-render flow into `WorldScreenController` as needed
 
-- Server `HealthComponent`: real gameplay health used to resolve combat
-- Client `HealthBarComponent`: display-only information used to draw UI
-- Server `CollisionSystem`: decides legal movement
-- Client `PositionInterpolator`: smooths visual movement between snapshots
+### Controller
 
-## Current Repo Shape
+Split a controller if:
 
-The repo is still early-stage, so not every folder is fully populated yet.
+- it handles more than one independent business flow
+- it grows beyond roughly 200 lines
 
-That is expected.
+### Handler or Command
 
-The goal is:
+Split a handler if:
 
-1. keep current working files
-2. add missing scaffolding where it helps
-3. move toward the target structure over time
+- it validates, executes, responds, and persists all in one place
+- it grows beyond roughly 80 lines
 
-## Client Folder Intent
+Rule:
 
-### `client/app`
+- commands should validate and delegate
 
-High-level app bootstrap and client lifecycle.
+### Service
 
-Examples:
+Split a service if:
 
-- `ClientMain`
-- `GameClient`
-- `ClientState`
-- `ClientStateMachine`
+- it mixes unrelated domains
+- it contains multiple workflows that can evolve separately
 
-### `client/network`
+Example:
 
-Socket and packet flow.
+- if `InventoryService` grows too much, pickup and equipment logic can become separate services
 
-Examples:
+### System
 
-- `network/auth/AuthClient`
-- `network/world/WorldClient`
-- `network/socket/ServerConnection`
-- packet codecs and routers in focused subpackages
+Split a system if:
 
-### `client/input`
+- it iterates over too many unrelated component groups
+- it starts mixing separate simulation concerns
 
-Keyboard, mouse, bindings, and input-to-command translation.
+### Repository or DAO
 
-Examples:
+Split a DAO if:
 
-- `InputManager`
-- `KeyboardInput`
-- `MouseInput`
-- `KeyBindings`
-- `WorldInputFrame`
-- `TextInputBuffer`
+- it queries unrelated tables or unrelated aggregates
 
-### `client/ecs`
+### Loader
 
-Client-side ECS primitives for visual entities.
+Split a loader if:
 
-Examples:
+- it reads more than one schema
+- it reads more than one file format
 
-- `ClientEntityId`
-- `ClientEntityManager`
-- `ClientComponentStore`
-- `ClientSystem`
-- `ClientSystemScheduler`
+### Renderer
 
-### `client/components`
+Split a renderer if:
 
-Visual or prediction-side entity state.
+- it draws fundamentally different responsibilities
 
-Examples:
+Rule:
 
-- `TransformComponent`
-- `VelocityComponent`
-- `InterpolationComponent`
-- `PredictionComponent`
-- `RenderableComponent`
-- `NameplateComponent`
+- scene and HUD rendering should stay separate
 
-### `client/systems`
+## Data Layout
 
-Client-side processing of visual state.
-
-Examples:
-
-- `PredictionSystem`
-- `RenderSystem`
-- `HudSystem`
-
-This package should stay for broad client gameplay/render pipelines.
-Highly specific snapshot replication helpers can live in `client/sync`.
-
-### `client/sync`
-
-Snapshot replication, interpolation, reconciliation, and prediction-facing world state.
-
-Examples:
-
-- `WorldSyncState`
-- `EntitySyncState`
-- `SnapshotApplier`
-- `PositionInterpolator`
-
-### `client/ui`
-
-HUD, widgets, screen navigation, and UI helpers.
-
-Examples:
-
-- `ScreenController`
-- future UI managers and widgets
-
-### `client/controller`
-
-Screen action controllers and user-triggered orchestration helpers.
-
-Examples:
-
-- `controller/auth/LoginController`
-- `controller/auth/RegisterController`
-- `controller/auth/CharacterSelectController`
-- `controller/world/WorldEntryController`
-
-### `client/render`
-
-Rendering helpers, palettes, HUD drawing, and visual chrome.
-
-Examples:
-
-- `WorldHudRenderer`
-- `ClientUiRenderer`
-- `ClientUiPalette`
-
-### `client/screens`
-
-Actual LibGDX screens.
-
-These should orchestrate behavior, not contain all logic forever.
-
-Recommended subpackages as the client grows:
-
-- `screens/auth`
-- `screens/menu`
-- `screens/world`
-
-### `server/world/definitions`
-
-Definition types and identifiers.
-
-Examples:
-
-- `NpcDefinition`
-- `LootTableDefinition`
-- `ItemDefinition`
-
-### `server/world/definitions/loaders`
-
-Small focused loaders for JSON-backed world data.
-
-Examples:
-
-- `NpcDefinitionLoader`
-- `NpcSpawnEntryLoader`
-- `LootTableLoader`
-- `ItemDefinitionLoader`
-
-### `client/world`
-
-Client-side map, zone, and spatial world helpers.
-
-Examples:
-
-- future map or zone view classes
-
-## Server Folder Intent
-
-### `server/auth`
-
-Authentication server flow.
-
-### `server/world`
-
-Authoritative world simulation.
-
-Main rule:
-
-- real gameplay rules belong here
-
-Examples:
-
-- `MovementSystem`
-- `CollisionSystem`
-- `CombatSystem`
-- `SnapshotSystem`
-
-## Shared Folder Intent
-
-### `shared/protocol`
-
-Packets, opcodes, packet validation, packet registration.
-
-### `shared/math`
-
-Pure math types.
-
-### `shared/time`
-
-Simulation clock types.
-
-### `shared/ecs`
-
-Shared ids or protocol-facing ECS helpers only.
+```text
+data/
+├── client/
+│   ├── animations/
+│   ├── sprites/
+│   ├── textures/
+│   ├── sounds/
+│   ├── music/
+│   └── ui/
+├── items/
+│   ├── item-definitions.json
+│   └── loot-tables.json
+├── npcs/
+│   ├── npc-definitions.json
+│   └── spawn-tables.json
+├── world/
+│   ├── maps/
+│   ├── zones/
+│   └── navmesh/
+└── quests/
+    └── quest-definitions.json
+```
+
+Rule:
+
+- `data/client/` is read by the client at runtime
+- `data/items`, `data/npcs`, `data/world`, and `data/quests` are authoritative server-side startup data
+- the client should not directly own gameplay truth from those server data folders
+
+## Target Compact Structure
+
+```text
+game/
+├── client/src/main/java/com/game/client/
+│   ├── app/            ClientMain, GameClient, ClientState, ClientStateMachine, ClientShutdownHook
+│   ├── screens/        Screen + auth/ + world/ + menu/
+│   ├── controllers/    auth/ + world/
+│   ├── ui/             ScreenController
+│   ├── render/         ClientUiRenderer, ClientUiPalette, UiFont + world/SceneRenderer, HudRenderer
+│   ├── input/          InputManager, KeyBindings, KeyboardInput, MouseInput, TextInputBuffer, WorldInputFrame
+│   ├── network/        socket/ + packet/ + auth/ + world/codec/ + PingService
+│   ├── world/          sync/ + ecs/
+│   └── settings/       ClientConfig
+│
+├── server/src/main/java/com/game/server/
+│   ├── auth/           app/ + config/ + login/ + registration/ + characters/ + sessions/ + security/ + database/ + network/
+│   ├── world/          app/ + config/ + loop/ + map/ + commands/ + factories/ + inventory/ + network/
+│   ├── ecs/            entity/ + component/ + system/ + WorldContext
+│   ├── components/     world/ + combat/ + inventory/ + npc/ + loot/
+│   ├── systems/        world/ + combat/ + npc/ + loot/
+│   ├── items/          definition/
+│   ├── npc/            definition/
+│   ├── loot/           definition/
+│   ├── database/       DatabasePool, DatabaseConfig, TransactionManager
+│   └── config/         ServerConfigLoader
+│
+└── shared/src/main/java/com/game/shared/
+    ├── math/           Vec2, Vec3, Bounds, Direction
+    ├── ids/            SharedEntityId
+    ├── protocol/       core/ + auth/ + world/ + error/
+    ├── time/           GameClock, TickRate
+    └── util/           Result, Validation
+```
 
 ## Working Rule For New Files
 
@@ -251,6 +159,6 @@ When adding a class, ask:
 
 1. Is this authoritative gameplay logic?
 2. Is this client-only visual logic?
-3. Is this protocol/shared contract?
+3. Is this shared protocol or pure utility logic?
 
-Put it in the module that owns the answer.
+Put it in the module that owns that answer.

@@ -1,6 +1,6 @@
 package com.game.server.world.network.codec;
 
-import com.game.shared.ecs.SharedEntityId;
+import com.game.shared.ids.SharedEntityId;
 import com.game.shared.protocol.core.Packet;
 import com.game.shared.protocol.error.ErrorPacket;
 import com.game.shared.protocol.world.AttackPacket;

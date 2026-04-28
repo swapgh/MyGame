@@ -1,15 +1,15 @@
 package com.game.server.world.inventory;
 
-import com.game.server.world.components.BaseCombatStatsComponent;
-import com.game.server.world.components.CombatStatsComponent;
-import com.game.server.world.components.DroppedLootComponent;
-import com.game.server.world.components.EquipmentComponent;
-import com.game.server.world.components.InventoryComponent;
-import com.game.server.world.components.InventoryEntry;
-import com.game.server.world.components.TransformComponent;
-import com.game.server.world.definitions.ItemDefinition;
-import com.game.server.world.ecs.EntityId;
-import com.game.server.world.ecs.EntityManager;
+import com.game.server.components.combat.BaseCombatStatsComponent;
+import com.game.server.components.combat.CombatStatsComponent;
+import com.game.server.components.inventory.EquipmentComponent;
+import com.game.server.components.inventory.InventoryComponent;
+import com.game.server.components.inventory.InventoryEntry;
+import com.game.server.components.loot.DroppedLootComponent;
+import com.game.server.components.world.TransformComponent;
+import com.game.server.items.definition.ItemDefinition;
+import com.game.server.ecs.entity.EntityId;
+import com.game.server.ecs.entity.EntityManager;
 import com.game.shared.math.Vec2;
 import com.game.shared.protocol.world.EquipmentSlot;
 import com.game.shared.protocol.world.InventoryUpdatePacket;

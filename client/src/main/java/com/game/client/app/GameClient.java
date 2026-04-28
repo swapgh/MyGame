@@ -1,13 +1,12 @@
 package com.game.client.app;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.game.client.network.auth.AuthClient;
 import com.game.client.network.world.WorldClient;
+import com.game.client.render.UiFont;
 import com.game.client.settings.ClientConfig;
 import com.game.client.ui.ScreenController;
 
@@ -25,7 +24,7 @@ public final class GameClient extends Game {
     private final OrthographicCamera uiCamera;
 
     private SpriteBatch spriteBatch;
-    private BitmapFont font;
+    private UiFont uiFont;
     private ShapeRenderer shapeRenderer;
     private ScreenController screenController;
     private Thread shutdownHookThread;
@@ -49,8 +48,7 @@ public final class GameClient extends Game {
     @Override
     public void create() {
         spriteBatch = new SpriteBatch();
-        font = new BitmapFont();
-        font.setColor(Color.WHITE);
+        uiFont = UiFont.load("fonts/Purisa.ttf");
         shapeRenderer = new ShapeRenderer();
         uiCamera.setToOrtho(false, 1280f, 720f);
 
@@ -64,7 +62,7 @@ public final class GameClient extends Game {
     /**
      * Resizes the shared UI camera with the desktop window.
      *
-     * @param width the new window width
+     * @param width  the new window width
      * @param height the new window height
      */
     @Override
@@ -86,8 +84,8 @@ public final class GameClient extends Game {
         if (shapeRenderer != null) {
             shapeRenderer.dispose();
         }
-        if (font != null) {
-            font.dispose();
+        if (uiFont != null) {
+            uiFont.dispose();
         }
         if (spriteBatch != null) {
             spriteBatch.dispose();
@@ -164,12 +162,12 @@ public final class GameClient extends Game {
     }
 
     /**
-     * Returns the shared font.
+     * Returns the shared UI fonts at all sizes.
      *
-     * @return the font
+     * @return the UI font set
      */
-    public BitmapFont font() {
-        return font;
+    public UiFont uiFont() {
+        return uiFont;
     }
 
     /**

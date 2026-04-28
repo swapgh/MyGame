@@ -1,6 +1,6 @@
 package com.game.shared.protocol.world;
 
-import com.game.shared.ecs.SharedEntityId;
+import com.game.shared.ids.SharedEntityId;
 import com.game.shared.protocol.core.Opcode;
 import com.game.shared.protocol.core.Packet;
 

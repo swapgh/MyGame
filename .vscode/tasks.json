@@ -4,7 +4,10 @@
         {
             "label": "Gradle: Build",
             "type": "shell",
-            "command": "./gradlew build",
+            "command": "${workspaceFolder}/gradlew",
+            "args": [
+                "build"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -16,7 +19,10 @@
         {
             "label": "Gradle: Clean",
             "type": "shell",
-            "command": "./gradlew clean",
+            "command": "${workspaceFolder}/gradlew",
+            "args": [
+                "clean"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -25,7 +31,10 @@
         {
             "label": "Gradle: Projects",
             "type": "shell",
-            "command": "./gradlew projects",
+            "command": "${workspaceFolder}/gradlew",
+            "args": [
+                "projects"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}"
             },

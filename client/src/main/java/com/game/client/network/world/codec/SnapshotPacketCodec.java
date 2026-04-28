@@ -1,6 +1,6 @@
 package com.game.client.network.world.codec;
 
-import com.game.shared.ecs.SharedEntityId;
+import com.game.shared.ids.SharedEntityId;
 import com.game.shared.math.Vec2;
 import com.game.shared.protocol.world.EntitySpawnPacket;
 import com.game.shared.protocol.world.EntityType;

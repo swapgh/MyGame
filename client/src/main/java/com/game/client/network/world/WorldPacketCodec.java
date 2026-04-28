@@ -3,7 +3,7 @@ package com.game.client.network.world;
 import com.game.client.network.world.codec.CommandPacketCodec;
 import com.game.client.network.world.codec.InventoryUpdateCodec;
 import com.game.client.network.world.codec.SnapshotPacketCodec;
-import com.game.shared.ecs.SharedEntityId;
+import com.game.shared.ids.SharedEntityId;
 import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.EquipItemPacket;
 import com.game.shared.protocol.world.EntityMovePacket;

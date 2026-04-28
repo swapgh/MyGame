@@ -1,7 +1,7 @@
 package com.game.server.auth.database;
 
-import com.game.server.shared.database.DatabasePool;
-import com.game.server.shared.database.TransactionManager;
+import com.game.server.database.DatabasePool;
+import com.game.server.database.TransactionManager;
 /**
  * Groups the auth persistence collaborators for early auth server development.
  * @since 0.1.0

@@ -1,7 +1,7 @@
 package com.game.server.world.loop;
 
-import com.game.server.world.ecs.EntityManager;
-import com.game.server.world.ecs.SystemRegistry;
+import com.game.server.ecs.entity.EntityManager;
+import com.game.server.ecs.system.SystemRegistry;
 import com.game.shared.time.GameClock;
 import com.game.shared.time.TickRate;
 

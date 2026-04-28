@@ -1,14 +1,4 @@
 {
-    "java.jdt.ls.java.home": "/opt/jdk-25",
-    "java.import.gradle.java.home": "/opt/jdk-25",
-    "gradle.javaHome": "/opt/jdk-25",
-    "java.configuration.runtimes": [
-        {
-            "name": "JavaSE-25",
-            "path": "/opt/jdk-25",
-            "default": true
-        }
-    ],
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.import.gradle.enabled": true,
     "java.project.outputPath": "target/vscode-classes",

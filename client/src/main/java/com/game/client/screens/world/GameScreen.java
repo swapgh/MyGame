@@ -2,16 +2,16 @@ package com.game.client.screens.world;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
-import com.game.client.controller.world.WorldScreenController;
+import com.game.client.controllers.world.WorldScreenController;
 import com.game.client.input.InputManager;
 import com.game.client.input.WorldInputFrame;
 import com.game.client.render.ClientUiRenderer;
-import com.game.client.render.WorldHudRenderer;
-import com.game.client.render.WorldSceneRenderer;
+import com.game.client.render.world.HudRenderer;
+import com.game.client.render.world.SceneRenderer;
 import com.game.client.screens.Screen;
-import com.game.client.sync.WorldSyncState;
 import com.game.client.ui.ScreenController;
-import com.game.shared.ecs.SharedEntityId;
+import com.game.client.world.sync.WorldSyncState;
+import com.game.shared.ids.SharedEntityId;
 
 /**
  * Screen shell for the active world session.
@@ -25,8 +25,8 @@ public final class GameScreen implements Screen {
     private final SharedEntityId playerEntityId;
     private final ClientUiRenderer uiRenderer = new ClientUiRenderer();
     private final InputManager inputManager = new InputManager();
-    private final WorldHudRenderer hudRenderer = new WorldHudRenderer();
-    private final WorldSceneRenderer sceneRenderer = new WorldSceneRenderer();
+    private final HudRenderer hudRenderer = new HudRenderer();
+    private final SceneRenderer sceneRenderer = new SceneRenderer();
     private final WorldScreenController worldScreenController;
     private final WorldSyncState worldSyncState;
 

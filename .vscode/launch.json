@@ -5,7 +5,7 @@
             "type": "java",
             "name": "WorldServerMain",
             "request": "launch",
-            "mainClass": "com.game.server.world.WorldServerMain",
+            "mainClass": "com.game.server.world.app.WorldServerMain",
             "projectName": "server",
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal"
@@ -14,7 +14,7 @@
             "type": "java",
             "name": "ClientMain",
             "request": "launch",
-            "mainClass": "com.game.client.ClientMain",
+            "mainClass": "com.game.client.app.ClientMain",
             "projectName": "client",
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -24,7 +24,7 @@
             "type": "java",
             "name": "AuthServerMain",
             "request": "launch",
-            "mainClass": "com.game.server.auth.AuthServerMain",
+            "mainClass": "com.game.server.auth.app.AuthServerMain",
             "projectName": "server",
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal"

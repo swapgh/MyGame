@@ -1,6 +1,6 @@
 package com.game.server.world.network;
 
-import com.game.server.world.ecs.EntityId;
+import com.game.server.ecs.entity.EntityId;
 
 import java.util.Collection;
 import java.util.Collections;

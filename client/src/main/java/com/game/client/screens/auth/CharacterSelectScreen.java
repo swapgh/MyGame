@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
-import com.game.client.controller.auth.CharacterSelectController;
+import com.game.client.controllers.auth.CharacterSelectController;
 import com.game.client.input.TextInputBuffer;
 import com.game.client.render.ClientUiPalette;
 import com.game.client.render.ClientUiRenderer;
