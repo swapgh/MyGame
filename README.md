@@ -5,8 +5,8 @@ Phase 0 skeleton for a 2D orthogonal top-down multiplayer RPG in Java using Grad
 ## Baseline
 
 - Build tool: Gradle
-- Java target: Java 21
-- Recommended runtime strategy: target Java 21 LTS, allow newer JDKs later after compatibility checks
+- Java target: Java 25
+- Recommended runtime strategy: target Java 25 LTS across development and builds
 - Architecture: `shared` + `server` + `client`
 - Server: authoritative ECS
 - Client: visual ECS + prediction
@@ -17,7 +17,7 @@ Phase 0 skeleton for a 2D orthogonal top-down multiplayer RPG in Java using Grad
 
 ## Java Version Policy
 
-Use Java 21 as the project baseline. JDK 25 or newer can be used on your machine later, but the source and toolchain should stay pinned to 21 until every dependency in the stack is confirmed compatible.
+Use Java 25 as the project baseline. Keep the Gradle toolchain and local development environment aligned to Java 25 unless the project deliberately decides to downgrade or retarget later.
 
 ## Current Scope
 

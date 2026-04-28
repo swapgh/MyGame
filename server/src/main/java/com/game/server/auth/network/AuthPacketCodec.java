@@ -1,6 +1,8 @@
 package com.game.server.auth.network;
 
 import com.game.shared.protocol.Packet;
+import com.game.shared.protocol.auth.CharacterCreateRequestPacket;
+import com.game.shared.protocol.auth.CharacterCreateResponsePacket;
 import com.game.shared.protocol.auth.CharacterListPacket;
 import com.game.shared.protocol.auth.LoginRequestPacket;
 import com.game.shared.protocol.auth.LoginResponsePacket;
@@ -30,6 +32,10 @@ public final class AuthPacketCodec {
         return switch (opcode) {
             case "LOGIN_REQUEST" -> new LoginRequestPacket(require(parts, 1), require(parts, 2));
             case "REGISTER_REQUEST" -> new RegisterRequestPacket(require(parts, 1), require(parts, 2));
+            case "CHARACTER_CREATE_REQUEST" -> new CharacterCreateRequestPacket(
+                    Long.parseLong(require(parts, 1)),
+                    require(parts, 2)
+            );
             default -> new ErrorPacket("UNKNOWN_OPCODE", "Unsupported opcode: " + opcode);
         };
     }
@@ -55,6 +61,16 @@ public final class AuthPacketCodec {
                     "REGISTER_RESPONSE",
                     Boolean.toString(response.success()),
                     response.message()
+            );
+        }
+        if (packet instanceof CharacterCreateResponsePacket response) {
+            return String.join(
+                    "|",
+                    "CHARACTER_CREATE_RESPONSE",
+                    Boolean.toString(response.success()),
+                    response.message(),
+                    Long.toString(response.accountId()),
+                    response.characterName()
             );
         }
         if (packet instanceof CharacterListPacket response) {

@@ -83,11 +83,18 @@ Done for the current skeleton milestone.
 
 ### Current Status
 
-Not started.
+Done for the current skeleton milestone.
 
 ### Summary
 
-- Will add LibGDX client bootstrap and auth-to-world flow
+- Desktop LibGDX launcher and client Gradle task added
+- Keyboard-driven login, register, character select, loading, and error screens added
+- Auth-to-world flow reaches a minimal in-world screen with a placeholder square
+
+### Notes
+
+- Verification is still blocked on this machine until a Java 25 JDK is installed.
+- The client still uses temporary line-based protocol flow from earlier phases.
 
 ## Phase 5: Player In The World
 

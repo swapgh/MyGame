@@ -1,10 +1,13 @@
 package com.game.server.auth.network;
 
 import com.game.server.auth.AuthServerMain.AuthApplication;
+import com.game.server.auth.database.CharacterRecord;
 import com.game.server.auth.characters.CharacterListService;
 import com.game.server.auth.login.LoginResult;
 import com.game.server.auth.sessions.AuthSession;
 import com.game.shared.protocol.Packet;
+import com.game.shared.protocol.auth.CharacterCreateRequestPacket;
+import com.game.shared.protocol.auth.CharacterCreateResponsePacket;
 import com.game.shared.protocol.auth.CharacterListPacket;
 import com.game.shared.protocol.auth.LoginRequestPacket;
 import com.game.shared.protocol.auth.LoginResponsePacket;
@@ -33,6 +36,8 @@ public final class AuthPacketHandlers {
                 handleLogin(connection, application, (LoginRequestPacket) packet));
         router.register(RegisterRequestPacket.class, (connection, packet) ->
                 handleRegister(connection, application, (RegisterRequestPacket) packet));
+        router.register(CharacterCreateRequestPacket.class, (connection, packet) ->
+                handleCharacterCreate(connection, application, (CharacterCreateRequestPacket) packet));
         router.register(CharacterListPacket.class, (connection, packet) ->
                 logCharacterListRequest(connection, application, packet));
     }
@@ -80,6 +85,34 @@ public final class AuthPacketHandlers {
                 .map(character -> character.name())
                 .toList();
         connection.send(new CharacterListPacket(accountId, characterNames));
+    }
+
+    private static void handleCharacterCreate(
+            AuthConnection connection,
+            AuthApplication application,
+            CharacterCreateRequestPacket packet
+    ) throws IOException {
+        Result<CharacterRecord, String> createResult = application.characterCreateService()
+                .create(packet.accountId(), packet.characterName());
+
+        if (createResult.isFailure()) {
+            connection.send(new CharacterCreateResponsePacket(
+                    false,
+                    createResult.error(),
+                    packet.accountId(),
+                    ""
+            ));
+            return;
+        }
+
+        CharacterRecord character = createResult.value();
+        connection.send(new CharacterCreateResponsePacket(
+                true,
+                "CHARACTER_CREATE_SUCCESS",
+                character.accountId(),
+                character.name()
+        ));
+        sendCharacterList(connection, application.characterListService(), character.accountId());
     }
 
     private static void logCharacterListRequest(

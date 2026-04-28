@@ -1,4 +1,33 @@
 {
     "version": "0.2.0",
-    "configurations": []
+    "configurations": [
+        {
+            "type": "java",
+            "name": "WorldServerMain",
+            "request": "launch",
+            "mainClass": "com.game.server.world.WorldServerMain",
+            "projectName": "server",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "ClientMain",
+            "request": "launch",
+            "mainClass": "com.game.client.ClientMain",
+            "projectName": "client",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "vmArgs": "--enable-native-access=ALL-UNNAMED"
+        },
+        {
+            "type": "java",
+            "name": "AuthServerMain",
+            "request": "launch",
+            "mainClass": "com.game.server.auth.AuthServerMain",
+            "projectName": "server",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        }
+    ]
 }

@@ -20,6 +20,7 @@ tasks.register("runAuthServer", JavaExec) {
     description = "Runs the auth server bootstrap."
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.game.server.auth.AuthServerMain"
+    workingDir = rootProject.projectDir
 }
 
 tasks.register("runWorldServer", JavaExec) {
@@ -27,6 +28,7 @@ tasks.register("runWorldServer", JavaExec) {
     description = "Runs the world server bootstrap."
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.game.server.world.WorldServerMain"
+    workingDir = rootProject.projectDir
 }
 
 application {

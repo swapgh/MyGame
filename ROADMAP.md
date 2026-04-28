@@ -2,9 +2,9 @@
 
 ## Current Status
 
-Completed: Phases 0-3
+Completed: Phases 0-4
 
-Current stage: Phase 4
+Current stage: Phase 5
 
 This file is the working plan for the project so we can track progress without cluttering the GitHub front page.
 
@@ -18,7 +18,7 @@ This file is the working plan for the project so we can track progress without c
    Socket server, login/register, password hashing, session tokens, PostgreSQL integration, and account/character DAOs. A test client can connect and log in.
 4. [x] Phase 3: world server skeleton
    Game loop, ECS core (`EntityManager`, `ComponentStore`, `GameSystem`), and basic map loading. The server runs and ticks, but the world is empty.
-5. [ ] Phase 4: client skeleton
+5. [x] Phase 4: client skeleton
    LibGDX window, `ScreenManager`, login flow, character select, and world entry. The world is still minimal.
 6. [ ] Phase 5: player in the world
    Movement system, collision, snapshot system, client prediction, and interpolation. A placeholder square moves smoothly and other entities appear.

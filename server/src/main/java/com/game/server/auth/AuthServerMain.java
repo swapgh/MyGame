@@ -26,7 +26,6 @@ import com.game.server.shared.config.ServerConfigLoader;
 import com.game.server.shared.database.DatabaseConfig;
 import com.game.server.shared.database.DatabasePool;
 import com.game.server.shared.database.TransactionManager;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
