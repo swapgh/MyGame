@@ -48,16 +48,7 @@ public final class GameClient extends Game {
     @Override
     public void create() {
         spriteBatch = new SpriteBatch();
-        uiFont = UiFont.load("fonts/Purisa.ttf","fonts/Exo2-Regular.ttf");
-        uiFont = UiFont.load("fonts/Purisa.ttf", "fonts/Exo2-Regular.ttf");
-
-// DEBUG - borra esto despues
-        System.out.println("Chars en small: " + uiFont.small.getData().missingGlyph);
-        System.out.println("Regions en small: " + uiFont.small.getRegions().size);
-        for (char c : "Auth 127.0.0.1:8080".toCharArray()) {
-            boolean tiene = uiFont.small.getData().getGlyph(c) != null;
-            System.out.println("Char '" + c + "' (" + (int)c + "): " + (tiene ? "OK" : "FALTA"));
-        }
+        uiFont = UiFont.load("fonts/Purisa.ttf");
         shapeRenderer = new ShapeRenderer();
         uiCamera.setToOrtho(false, 1280f, 720f);
 

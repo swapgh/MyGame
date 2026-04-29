@@ -1,11 +1,11 @@
 package com.game.server.world.network;
 
 import com.game.server.world.app.WorldServerMain.WorldApplication;
-import com.game.server.world.network.handlers.AttackPacketHandler;
-import com.game.server.world.network.handlers.ChatPacketHandler;
-import com.game.server.world.network.handlers.EnterWorldPacketHandler;
-import com.game.server.world.network.handlers.InventoryPacketHandler;
-import com.game.server.world.network.handlers.MovementPacketHandler;
+import com.game.server.world.commands.AttackHandler;
+import com.game.server.world.commands.ChatHandler;
+import com.game.server.world.commands.EnterHandler;
+import com.game.server.world.commands.InventoryHandler;
+import com.game.server.world.commands.MoveHandler;
 import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.ChatMessagePacket;
 import com.game.shared.protocol.world.EquipItemPacket;
@@ -29,11 +29,11 @@ public final class WorldPacketHandlers {
      * @param application the world application collaborators
      */
     public static void register(WorldPacketRouter router, WorldApplication application) {
-        router.register(EnterWorldPacket.class, new EnterWorldPacketHandler(application));
-        router.register(EntityMovePacket.class, new MovementPacketHandler(application));
-        router.register(AttackPacket.class, new AttackPacketHandler(application));
-        router.register(PickupLootPacket.class, new InventoryPacketHandler(application));
-        router.register(EquipItemPacket.class, new InventoryPacketHandler(application));
-        router.register(ChatMessagePacket.class, new ChatPacketHandler(application));
+        router.register(EnterWorldPacket.class, new EnterHandler(application));
+        router.register(EntityMovePacket.class, new MoveHandler(application));
+        router.register(AttackPacket.class, new AttackHandler(application));
+        router.register(PickupLootPacket.class, new InventoryHandler(application));
+        router.register(EquipItemPacket.class, new InventoryHandler(application));
+        router.register(ChatMessagePacket.class, new ChatHandler(application));
     }
 }

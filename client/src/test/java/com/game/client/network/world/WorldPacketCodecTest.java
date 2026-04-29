@@ -1,6 +1,6 @@
 package com.game.client.network.world;
 
-import com.game.shared.ecs.SharedEntityId;
+import com.game.shared.ids.SharedEntityId;
 import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.EntityType;
 import com.game.shared.protocol.world.EquipmentSlot;

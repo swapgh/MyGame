@@ -1,61 +1,57 @@
 # Game
 
-Phase 0 skeleton for a 2D orthogonal top-down multiplayer RPG in Java using Gradle and LibGDX later.
+Java multiplayer RPG prototype built with Gradle, LibGDX, a shared protocol module, an auth server, and a world server.
 
-## Baseline
+## Stack
 
-- Build tool: Gradle
-- Java target: Java 25
-- Recommended runtime strategy: target Java 25 LTS across development and builds
-- Architecture: `shared` + `server` + `client`
-- Server: authoritative ECS
-- Client: visual ECS + prediction
-- Protocol: shared module
-- Data: JSON/YAML first
-- Database: PostgreSQL
-- Networking: TCP first, UDP later if needed
+- Java 25
+- Gradle multi-module build
+- LibGDX desktop client
+- authoritative server simulation
+- JSON and YAML data/config files
+- PostgreSQL-oriented persistence layer
 
-## Java Version Policy
+## Modules
 
-Use Java 25 as the project baseline. Keep the Gradle toolchain and local development environment aligned to Java 25 unless the project deliberately decides to downgrade or retarget later.
+- `client`: LibGDX desktop client, UI, input, prediction, interpolation, rendering
+- `server`: auth server, world server, authoritative gameplay logic
+- `shared`: protocol, math, time, and shared utility types
 
-## Current Scope
-
-This phase is structure only.
-
-- Multi-module Gradle repository
-- Package directories for future code
-- Config, data, logs, tools, and resource folders
-- No gameplay implementation yet
-- No `.java` classes generated yet
-
-## Project Layout
+## Runtime Layout
 
 ```text
 game/
-├── settings.gradle
-├── build.gradle
-├── gradle.properties
-├── README.md
+├── client/
+├── server/
+├── shared/
 ├── config/
 ├── data/
-├── logs/
 ├── tools/
-├── shared/
-├── server/
-└── client/
+└── README.md
 ```
 
-## Notes
-
-- The package tree is scaffolded to match the intended architecture, but source files are intentionally absent.
-- LibGDX setup is planned for the client phase, not this skeleton phase.
-- Empty directories are tracked with `.gitkeep` files where needed.
-- The development roadmap lives in `ROADMAP.md` to keep this front page focused.
-
-## Development
+## Commands
 
 ```bash
 ./gradlew build
-./gradlew projects
+./gradlew test
+./gradlew :client:runClient
+./gradlew :server:runAuthServer
+./gradlew :server:runWorldServer
 ```
+
+## Environment Notes
+
+This repo works on Ubuntu + VS Code and Windows + IntelliJ.
+
+- Gradle is the source of truth.
+- The project expects JDK 25.
+- Use the Gradle wrapper included in the repo instead of installing Gradle manually.
+- VS Code uses `.vscode/launch.json` as a convenience.
+- IntelliJ should open the repo as a Gradle project.
+
+The full setup and troubleshooting guide lives in `GUIDE.md`.
+
+## Structure Reference
+
+The canonical structure guide lives in `ARCHITECTURE_REFERENCE.md`.

@@ -9,7 +9,7 @@ import com.game.client.screens.menu.ErrorScreen;
 import com.game.client.screens.menu.SettingsScreen;
 import com.game.client.screens.world.GameScreen;
 import com.game.client.screens.world.LoadingScreen;
-import com.game.shared.ecs.SharedEntityId;
+import com.game.shared.ids.SharedEntityId;
 
 import java.util.List;
 

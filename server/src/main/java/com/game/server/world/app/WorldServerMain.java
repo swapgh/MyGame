@@ -1,17 +1,26 @@
 package com.game.server.world.app;
 
-import com.game.server.world.ecs.EntityManager;
-import com.game.server.world.ecs.SystemRegistry;
-import com.game.server.world.ecs.WorldContext;
+import com.game.server.ecs.WorldContext;
+import com.game.server.ecs.entity.EntityManager;
+import com.game.server.ecs.system.SystemRegistry;
+import com.game.server.components.npc.NpcComponent;
+import com.game.server.systems.combat.CombatSystem;
+import com.game.server.systems.loot.LootDropSystem;
+import com.game.server.systems.npc.NpcAiSystem;
+import com.game.server.systems.npc.RespawnSystem;
+import com.game.server.systems.world.CollisionSystem;
+import com.game.server.systems.world.EmptyWorldSystem;
+import com.game.server.systems.world.MovementSystem;
+import com.game.server.systems.world.SnapshotSystem;
 import com.game.server.world.config.WorldServerConfig;
-import com.game.server.world.definitions.LootTableDefinition;
-import com.game.server.world.definitions.NpcDefinition;
-import com.game.server.world.definitions.NpcSpawnEntry;
-import com.game.server.world.definitions.ItemDefinition;
-import com.game.server.world.definitions.loaders.ItemDefinitionLoader;
-import com.game.server.world.definitions.loaders.LootTableLoader;
-import com.game.server.world.definitions.loaders.NpcDefinitionLoader;
-import com.game.server.world.definitions.loaders.NpcSpawnEntryLoader;
+import com.game.server.items.definition.ItemDefinition;
+import com.game.server.items.definition.ItemDefinitionLoader;
+import com.game.server.loot.definition.LootTableDefinition;
+import com.game.server.loot.definition.LootTableLoader;
+import com.game.server.npc.definition.NpcDefinition;
+import com.game.server.npc.definition.NpcDefinitionLoader;
+import com.game.server.npc.definition.NpcSpawnEntry;
+import com.game.server.npc.definition.NpcSpawnEntryLoader;
 import com.game.server.world.inventory.InventoryService;
 import com.game.server.world.loop.WorldGameLoop;
 import com.game.server.world.factories.NpcFactory;
@@ -22,15 +31,7 @@ import com.game.server.world.network.WorldConnectionManager;
 import com.game.server.world.network.WorldPacketHandlers;
 import com.game.server.world.network.WorldPacketRouter;
 import com.game.server.world.network.WorldSocketServer;
-import com.game.server.world.systems.CollisionSystem;
-import com.game.server.world.systems.CombatSystem;
-import com.game.server.world.systems.EmptyWorldSystem;
-import com.game.server.world.systems.LootDropSystem;
-import com.game.server.world.systems.MovementSystem;
-import com.game.server.world.systems.NpcAiSystem;
-import com.game.server.world.systems.RespawnSystem;
-import com.game.server.world.systems.SnapshotSystem;
-import com.game.server.shared.config.ServerConfigLoader;
+import com.game.server.config.ServerConfigLoader;
 import com.game.shared.time.TickRate;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -125,7 +126,7 @@ public final class WorldServerMain {
                     config.ticksPerSecond(),
                     worldContext.zoneLoader().count(),
                     worldContext.world().zoneCount(),
-                    worldContext.entityManager().storeOf(com.game.server.world.components.NpcComponent.class).size()
+                    worldContext.entityManager().storeOf(NpcComponent.class).size()
             );
             socketServer.awaitShutdown(Duration.ofSeconds(1));
         } finally {

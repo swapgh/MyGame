@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
-import com.game.client.controller.auth.LoginController;
+import com.game.client.controllers.auth.LoginController;
 import com.game.client.input.TextInputBuffer;
 import com.game.client.render.ClientUiPalette;
 import com.game.client.render.ClientUiRenderer;
@@ -26,7 +26,7 @@ public final class LoginScreen extends InputAdapter implements Screen {
     private final TextInputBuffer passwordBuffer = new TextInputBuffer("dev-password");
 
     private volatile boolean busy;
-    private volatile String status = "Type credentials, TAB switches field, ENTER logs in, R opens register.";
+    private volatile String status = "Secure access required";
     private int focusedField;
 
     /**
@@ -72,26 +72,53 @@ public final class LoginScreen extends InputAdapter implements Screen {
 
         gameClient.uiCamera().update();
         uiRenderer.renderBackdrop(gameClient, delta + (System.currentTimeMillis() / 1000f));
+        float viewportWidth = gameClient.uiCamera().viewportWidth;
+        float viewportHeight = gameClient.uiCamera().viewportHeight;
+        float panelWidth = 680f;
+        float panelHeight = 320f;
+        float panelX = (viewportWidth - panelWidth) * 0.5f;
+        float panelY = Math.max(72f, (viewportHeight * 0.5f) - 110f);
+        float titleCenterX = viewportWidth * 0.5f;
+        float titleTopY = panelY + panelHeight + 120f;
+
         gameClient.spriteBatch().setProjectionMatrix(gameClient.uiCamera().combined);
         gameClient.spriteBatch().begin();
-        uiRenderer.renderHero(gameClient, "Gateway", "OOT Client", "Sign in to the auth server and continue into the world.");
-        uiRenderer.renderInfo(
+        uiRenderer.renderHeroCentered(
                 gameClient,
-                "Auth  " + gameClient.clientConfig().authHost() + ":" + gameClient.clientConfig().authPort(),
-                96f,
-                500f
+                "",
+                "OOT Client",
+                "Secure access required",
+                titleCenterX,
+                titleTopY
         );
-        uiRenderer.renderInfo(
+        uiRenderer.renderLauncherPanel(gameClient, panelX, panelY, panelWidth, panelHeight);
+        uiRenderer.renderStatusBadge(gameClient, panelX + panelWidth - 170f, panelY + panelHeight - 66f, "ACTIVE");
+        uiRenderer.renderLauncherField(
                 gameClient,
-                "World " + gameClient.clientConfig().worldHost() + ":" + gameClient.clientConfig().worldPort(),
-                96f,
-                470f
+                "Username",
+                usernameBuffer.value(),
+                panelX + 50f,
+                panelY + 168f,
+                focusedField == 0,
+                "user"
         );
-        uiRenderer.renderField(gameClient, "Username", usernameBuffer.value(), 96f, 402f, focusedField == 0);
-        uiRenderer.renderField(gameClient, "Password", mask(passwordBuffer.value()), 96f, 328f, focusedField == 1);
-        uiRenderer.renderStatus(gameClient, status, 96f, 242f, busy ? ClientUiPalette.TEXT_WARNING : ClientUiPalette.TEXT_ACCENT);
-        uiRenderer.renderInfo(gameClient, "TAB switch field  ENTER login  R register  S settings", 96f, 196f);
-        uiRenderer.renderInfo(gameClient, "State: " + gameClient.stateMachine().currentState(), 96f, 162f);
+        uiRenderer.renderLauncherField(
+                gameClient,
+                "Password",
+                mask(passwordBuffer.value()),
+                panelX + 50f,
+                panelY + 74f,
+                focusedField == 1,
+                "lock"
+        );
+        uiRenderer.renderActionButton(gameClient, "LOGIN", panelX + 50f, panelY + 12f, 580f, 44f, !busy);
+        uiRenderer.renderStatus(
+                gameClient,
+                status,
+                panelX + 50f,
+                panelY - 18f,
+                busy ? ClientUiPalette.TEXT_WARNING : ClientUiPalette.TEXT_MUTED
+        );
         gameClient.spriteBatch().end();
     }
 
@@ -110,7 +137,7 @@ public final class LoginScreen extends InputAdapter implements Screen {
 
     private void login() {
         busy = true;
-        status = "Connecting to auth server...";
+        status = "Connecting...";
         String username = usernameBuffer.value().trim();
         String password = passwordBuffer.value();
         loginController.login(

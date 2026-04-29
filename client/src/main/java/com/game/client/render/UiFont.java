@@ -13,6 +13,14 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
  * @since 0.1.0
  */
 public final class UiFont {
+    private static final String EXTRA_UI_CHARS =
+            " \n\r\t"
+                    + "0123456789"
+                    + ".,;:!?\"'`´^~"
+                    + "+-*/=_<>|\\/@#$%&()[]{}"
+                    + "áéíóúÁÉÍÓÚàèìòùÀÈÌÒÙ"
+                    + "äëïöüÄËÏÖÜâêîôûÂÊÎÔÛ"
+                    + "ñÑçÇ¿¡";
 
     /** Small: labels, muted hints, info lines. */
     public final BitmapFont small;
@@ -30,50 +38,35 @@ public final class UiFont {
     }
 
     /**
-     * Loads fonts from two TTF files — one decorative for titles,
-     * one clean for body and small text.
+     * Loads fonts from a single TTF file and generates the sizes used by the UI.
      *
-     * @param titleFontPath path to the decorative title font
-     * @param bodyFontPath  path to the clean readable font
+     * @param fontPath path to the font used by the UI
      * @return a loaded UiFont instance
      */
-    public static UiFont load(String titleFontPath, String bodyFontPath) {
+    public static UiFont load(String fontPath) {
 
-        String chars = FreeTypeFontGenerator.DEFAULT_CHARS
-                + ".:/ 0123456789";
+        String chars = FreeTypeFontGenerator.DEFAULT_CHARS + EXTRA_UI_CHARS;
 
-        // --- title font ---
-        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(
-                Gdx.files.internal(titleFontPath)
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
+                Gdx.files.internal(fontPath)
         );
-        FreeTypeFontParameter titleParams = new FreeTypeFontParameter();
-        titleParams.characters = chars;
-        titleParams.packer = new PixmapPacker(
-                1024, 1024, Pixmap.Format.RGBA8888, 2, false
-        );
-        titleParams.size = 32;
-        BitmapFont title = titleGenerator.generateFont(titleParams);
-        titleParams.packer.dispose();
-        titleGenerator.dispose();
-
-        // --- body font ---
-        FreeTypeFontGenerator bodyGenerator = new FreeTypeFontGenerator(
-                Gdx.files.internal(bodyFontPath)
-        );
-        FreeTypeFontParameter bodyParams = new FreeTypeFontParameter();
-        bodyParams.characters = chars;
-        bodyParams.packer = new PixmapPacker(
+        FreeTypeFontParameter params = new FreeTypeFontParameter();
+        params.characters = chars;
+        params.packer = new PixmapPacker(
                 1024, 1024, Pixmap.Format.RGBA8888, 2, false
         );
 
-        bodyParams.size = 15;
-        BitmapFont small = bodyGenerator.generateFont(bodyParams);
+        params.size = 15;
+        BitmapFont small = generator.generateFont(params);
 
-        bodyParams.size = 19;
-        BitmapFont body = bodyGenerator.generateFont(bodyParams);
+        params.size = 19;
+        BitmapFont body = generator.generateFont(params);
 
-        bodyParams.packer.dispose();
-        bodyGenerator.dispose();
+        params.size = 32;
+        BitmapFont title = generator.generateFont(params);
+
+        params.packer.dispose();
+        generator.dispose();
 
         return new UiFont(small, body, title);
     }

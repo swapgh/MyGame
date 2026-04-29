@@ -1,18 +1,18 @@
 package com.game.server.world.factories;
 
-import com.game.server.world.components.AiComponent;
-import com.game.server.world.components.AiState;
-import com.game.server.world.components.AiStateComponent;
-import com.game.server.world.components.CombatStatsComponent;
-import com.game.server.world.components.HealthComponent;
-import com.game.server.world.components.LootComponent;
-import com.game.server.world.components.NpcComponent;
-import com.game.server.world.components.RespawnComponent;
-import com.game.server.world.ecs.EntityId;
-import com.game.server.world.ecs.EntityManager;
-import com.game.server.world.definitions.LootTableDefinition;
-import com.game.server.world.definitions.NpcDefinition;
-import com.game.server.world.definitions.NpcSpawnEntry;
+import com.game.server.components.combat.CombatStatsComponent;
+import com.game.server.components.combat.HealthComponent;
+import com.game.server.components.loot.LootComponent;
+import com.game.server.components.npc.AiComponent;
+import com.game.server.components.npc.AiState;
+import com.game.server.components.npc.AiStateComponent;
+import com.game.server.components.npc.NpcComponent;
+import com.game.server.components.npc.RespawnComponent;
+import com.game.server.ecs.entity.EntityId;
+import com.game.server.ecs.entity.EntityManager;
+import com.game.server.loot.definition.LootTableDefinition;
+import com.game.server.npc.definition.NpcDefinition;
+import com.game.server.npc.definition.NpcSpawnEntry;
 import com.game.shared.math.Vec2;
 import org.junit.jupiter.api.Test;
 
