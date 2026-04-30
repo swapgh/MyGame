@@ -9,6 +9,7 @@ public enum ClientState {
     LOGIN,
     REGISTER,
     CHARACTER_SELECT,
+    CHARACTER_CREATE,
     LOADING_WORLD,
     IN_WORLD,
     SETTINGS,

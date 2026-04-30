@@ -1,0 +1,3 @@
+display_name: Client UI Screen Architecture
+short_description: Keep client screens thin and UI rendering safe
+default_prompt: Apply the repo's client screen and UI rendering architecture while modifying layouts, auth screens, menus, or shared UI drawing.

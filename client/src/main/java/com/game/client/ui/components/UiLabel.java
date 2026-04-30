@@ -1,4 +1,4 @@
-package com.game.client.ui.widget;
+package com.game.client.ui.components;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.game.client.app.GameClient;
-import com.game.client.render.UiFont;
+import com.game.client.ui.theme.UiFont;
 
 /**
  * Minimalistic text label widget.

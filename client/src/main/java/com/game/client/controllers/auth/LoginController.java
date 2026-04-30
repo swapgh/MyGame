@@ -1,7 +1,8 @@
 package com.game.client.controllers.auth;
 
 import com.badlogic.gdx.Gdx;
-import com.game.client.network.auth.AuthClient;
+import com.game.client.model.LoginSessionState;
+import com.game.client.service.AuthService;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -12,15 +13,15 @@ import java.util.function.Consumer;
  * @since 0.1.0
  */
 public final class LoginController {
-    private final AuthClient authClient;
+    private final AuthService authService;
 
     /**
      * Creates a login controller backed by the auth client.
      *
-     * @param authClient the auth client
+     * @param authService the auth service
      */
-    public LoginController(AuthClient authClient) {
-        this.authClient = authClient;
+    public LoginController(AuthService authService) {
+        this.authService = authService;
     }
 
     /**
@@ -34,14 +35,14 @@ public final class LoginController {
     public void login(
             String username,
             String password,
-            Consumer<AuthClient.AuthFlowResult> onSuccess,
+            Consumer<LoginSessionState> onSuccess,
             Consumer<String> onError
     ) {
         Thread loginThread = new Thread(() -> {
             try {
-                AuthClient.AuthFlowResult result = authClient.login(username, password);
+                LoginSessionState result = authService.login(username, password);
                 Gdx.app.postRunnable(() -> onSuccess.accept(result));
-            } catch (IOException | IllegalArgumentException exception) {
+            } catch (IOException | IllegalArgumentException | IllegalStateException exception) {
                 Gdx.app.postRunnable(() -> onError.accept(exception.getMessage()));
             }
         }, "auth-login");

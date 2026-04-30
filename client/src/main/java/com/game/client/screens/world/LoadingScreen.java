@@ -5,9 +5,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
 import com.game.client.controllers.world.WorldEntryController;
 import com.game.client.screens.Screen;
-import com.game.client.render.ClientUiPalette;
-import com.game.client.render.ClientUiRenderer;
-import com.game.client.ui.ScreenController;
+import com.game.client.ui.theme.UiPalette;
+import com.game.client.ui.render.UiRenderState;
+import com.game.client.ui.render.UiRenderer;
+import com.game.client.screens.ScreenController;
 
 /**
  * Temporary loading screen used while entering the world server.
@@ -19,7 +20,7 @@ public final class LoadingScreen implements Screen {
     private final ScreenController screenController;
     private final WorldEntryController worldEntryController;
     private final String characterName;
-    private final ClientUiRenderer uiRenderer = new ClientUiRenderer();
+    private final UiRenderer uiRenderer = new UiRenderer();
 
     private volatile boolean started;
     private volatile String status = "Connecting to world server...";
@@ -34,7 +35,7 @@ public final class LoadingScreen implements Screen {
     public LoadingScreen(GameClient gameClient, ScreenController screenController, String characterName) {
         this.gameClient = gameClient;
         this.screenController = screenController;
-        this.worldEntryController = new WorldEntryController(gameClient.worldClient());
+        this.worldEntryController = new WorldEntryController(gameClient.worldService());
         this.characterName = characterName;
     }
 
@@ -56,12 +57,12 @@ public final class LoadingScreen implements Screen {
         gameClient.uiCamera().update();
         uiRenderer.renderBackdrop(gameClient, delta + (System.currentTimeMillis() / 1000f));
         gameClient.spriteBatch().setProjectionMatrix(gameClient.uiCamera().combined);
-        gameClient.spriteBatch().begin();
+        UiRenderState.beginText(gameClient);
         uiRenderer.renderHero(gameClient, "Transit", "Entering World", "Establishing the world connection and preparing the first snapshot.");
         uiRenderer.renderInfo(gameClient, "Character: " + characterName, 96f, 456f);
-        uiRenderer.renderStatus(gameClient, status, 96f, 396f, ClientUiPalette.TEXT_WARNING);
+        uiRenderer.renderStatus(gameClient, status, 96f, 396f, UiPalette.TEXT_WARNING);
         uiRenderer.renderInfo(gameClient, "Please wait while the server syncs your session.", 96f, 340f);
-        gameClient.spriteBatch().end();
+        UiRenderState.endText(gameClient);
     }
 
     private void startWorldEntry() {
@@ -69,7 +70,7 @@ public final class LoadingScreen implements Screen {
                 characterName,
                 result -> {
                     if (result.success()) {
-                        screenController.showGame(characterName, result.snapshot().playerEntityId());
+                        screenController.showGame();
                     } else {
                         screenController.showError("World entry failed: " + result.message());
                     }

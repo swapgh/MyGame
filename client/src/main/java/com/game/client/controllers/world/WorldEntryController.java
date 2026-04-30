@@ -2,6 +2,7 @@ package com.game.client.controllers.world;
 
 import com.badlogic.gdx.Gdx;
 import com.game.client.network.world.WorldClient;
+import com.game.client.service.WorldService;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -12,15 +13,15 @@ import java.util.function.Consumer;
  * @since 0.1.0
  */
 public final class WorldEntryController {
-    private final WorldClient worldClient;
+    private final WorldService worldService;
 
     /**
      * Creates a world entry controller backed by the world client.
      *
-     * @param worldClient the world client
+     * @param worldService the world service
      */
-    public WorldEntryController(WorldClient worldClient) {
-        this.worldClient = worldClient;
+    public WorldEntryController(WorldService worldService) {
+        this.worldService = worldService;
     }
 
     /**
@@ -37,9 +38,9 @@ public final class WorldEntryController {
     ) {
         Thread worldThread = new Thread(() -> {
             try {
-                WorldClient.WorldEntryResult result = worldClient.enterWorld(characterName);
+                WorldClient.WorldEntryResult result = worldService.enterWorld(characterName);
                 Gdx.app.postRunnable(() -> onSuccess.accept(result));
-            } catch (IOException | IllegalArgumentException exception) {
+            } catch (IOException | IllegalArgumentException | IllegalStateException exception) {
                 Gdx.app.postRunnable(() -> onError.accept(exception.getMessage()));
             }
         }, "world-entry");

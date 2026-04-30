@@ -1,7 +1,7 @@
 package com.game.client.controllers.auth;
 
 import com.badlogic.gdx.Gdx;
-import com.game.client.network.auth.AuthClient;
+import com.game.client.service.AuthService;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -12,15 +12,15 @@ import java.util.function.Consumer;
  * @since 0.1.0
  */
 public final class RegisterController {
-    private final AuthClient authClient;
+    private final AuthService authService;
 
     /**
      * Creates a register controller backed by the auth client.
      *
-     * @param authClient the auth client
+     * @param authService the auth service
      */
-    public RegisterController(AuthClient authClient) {
-        this.authClient = authClient;
+    public RegisterController(AuthService authService) {
+        this.authService = authService;
     }
 
     /**
@@ -39,7 +39,7 @@ public final class RegisterController {
     ) {
         Thread registerThread = new Thread(() -> {
             try {
-                String result = authClient.register(username, password);
+                String result = authService.register(username, password);
                 Gdx.app.postRunnable(() -> onSuccess.accept(result));
             } catch (IOException | IllegalArgumentException exception) {
                 Gdx.app.postRunnable(() -> onError.accept(exception.getMessage()));

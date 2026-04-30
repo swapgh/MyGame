@@ -12,6 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WorldSyncStateTest {
@@ -78,5 +79,23 @@ class WorldSyncStateTest {
         assertFalse(remote.alive());
         assertEquals(18L, remote.respawnTicksRemaining());
         assertEquals(0, remote.currentHealth());
+    }
+
+    @Test
+    void returnsEntityStateByEntityId() {
+        WorldSyncState worldSyncState = new WorldSyncState(new SharedEntityId(1L));
+        WorldSnapshotPacket snapshot = new WorldSnapshotPacket(
+                40L,
+                new SharedEntityId(1L),
+                List.of(
+                        new EntitySpawnPacket(new SharedEntityId(1L), new Vec2(0.0f, 0.0f), Vec2.ZERO, EntityType.PLAYER, "DevKnight", 100, 100, true, 0L),
+                        new EntitySpawnPacket(new SharedEntityId(9L), new Vec2(16.0f, 10.0f), Vec2.ZERO, EntityType.VENDOR, "Village Vendor", 1, 1, true, 0L)
+                )
+        );
+
+        worldSyncState.applySnapshot(snapshot);
+
+        assertNotNull(worldSyncState.entityState(9L));
+        assertNull(worldSyncState.entityState(88L));
     }
 }

@@ -2,27 +2,31 @@ package com.game.client.screens.auth;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
 import com.game.client.controllers.auth.LoginController;
-import com.game.client.render.ClientUiPalette;
-import com.game.client.render.ClientUiRenderer;
-import com.game.client.screens.Screen;
-import com.game.client.ui.ScreenController;
-import com.game.client.ui.widget.UiButton;
-import com.game.client.ui.widget.UiContainer;
-import com.game.client.ui.widget.UiTextField;
+import com.game.client.ui.theme.UiPalette;
+import com.game.client.screens.UiScreen;
+import com.game.client.screens.ScreenController;
+import com.game.client.ui.components.UiButton;
+import com.game.client.ui.components.UiContainer;
+import com.game.client.ui.components.UiFormPanel;
+import com.game.client.ui.components.UiTextField;
+import com.game.client.ui.core.UiDocument;
+import com.game.client.ui.core.UiHero;
+import com.game.client.ui.core.UiSection;
+import com.game.client.ui.core.UiTextLine;
+import com.game.client.ui.layouts.UiRect;
+import com.game.client.ui.layouts.UiViewportLayout;
 
 /**
  * Minimalistic login screen using the widget system.
  *
  * @since 0.1.0
  */
-public final class LoginScreen extends InputAdapter implements Screen {
+public final class LoginScreen extends UiScreen {
 
     private static final float PANEL_WIDTH = 520f;
-    private static final float PANEL_HEIGHT = 280f;
+    private static final float PANEL_HEIGHT = 320f;
     private static final float FIELD_HEIGHT = 48f;
     private static final float BUTTON_HEIGHT = 44f;
     private static final float SPACING = 16f;
@@ -30,9 +34,8 @@ public final class LoginScreen extends InputAdapter implements Screen {
     private final GameClient gameClient;
     private final ScreenController screenController;
     private final LoginController loginController;
-    private final ClientUiRenderer uiRenderer = new ClientUiRenderer();
 
-    private final UiContainer formContainer;
+    private final UiFormPanel formPanel;
     private final UiTextField usernameField;
     private final UiTextField passwordField;
     private final UiButton loginButton;
@@ -47,33 +50,32 @@ public final class LoginScreen extends InputAdapter implements Screen {
      * @param screenController the screen controller
      */
     public LoginScreen(GameClient gameClient, ScreenController screenController) {
+        super(gameClient);
         this.gameClient = gameClient;
         this.screenController = screenController;
-        this.loginController = new LoginController(gameClient.authClient());
+        this.loginController = new LoginController(gameClient.authService());
 
         usernameField = new UiTextField("Username");
+        usernameField.setBounds(0, 0, PANEL_WIDTH - 40f, FIELD_HEIGHT);
         usernameField.setValue("dev");
         usernameField.setFocused(true);
 
         passwordField = new UiTextField("Password", true);
+        passwordField.setBounds(0, 0, PANEL_WIDTH - 40f, FIELD_HEIGHT);
         passwordField.setValue("dev-password");
 
         loginButton = new UiButton("LOGIN", this::login);
         loginButton.setBounds(0, 0, PANEL_WIDTH - 40f, BUTTON_HEIGHT);
 
-        formContainer = new UiContainer(UiContainer.LayoutType.VERTICAL, 20f, SPACING);
+        UiContainer formContainer = new UiContainer(UiContainer.LayoutType.VERTICAL, 20f, SPACING);
         formContainer.addChild(usernameField);
         formContainer.addChild(passwordField);
         formContainer.addChild(loginButton);
+        formPanel = new UiFormPanel(formContainer);
     }
 
     @Override
-    public void show() {
-        Gdx.input.setInputProcessor(this);
-    }
-
-    @Override
-    public void render(float delta) {
+    protected void update(float delta) {
         if (!busy) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
                 if (!usernameField.getValue().trim().isEmpty()) {
@@ -96,40 +98,23 @@ public final class LoginScreen extends InputAdapter implements Screen {
             }
         }
 
-        Gdx.gl.glClearColor(0.03f, 0.06f, 0.1f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        gameClient.uiCamera().update();
-        uiRenderer.renderBackdrop(gameClient, delta + (System.currentTimeMillis() / 1000f));
-
         float viewportWidth = gameClient.uiCamera().viewportWidth;
         float viewportHeight = gameClient.uiCamera().viewportHeight;
-        float panelX = (viewportWidth - PANEL_WIDTH) * 0.5f;
-        float panelY = Math.max(72f, (viewportHeight * 0.5f) - (PANEL_HEIGHT * 0.5f));
-        float titleCenterX = viewportWidth * 0.5f;
-        float titleTopY = panelY + PANEL_HEIGHT + 100f;
-
-        formContainer.setBounds(panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT);
-
-        updateWidgetInput();
-
-        gameClient.spriteBatch().setProjectionMatrix(gameClient.uiCamera().combined);
-        gameClient.spriteBatch().begin();
-        uiRenderer.renderHeroCentered(
-                gameClient,
-                "",
-                "OOT Client",
-                "Secure access required",
-                titleCenterX,
-                titleTopY
+        UiRect panelBounds = UiViewportLayout.centeredPanel(
+                viewportWidth,
+                viewportHeight,
+                PANEL_WIDTH,
+                PANEL_HEIGHT,
+                72f
         );
-        uiRenderer.renderPanel(gameClient, panelX, panelY, PANEL_WIDTH, PANEL_HEIGHT);
-        formContainer.render(gameClient, gameClient.spriteBatch());
-        renderStatusLine(gameClient, panelX, panelY);
-        gameClient.spriteBatch().end();
 
-        usernameField.update(delta);
-        passwordField.update(delta);
+        formPanel.setBounds(panelBounds);
+        updateWidgetInput(formPanel.root(), formPanel::clearFocus);
+    }
+
+    @Override
+    protected void afterRender(float delta) {
+        formPanel.update(delta);
     }
 
     @Override
@@ -137,50 +122,30 @@ public final class LoginScreen extends InputAdapter implements Screen {
         if (busy) {
             return false;
         }
-        return formContainer.handleKeyTyped(character);
+        return formPanel.root().handleKeyTyped(character);
     }
 
-    private void updateWidgetInput() {
-        int mouseX = Gdx.input.getX();
-        int mouseY = Gdx.input.getY();
-        float worldMouseX = screenXToWorld(mouseX);
-        float worldMouseY = screenYToWorld(mouseY);
-
-        formContainer.handleMouseMove(worldMouseX, worldMouseY);
-
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            boolean handled = formContainer.handleMousePressed(worldMouseX, worldMouseY, Input.Buttons.LEFT);
-            if (!handled) {
-                usernameField.setFocused(false);
-                passwordField.setFocused(false);
-            }
-        }
-
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            formContainer.handleMouseReleased(worldMouseX, worldMouseY, Input.Buttons.LEFT);
-        }
-    }
-
-    private float screenXToWorld(int screenX) {
-        float viewportWidth = gameClient.uiCamera().viewportWidth;
-        int screenWidth = Gdx.graphics.getWidth();
-        return screenX * (viewportWidth / screenWidth);
-    }
-
-    private float screenYToWorld(int screenY) {
-        float viewportHeight = gameClient.uiCamera().viewportHeight;
-        int screenHeight = Gdx.graphics.getHeight();
-        return viewportHeight - (screenY * (viewportHeight / screenHeight));
-    }
-
-    private void renderStatusLine(GameClient gameClient, float panelX, float panelY) {
-        uiRenderer.renderStatus(
-                gameClient,
-                status,
-                panelX + 20f,
-                panelY - 18f,
-                busy ? ClientUiPalette.TEXT_WARNING : ClientUiPalette.TEXT_MUTED
-        );
+    @Override
+    protected UiDocument buildDocument(float delta) {
+        UiRect panelBounds = formPanel.bounds();
+        return UiDocument.builder()
+                .hero(UiHero.centered(
+                        "",
+                        "OOT Client",
+                        "Secure access required",
+                        panelBounds.centerX(),
+                        panelBounds.top() + 100f
+                ))
+                .section(UiSection.builder(panelBounds)
+                        .form(formPanel)
+                        .line(UiTextLine.status(
+                                status,
+                                panelBounds.x() + 20f,
+                                panelBounds.y() - 18f,
+                                busy ? UiPalette.TEXT_WARNING : UiPalette.TEXT_MUTED
+                        ))
+                        .build())
+                .build();
     }
 
     private void login() {
@@ -193,13 +158,13 @@ public final class LoginScreen extends InputAdapter implements Screen {
                 password,
                 result -> {
                     busy = false;
-                    if (!result.loginResponse().success()) {
-                        screenController.showError("Login failed: " + result.loginResponse().message());
+                    if (result.session().accountId() < 0L) {
+                        screenController.showError("Login failed.");
                         return;
                     }
                     screenController.showCharacterSelect(
-                            result.loginResponse().accountId(),
-                            result.loginResponse().sessionToken(),
+                            result.session().accountId(),
+                            result.session().sessionToken(),
                             result.characterNames()
                     );
                 },

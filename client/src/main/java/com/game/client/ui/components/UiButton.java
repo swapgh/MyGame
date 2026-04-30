@@ -1,4 +1,4 @@
-package com.game.client.ui.widget;
+package com.game.client.ui.components;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -7,8 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.game.client.app.GameClient;
-import com.game.client.render.ClientUiPalette;
-import com.game.client.render.UiFont;
+import com.game.client.ui.render.UiRenderState;
+import com.game.client.ui.theme.UiPalette;
+import com.game.client.ui.theme.UiFont;
 
 /**
  * Minimalistic button widget with subtle border styling.
@@ -58,47 +59,41 @@ public class UiButton implements UiWidget {
         SpriteBatch spriteBatch = gameClient.spriteBatch();
         ShapeRenderer shapeRenderer = gameClient.shapeRenderer();
 
-        if (spriteBatch.isDrawing()) {
-            spriteBatch.end();
-        }
-
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Filled);
 
         Color fillColor;
         Color borderColor;
 
         if (!enabled) {
-            fillColor = withAlpha(ClientUiPalette.PANEL_ALT, 0.6f);
-            borderColor = withAlpha(ClientUiPalette.TEXT_MUTED, 0.15f);
+            fillColor = withAlpha(UiPalette.PANEL_ALT, 0.6f);
+            borderColor = withAlpha(UiPalette.TEXT_MUTED, 0.15f);
         } else if (pressed) {
-            fillColor = withAlpha(ClientUiPalette.GLOW_GOLD, 0.12f);
-            borderColor = withAlpha(ClientUiPalette.GLOW_GOLD, 0.5f);
+            fillColor = withAlpha(UiPalette.GLOW_GOLD, 0.12f);
+            borderColor = withAlpha(UiPalette.GLOW_GOLD, 0.5f);
         } else if (hovered || focused) {
-            fillColor = withAlpha(ClientUiPalette.GLOW_GOLD, 0.06f);
-            borderColor = withAlpha(ClientUiPalette.GLOW_GOLD, 0.35f);
+            fillColor = withAlpha(UiPalette.GLOW_GOLD, 0.06f);
+            borderColor = withAlpha(UiPalette.GLOW_GOLD, 0.35f);
         } else {
-            fillColor = withAlpha(ClientUiPalette.PANEL_ALT, 0.9f);
-            borderColor = withAlpha(ClientUiPalette.PANEL_BORDER, 0.22f);
+            fillColor = withAlpha(UiPalette.PANEL_ALT, 0.9f);
+            borderColor = withAlpha(UiPalette.PANEL_BORDER, 0.22f);
         }
 
         shapeRenderer.setColor(fillColor);
         shapeRenderer.rect(x, y, width, height);
 
-        shapeRenderer.end();
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        UiRenderState.endShapes(gameClient);
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(borderColor);
         shapeRenderer.rect(x, y, width, height);
-        shapeRenderer.end();
-
-        spriteBatch.begin();
+        UiRenderState.endShapes(gameClient);
+        UiRenderState.beginText(gameClient);
 
         BitmapFont font = uiFont.body;
         GlyphLayout layout = new GlyphLayout(font, text);
         float textX = x + (width * 0.5f) - (layout.width * 0.5f);
         float textY = y + (height * 0.5f) + (layout.height * 0.35f);
 
-        Color textColor = enabled ? ClientUiPalette.TEXT_PRIMARY : ClientUiPalette.TEXT_MUTED;
+        Color textColor = enabled ? UiPalette.TEXT_PRIMARY : UiPalette.TEXT_MUTED;
         Color previous = font.getColor().cpy();
         font.setColor(textColor);
         font.draw(spriteBatch, text, textX, textY);

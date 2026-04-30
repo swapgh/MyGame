@@ -4,10 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
-import com.game.client.render.ClientUiPalette;
-import com.game.client.render.ClientUiRenderer;
+import com.game.client.ui.theme.UiPalette;
+import com.game.client.ui.render.UiRenderState;
+import com.game.client.ui.render.UiRenderer;
 import com.game.client.screens.Screen;
-import com.game.client.ui.ScreenController;
+import com.game.client.screens.ScreenController;
 
 /**
  * Simple error screen used by the early client flow.
@@ -18,7 +19,7 @@ public final class ErrorScreen implements Screen {
     private final GameClient gameClient;
     private final ScreenController screenController;
     private final String message;
-    private final ClientUiRenderer uiRenderer = new ClientUiRenderer();
+    private final UiRenderer uiRenderer = new UiRenderer();
 
     /**
      * Creates an error screen with a message.
@@ -51,10 +52,10 @@ public final class ErrorScreen implements Screen {
         gameClient.uiCamera().update();
         uiRenderer.renderBackdrop(gameClient, delta + (System.currentTimeMillis() / 1000f));
         gameClient.spriteBatch().setProjectionMatrix(gameClient.uiCamera().combined);
-        gameClient.spriteBatch().begin();
+        UiRenderState.beginText(gameClient);
         uiRenderer.renderHero(gameClient, "Alert", "Connection Error", "Something interrupted the current client flow.");
-        uiRenderer.renderStatus(gameClient, message, 96f, 438f, ClientUiPalette.TEXT_DANGER);
+        uiRenderer.renderStatus(gameClient, message, 96f, 438f, UiPalette.TEXT_DANGER);
         uiRenderer.renderInfo(gameClient, "Press B or ESC to return to login.", 96f, 372f);
-        gameClient.spriteBatch().end();
+        UiRenderState.endText(gameClient);
     }
 }

@@ -3,6 +3,7 @@ package com.game.client.network.world.codec;
 import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.EquipItemPacket;
 import com.game.shared.protocol.world.EntityMovePacket;
+import com.game.shared.protocol.world.InteractPacket;
 import com.game.shared.protocol.world.PickupLootPacket;
 
 /**
@@ -25,12 +26,22 @@ public final class CommandPacketCodec {
         return String.join(
                 "|",
                 "ATTACK",
-                Long.toString(packet.attackerEntityId().value())
+                Long.toString(packet.attackerEntityId().value()),
+                packet.targetEntityId() == null ? "" : Long.toString(packet.targetEntityId().value())
         );
     }
 
     public String encode(PickupLootPacket packet) {
         return String.join("|", "PICKUP_LOOT", Long.toString(packet.playerEntityId().value()));
+    }
+
+    public String encode(InteractPacket packet) {
+        return String.join(
+                "|",
+                "INTERACT",
+                Long.toString(packet.playerEntityId().value()),
+                Long.toString(packet.targetEntityId().value())
+        );
     }
 
     public String encode(EquipItemPacket packet) {

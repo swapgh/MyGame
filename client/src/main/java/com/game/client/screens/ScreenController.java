@@ -1,7 +1,8 @@
-package com.game.client.ui;
+package com.game.client.screens;
 
 import com.game.client.app.ClientState;
 import com.game.client.app.GameClient;
+import com.game.client.screens.auth.CharacterCreateScreen;
 import com.game.client.screens.auth.CharacterSelectScreen;
 import com.game.client.screens.auth.LoginScreen;
 import com.game.client.screens.auth.RegisterScreen;
@@ -9,7 +10,6 @@ import com.game.client.screens.menu.ErrorScreen;
 import com.game.client.screens.menu.SettingsScreen;
 import com.game.client.screens.world.GameScreen;
 import com.game.client.screens.world.LoadingScreen;
-import com.game.shared.ids.SharedEntityId;
 
 import java.util.List;
 
@@ -34,6 +34,7 @@ public final class ScreenController {
      * Shows the login screen.
      */
     public void showLogin() {
+        gameClient.authService().clearSession();
         gameClient.stateMachine().transitionTo(ClientState.LOGIN);
         switchTo(new LoginScreen(gameClient, this));
     }
@@ -59,6 +60,18 @@ public final class ScreenController {
     }
 
     /**
+     * Shows the character creation screen.
+     *
+     * @param accountId the logged-in account id
+     * @param sessionToken the issued auth session token
+     * @param characterNames available character names
+     */
+    public void showCharacterCreate(long accountId, String sessionToken, List<String> characterNames) {
+        gameClient.stateMachine().transitionTo(ClientState.CHARACTER_CREATE);
+        switchTo(new CharacterCreateScreen(gameClient, this, accountId, sessionToken, characterNames));
+    }
+
+    /**
      * Shows the loading screen while world entry is in progress.
      *
      * @param characterName the selected character name
@@ -70,12 +83,10 @@ public final class ScreenController {
 
     /**
      * Shows the in-world screen.
-     *
-     * @param characterName the active character name
      */
-    public void showGame(String characterName, SharedEntityId playerEntityId) {
+    public void showGame() {
         gameClient.stateMachine().transitionTo(ClientState.IN_WORLD);
-        switchTo(new GameScreen(gameClient, this, characterName, playerEntityId));
+        switchTo(new GameScreen(gameClient, this));
     }
 
     /**

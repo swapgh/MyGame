@@ -6,9 +6,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.game.client.network.auth.AuthClient;
 import com.game.client.network.world.WorldClient;
-import com.game.client.render.UiFont;
+import com.game.client.ui.theme.UiFont;
+import com.game.client.service.AuthService;
+import com.game.client.service.ClientSessionService;
+import com.game.client.service.TargetingService;
+import com.game.client.service.WorldActionService;
+import com.game.client.service.WorldFeedbackService;
+import com.game.client.service.WorldService;
 import com.game.client.settings.ClientConfig;
-import com.game.client.ui.ScreenController;
+import com.game.client.screens.ScreenController;
 
 /**
  * Root LibGDX game object for the desktop client.
@@ -21,6 +27,12 @@ public final class GameClient extends Game {
     private final ClientStateMachine stateMachine;
     private final AuthClient authClient;
     private final WorldClient worldClient;
+    private final ClientSessionService clientSessionService;
+    private final AuthService authService;
+    private final WorldService worldService;
+    private final TargetingService targetingService;
+    private final WorldActionService worldActionService;
+    private final WorldFeedbackService worldFeedbackService;
     private final OrthographicCamera uiCamera;
 
     private SpriteBatch spriteBatch;
@@ -39,6 +51,12 @@ public final class GameClient extends Game {
         this.stateMachine = new ClientStateMachine();
         this.authClient = new AuthClient(clientConfig);
         this.worldClient = new WorldClient(clientConfig);
+        this.clientSessionService = new ClientSessionService();
+        this.authService = new AuthService(authClient, clientSessionService);
+        this.worldService = new WorldService(worldClient, clientSessionService);
+        this.targetingService = new TargetingService();
+        this.worldActionService = new WorldActionService();
+        this.worldFeedbackService = new WorldFeedbackService();
         this.uiCamera = new OrthographicCamera();
     }
 
@@ -48,7 +66,7 @@ public final class GameClient extends Game {
     @Override
     public void create() {
         spriteBatch = new SpriteBatch();
-        uiFont = UiFont.load("fonts/Purisa.ttf");
+        uiFont = UiFont.load("assets/ui/fonts/Purisa.ttf");
         shapeRenderer = new ShapeRenderer();
         uiCamera.setToOrtho(false, 1280f, 720f);
 
@@ -135,12 +153,66 @@ public final class GameClient extends Game {
     }
 
     /**
+     * Returns the auth service.
+     *
+     * @return the auth service
+     */
+    public AuthService authService() {
+        return authService;
+    }
+
+    /**
      * Returns the world client.
      *
      * @return the world client
      */
     public WorldClient worldClient() {
         return worldClient;
+    }
+
+    /**
+     * Returns the world service.
+     *
+     * @return the world service
+     */
+    public WorldService worldService() {
+        return worldService;
+    }
+
+    /**
+     * Returns the shared client session service.
+     *
+     * @return the session service
+     */
+    public ClientSessionService clientSessionService() {
+        return clientSessionService;
+    }
+
+    /**
+     * Returns the shared targeting service.
+     *
+     * @return the targeting service
+     */
+    public TargetingService targetingService() {
+        return targetingService;
+    }
+
+    /**
+     * Returns the world action service.
+     *
+     * @return the world action service
+     */
+    public WorldActionService worldActionService() {
+        return worldActionService;
+    }
+
+    /**
+     * Returns the world feedback service.
+     *
+     * @return the world feedback service
+     */
+    public WorldFeedbackService worldFeedbackService() {
+        return worldFeedbackService;
     }
 
     /**

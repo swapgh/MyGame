@@ -5,13 +5,14 @@ import com.game.client.app.GameClient;
 import com.game.client.controllers.world.WorldScreenController;
 import com.game.client.input.InputManager;
 import com.game.client.input.WorldInputFrame;
-import com.game.client.render.ClientUiRenderer;
-import com.game.client.render.world.HudRenderer;
+import com.game.client.model.WorldFrameState;
+import com.game.client.model.WorldSession;
+import com.game.client.render.overlay.WorldHudRenderer;
 import com.game.client.render.world.SceneRenderer;
 import com.game.client.screens.Screen;
-import com.game.client.ui.ScreenController;
+import com.game.client.screens.ScreenController;
+import com.game.client.ui.render.UiRenderer;
 import com.game.client.world.sync.WorldSyncState;
-import com.game.shared.ids.SharedEntityId;
 
 /**
  * Screen shell for the active world session.
@@ -21,11 +22,10 @@ import com.game.shared.ids.SharedEntityId;
 public final class GameScreen implements Screen {
     private final GameClient gameClient;
     private final ScreenController screenController;
-    private final String characterName;
-    private final SharedEntityId playerEntityId;
-    private final ClientUiRenderer uiRenderer = new ClientUiRenderer();
+    private final WorldSession worldSession;
+    private final UiRenderer uiRenderer = new UiRenderer();
     private final InputManager inputManager = new InputManager();
-    private final HudRenderer hudRenderer = new HudRenderer();
+    private final WorldHudRenderer hudRenderer = new WorldHudRenderer();
     private final SceneRenderer sceneRenderer = new SceneRenderer();
     private final WorldScreenController worldScreenController;
     private final WorldSyncState worldSyncState;
@@ -35,21 +35,19 @@ public final class GameScreen implements Screen {
      *
      * @param gameClient the owning game client
      * @param screenController the screen controller
-     * @param characterName the active character name
-     * @param playerEntityId the authoritative local player entity id
      */
-    public GameScreen(
-            GameClient gameClient,
-            ScreenController screenController,
-            String characterName,
-            SharedEntityId playerEntityId
-    ) {
+    public GameScreen(GameClient gameClient, ScreenController screenController) {
         this.gameClient = gameClient;
         this.screenController = screenController;
-        this.characterName = characterName;
-        this.playerEntityId = playerEntityId;
-        this.worldScreenController = new WorldScreenController(gameClient.worldClient());
-        this.worldSyncState = new WorldSyncState(playerEntityId);
+        this.worldSession = gameClient.worldService().requireWorldSession();
+        this.worldScreenController = new WorldScreenController(
+                gameClient.worldService(),
+                gameClient.targetingService(),
+                gameClient.worldActionService(),
+                gameClient.worldFeedbackService()
+        );
+        this.worldSyncState = new WorldSyncState(worldSession.playerEntityId());
+        gameClient.worldFeedbackService().reset();
     }
 
     /**
@@ -60,8 +58,19 @@ public final class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         WorldInputFrame inputFrame = inputManager.readWorldInput();
+        long nowMillis = System.currentTimeMillis();
+        WorldFrameState frameState = worldScreenController.prepareFrame(
+                worldSession.playerEntityId(),
+                worldSyncState,
+                inputFrame,
+                gameClient.worldClient().latestInteractionMessage(),
+                gameClient.worldClient().latestInteractionMessageVersion(),
+                gameClient.worldClient().latestInventoryUpdate(),
+                nowMillis
+        );
+
         if (inputFrame.disconnectRequested()) {
-            gameClient.worldClient().close();
+            gameClient.worldService().leaveWorld();
             screenController.showLogin();
             return;
         }
@@ -71,7 +80,12 @@ public final class GameScreen implements Screen {
         }
 
         try {
-            worldScreenController.handleInput(playerEntityId, inputFrame, worldSyncState);
+            worldScreenController.handleInput(
+                    worldSession.playerEntityId(),
+                    inputFrame,
+                    worldSyncState,
+                    frameState
+            );
         } catch (java.io.IOException exception) {
             screenController.showError("World send failed: " + exception.getMessage());
             return;
@@ -87,15 +101,17 @@ public final class GameScreen implements Screen {
                 gameClient,
                 gameClient.worldClient().latestSnapshot(),
                 worldSyncState,
-                playerEntityId,
+                worldSession.playerEntityId(),
                 delta
         );
 
         gameClient.spriteBatch().setProjectionMatrix(gameClient.uiCamera().combined);
-        gameClient.spriteBatch().begin();
-        hudRenderer.renderHeader(gameClient, characterName);
-        hudRenderer.renderInventory(gameClient, gameClient.worldClient().latestInventoryUpdate());
-        hudRenderer.renderEntityLabels(gameClient, worldSyncState.entityStates(), playerEntityId.value());
-        gameClient.spriteBatch().end();
+        hudRenderer.render(
+                gameClient,
+                worldSession.characterName(),
+                worldSyncState.entityStates(),
+                worldSession.playerEntityId().value(),
+                frameState
+        );
     }
 }

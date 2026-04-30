@@ -9,11 +9,14 @@ import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.EquipItemPacket;
 import com.game.shared.protocol.world.InventoryUpdatePacket;
 import com.game.shared.protocol.world.EntityMovePacket;
+import com.game.shared.protocol.world.InteractPacket;
+import com.game.shared.protocol.world.InteractionMessagePacket;
 import com.game.shared.protocol.world.PickupLootPacket;
 import com.game.shared.protocol.world.WorldSnapshotPacket;
 import com.game.shared.protocol.core.Packet;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -26,6 +29,8 @@ public final class WorldClient implements AutoCloseable {
     private final WorldPacketCodec packetCodec = new WorldPacketCodec();
     private final AtomicReference<WorldSnapshotPacket> latestSnapshot = new AtomicReference<>();
     private final AtomicReference<InventoryUpdatePacket> latestInventoryUpdate = new AtomicReference<>();
+    private final AtomicReference<String> latestInteractionMessage = new AtomicReference<>();
+    private final AtomicLong latestInteractionMessageVersion = new AtomicLong();
     private final AtomicReference<Vec2> lastSentDirection = new AtomicReference<>(Vec2.ZERO);
 
     private volatile ServerConnection activeConnection;
@@ -60,6 +65,8 @@ public final class WorldClient implements AutoCloseable {
         activeConnection = connection;
         latestSnapshot.set(snapshot);
         latestInventoryUpdate.set(null);
+        latestInteractionMessage.set(null);
+        latestInteractionMessageVersion.set(0L);
         lastSentDirection.set(Vec2.ZERO);
         startReaderLoop(connection);
         return new WorldEntryResult(true, "WORLD_SNAPSHOT", snapshot);
@@ -81,6 +88,24 @@ public final class WorldClient implements AutoCloseable {
      */
     public InventoryUpdatePacket latestInventoryUpdate() {
         return latestInventoryUpdate.get();
+    }
+
+    /**
+     * Returns the latest interaction feedback message from the world server.
+     *
+     * @return the latest interaction message, if any
+     */
+    public String latestInteractionMessage() {
+        return latestInteractionMessage.get();
+    }
+
+    /**
+     * Returns the version of the latest interaction feedback message.
+     *
+     * @return the latest interaction message version
+     */
+    public long latestInteractionMessageVersion() {
+        return latestInteractionMessageVersion.get();
     }
 
     /**
@@ -119,15 +144,16 @@ public final class WorldClient implements AutoCloseable {
      * Sends a one-shot attack request for the local player.
      *
      * @param playerEntityId the local player entity id
+     * @param targetEntityId the selected target entity, or {@code null}
      * @throws IOException if sending fails
      */
-    public void sendAttack(SharedEntityId playerEntityId) throws IOException {
+    public void sendAttack(SharedEntityId playerEntityId, SharedEntityId targetEntityId) throws IOException {
         ServerConnection connection = activeConnection;
         if (connection == null || !connection.isOpen()) {
             return;
         }
 
-        connection.sendLine(packetCodec.encode(new AttackPacket(playerEntityId)));
+        connection.sendLine(packetCodec.encode(new AttackPacket(playerEntityId, targetEntityId)));
     }
 
     /**
@@ -142,6 +168,21 @@ public final class WorldClient implements AutoCloseable {
             return;
         }
         connection.sendLine(packetCodec.encode(new PickupLootPacket(playerEntityId)));
+    }
+
+    /**
+     * Sends an interaction request for the local player.
+     *
+     * @param playerEntityId the local player entity id
+     * @param targetEntityId the interaction target entity id
+     * @throws IOException if sending fails
+     */
+    public void sendInteract(SharedEntityId playerEntityId, SharedEntityId targetEntityId) throws IOException {
+        ServerConnection connection = activeConnection;
+        if (connection == null || !connection.isOpen()) {
+            return;
+        }
+        connection.sendLine(packetCodec.encode(new InteractPacket(playerEntityId, targetEntityId)));
     }
 
     /**
@@ -166,6 +207,8 @@ public final class WorldClient implements AutoCloseable {
     public void close() {
         latestSnapshot.set(null);
         latestInventoryUpdate.set(null);
+        latestInteractionMessage.set(null);
+        latestInteractionMessageVersion.set(0L);
         lastSentDirection.set(Vec2.ZERO);
 
         ServerConnection connection = activeConnection;
@@ -195,6 +238,9 @@ public final class WorldClient implements AutoCloseable {
                         latestSnapshot.set(snapshot);
                     } else if (packet instanceof InventoryUpdatePacket inventoryUpdate) {
                         latestInventoryUpdate.set(inventoryUpdate);
+                    } else if (packet instanceof InteractionMessagePacket interactionMessage) {
+                        latestInteractionMessage.set(interactionMessage.message());
+                        latestInteractionMessageVersion.incrementAndGet();
                     }
                 }
             } catch (IOException | IllegalArgumentException exception) {

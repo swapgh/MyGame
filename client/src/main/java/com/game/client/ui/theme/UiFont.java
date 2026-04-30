@@ -1,4 +1,4 @@
-package com.game.client.render;
+package com.game.client.ui.theme;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;

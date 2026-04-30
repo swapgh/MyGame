@@ -2,7 +2,7 @@ package com.game.client.render.world;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.game.client.app.GameClient;
-import com.game.client.render.ClientUiPalette;
+import com.game.client.ui.theme.UiPalette;
 import com.game.client.world.sync.EntitySyncState;
 import com.game.client.world.sync.PositionInterpolator;
 import com.game.client.world.sync.SnapshotApplier;
@@ -48,15 +48,17 @@ public final class SceneRenderer {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (EntitySyncState entityState : worldSyncState.entityStates()) {
             if (entityState.entityId() == playerEntityId.value()) {
-                shapeRenderer.setColor(ClientUiPalette.PLAYER);
+                shapeRenderer.setColor(UiPalette.PLAYER);
             } else if (entityState.entityType() == EntityType.LOOT) {
-                shapeRenderer.setColor(ClientUiPalette.LOOT);
-            } else if (entityState.entityType() == EntityType.NPC) {
-                shapeRenderer.setColor(entityState.alive() ? ClientUiPalette.LIVING_ENEMY : ClientUiPalette.DEAD_ENTITY);
+                shapeRenderer.setColor(UiPalette.LOOT);
+            } else if (entityState.entityType() == EntityType.ENEMY || entityState.entityType() == EntityType.NPC) {
+                shapeRenderer.setColor(entityState.alive() ? UiPalette.LIVING_ENEMY : UiPalette.DEAD_ENTITY);
+            } else if (entityState.entityType() == EntityType.VENDOR) {
+                shapeRenderer.setColor(UiPalette.TEXT_SUCCESS);
             } else if (!entityState.alive()) {
-                shapeRenderer.setColor(ClientUiPalette.DEAD_ENTITY);
+                shapeRenderer.setColor(UiPalette.DEAD_ENTITY);
             } else {
-                shapeRenderer.setColor(ClientUiPalette.TEXT_SUCCESS);
+                shapeRenderer.setColor(UiPalette.TEXT_SUCCESS);
             }
             shapeRenderer.rect(
                     entityState.displayPosition().x() - 20.0f,

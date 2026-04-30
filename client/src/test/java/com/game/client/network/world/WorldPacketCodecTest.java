@@ -38,7 +38,7 @@ class WorldPacketCodecTest {
 
         String encoded = codec.encode(new AttackPacket(new SharedEntityId(17L)));
 
-        assertEquals("ATTACK|17", encoded);
+        assertEquals("ATTACK|17|", encoded);
     }
 
     @Test

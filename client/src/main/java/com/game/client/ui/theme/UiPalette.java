@@ -1,4 +1,4 @@
-package com.game.client.render;
+package com.game.client.ui.theme;
 
 import com.badlogic.gdx.graphics.Color;
 
@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Color;
  *
  * @since 0.1.0
  */
-public final class ClientUiPalette {
+public final class UiPalette {
     public static final Color BACKGROUND = Color.valueOf("05080C");
     public static final Color BACKGROUND_GLOW = Color.valueOf("0D1721");
     public static final Color PANEL = Color.valueOf("10161D");
@@ -28,6 +28,6 @@ public final class ClientUiPalette {
     public static final Color DEAD_ENTITY = Color.valueOf("6F7C89");
     public static final Color LOOT = Color.valueOf("E9C15B");
 
-    private ClientUiPalette() {
+    private UiPalette() {
     }
 }

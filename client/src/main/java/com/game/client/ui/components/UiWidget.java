@@ -1,4 +1,4 @@
-package com.game.client.ui.widget;
+package com.game.client.ui.components;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;

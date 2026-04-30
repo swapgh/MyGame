@@ -3,11 +3,12 @@ package com.game.client.network.world;
 import com.game.client.network.world.codec.CommandPacketCodec;
 import com.game.client.network.world.codec.InventoryUpdateCodec;
 import com.game.client.network.world.codec.SnapshotPacketCodec;
-import com.game.shared.ids.SharedEntityId;
 import com.game.shared.protocol.world.AttackPacket;
 import com.game.shared.protocol.world.EquipItemPacket;
 import com.game.shared.protocol.world.EntityMovePacket;
 import com.game.shared.protocol.world.InventoryUpdatePacket;
+import com.game.shared.protocol.world.InteractPacket;
+import com.game.shared.protocol.world.InteractionMessagePacket;
 import com.game.shared.protocol.world.PickupLootPacket;
 import com.game.shared.protocol.world.WorldSnapshotPacket;
 import com.game.shared.protocol.core.Packet;
@@ -53,6 +54,16 @@ public final class WorldPacketCodec {
     }
 
     /**
+     * Encodes an interaction request for the world server.
+     *
+     * @param packet the interaction request
+     * @return the encoded protocol line
+     */
+    public String encode(InteractPacket packet) {
+        return commandPacketCodec.encode(packet);
+    }
+
+    /**
      * Encodes an equip request for the world server.
      *
      * @param packet the equip request
@@ -83,6 +94,20 @@ public final class WorldPacketCodec {
     }
 
     /**
+     * Decodes an interaction message line.
+     *
+     * @param line the encoded protocol line
+     * @return the decoded interaction message packet
+     */
+    public InteractionMessagePacket decodeInteractionMessage(String line) {
+        String[] parts = line.split("\\|", -1);
+        if (parts.length < 2 || !"INTERACTION_MESSAGE".equals(parts[0])) {
+            throw new IllegalArgumentException("Unexpected interaction message: " + line);
+        }
+        return new InteractionMessagePacket(parts[1]);
+    }
+
+    /**
      * Decodes a mixed world packet line for the background reader.
      *
      * @param line the encoded protocol line
@@ -97,6 +122,9 @@ public final class WorldPacketCodec {
         }
         if (line.startsWith("INVENTORY_UPDATE|")) {
             return decodeInventoryUpdate(line);
+        }
+        if (line.startsWith("INTERACTION_MESSAGE|")) {
+            return decodeInteractionMessage(line);
         }
         throw new IllegalArgumentException("Unexpected world response: " + line);
     }

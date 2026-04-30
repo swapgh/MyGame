@@ -1,4 +1,4 @@
-package com.game.client.ui.widget;
+package com.game.client.ui.components;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -7,8 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.game.client.app.GameClient;
-import com.game.client.render.ClientUiPalette;
-import com.game.client.render.UiFont;
+import com.game.client.ui.render.UiRenderState;
+import com.game.client.ui.theme.UiPalette;
+import com.game.client.ui.theme.UiFont;
 
 /**
  * Minimalistic text field widget with focus state and optional masking.
@@ -100,32 +101,27 @@ public class UiTextField implements UiWidget {
         SpriteBatch spriteBatch = gameClient.spriteBatch();
         ShapeRenderer shapeRenderer = gameClient.shapeRenderer();
 
-        if (spriteBatch.isDrawing()) {
-            spriteBatch.end();
-        }
-
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Filled);
 
         Color fillColor;
         Color borderColor;
 
         if (focused) {
-            fillColor = withAlpha(ClientUiPalette.PANEL_ALT, 0.95f);
-            borderColor = withAlpha(ClientUiPalette.GLOW_BLUE, 0.3f);
+            fillColor = withAlpha(UiPalette.PANEL_ALT, 0.95f);
+            borderColor = withAlpha(UiPalette.GLOW_BLUE, 0.3f);
         } else if (hovered) {
-            fillColor = withAlpha(ClientUiPalette.PANEL_ALT, 0.92f);
-            borderColor = withAlpha(ClientUiPalette.PANEL_BORDER, 0.3f);
+            fillColor = withAlpha(UiPalette.PANEL_ALT, 0.92f);
+            borderColor = withAlpha(UiPalette.PANEL_BORDER, 0.3f);
         } else {
-            fillColor = withAlpha(ClientUiPalette.PANEL_ALT, 0.85f);
-            borderColor = withAlpha(ClientUiPalette.PANEL_BORDER, 0.18f);
+            fillColor = withAlpha(UiPalette.PANEL_ALT, 0.85f);
+            borderColor = withAlpha(UiPalette.PANEL_BORDER, 0.18f);
         }
 
         shapeRenderer.setColor(fillColor);
         shapeRenderer.rect(x, y, width, height);
-        shapeRenderer.end();
+        UiRenderState.endShapes(gameClient);
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(borderColor);
         shapeRenderer.rect(x, y, width, height);
 
@@ -136,23 +132,23 @@ public class UiTextField implements UiWidget {
             float cursorX = x + 4f + cursorLayout.width + 2f;
             float cursorTop = y + height - 6f;
             float cursorBottom = y + 6f;
-            shapeRenderer.setColor(withAlpha(ClientUiPalette.TEXT_ACCENT, 0.7f));
+            shapeRenderer.setColor(withAlpha(UiPalette.TEXT_ACCENT, 0.7f));
             shapeRenderer.line(cursorX, cursorBottom, cursorX, cursorTop);
         }
-        shapeRenderer.end();
+        UiRenderState.endShapes(gameClient);
 
-        spriteBatch.begin();
+        UiRenderState.beginText(gameClient);
 
         float labelY = y + height + 14f;
         BitmapFont smallFont = uiFont.small;
         Color previousSmall = smallFont.getColor().cpy();
-        smallFont.setColor(ClientUiPalette.TEXT_MUTED);
+        smallFont.setColor(UiPalette.TEXT_MUTED);
         smallFont.draw(spriteBatch, label.toUpperCase(), x + 4f, labelY);
         smallFont.setColor(previousSmall);
 
         BitmapFont bodyFont = uiFont.body;
         String display = displayValue().isEmpty() ? "..." : displayValue();
-        Color fieldColor = focused ? ClientUiPalette.TEXT_PRIMARY : ClientUiPalette.TEXT_MUTED;
+        Color fieldColor = focused ? UiPalette.TEXT_PRIMARY : UiPalette.TEXT_MUTED;
         Color previousBody = bodyFont.getColor().cpy();
         bodyFont.setColor(fieldColor);
         bodyFont.draw(spriteBatch, display, x + 4f, y + (height * 0.5f) + (bodyFont.getData().lineHeight * 0.3f));

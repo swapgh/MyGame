@@ -4,10 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
-import com.game.client.render.ClientUiPalette;
-import com.game.client.render.ClientUiRenderer;
+import com.game.client.ui.theme.UiPalette;
+import com.game.client.ui.render.UiRenderState;
+import com.game.client.ui.render.UiRenderer;
 import com.game.client.screens.Screen;
-import com.game.client.ui.ScreenController;
+import com.game.client.screens.ScreenController;
 
 /**
  * Placeholder settings screen for the Phase 4 client skeleton.
@@ -17,7 +18,7 @@ import com.game.client.ui.ScreenController;
 public final class SettingsScreen implements Screen {
     private final GameClient gameClient;
     private final ScreenController screenController;
-    private final ClientUiRenderer uiRenderer = new ClientUiRenderer();
+    private final UiRenderer uiRenderer = new UiRenderer();
 
     /**
      * Creates the settings screen.
@@ -48,11 +49,11 @@ public final class SettingsScreen implements Screen {
         gameClient.uiCamera().update();
         uiRenderer.renderBackdrop(gameClient, delta + (System.currentTimeMillis() / 1000f));
         gameClient.spriteBatch().setProjectionMatrix(gameClient.uiCamera().combined);
-        gameClient.spriteBatch().begin();
+        UiRenderState.beginText(gameClient);
         uiRenderer.renderHero(gameClient, "Client", "Settings", "Configuration surface reserved for future polish and accessibility options.");
-        uiRenderer.renderStatus(gameClient, "Current build keeps settings read-only for now.", 96f, 438f, ClientUiPalette.TEXT_WARNING);
+        uiRenderer.renderStatus(gameClient, "Current build keeps settings read-only for now.", 96f, 438f, UiPalette.TEXT_WARNING);
         uiRenderer.renderInfo(gameClient, "Planned next: audio levels, keybind remapping, UI scale, and fullscreen.", 96f, 382f);
         uiRenderer.renderInfo(gameClient, "Press B or ESC to return.", 96f, 326f);
-        gameClient.spriteBatch().end();
+        UiRenderState.endText(gameClient);
     }
 }

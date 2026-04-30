@@ -113,6 +113,16 @@ public final class WorldSyncState {
         return entityStates.values();
     }
 
+    /**
+     * Returns one visible entity state by id, if present.
+     *
+     * @param entityId visible entity id
+     * @return the entity state, or {@code null}
+     */
+    public EntitySyncState entityState(long entityId) {
+        return entityStates.get(entityId);
+    }
+
     private void reconcileLocalPlayer(EntitySpawnPacket entity, EntitySyncState state) {
         Vec2 authoritativePosition = entity.position();
         if (predictedPlayerPosition == null) {

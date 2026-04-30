@@ -6,7 +6,8 @@ import com.game.shared.math.Vec2;
  * Input snapshot for one world frame.
  *
  * @param movementDirection normalized movement intent
- * @param attackRequested whether an attack was triggered this frame
+ * @param cycleTargetRequested whether the user cycled the current hostile target
+ * @param primaryActionRequested whether the main world action key was triggered this frame
  * @param pickupRequested whether loot pickup was triggered this frame
  * @param equipSlotIndex zero-based slot index to equip, or {@code -1}
  * @param disconnectRequested whether the user wants to leave the world
@@ -14,7 +15,8 @@ import com.game.shared.math.Vec2;
  */
 public record WorldInputFrame(
         Vec2 movementDirection,
-        boolean attackRequested,
+        boolean cycleTargetRequested,
+        boolean primaryActionRequested,
         boolean pickupRequested,
         int equipSlotIndex,
         boolean disconnectRequested

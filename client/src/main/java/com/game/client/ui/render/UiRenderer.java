@@ -1,4 +1,4 @@
-package com.game.client.render;
+package com.game.client.ui.render;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -6,13 +6,15 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.game.client.app.GameClient;
+import com.game.client.ui.theme.UiFont;
+import com.game.client.ui.theme.UiPalette;
 
 /**
  * Shared screen chrome for the desktop client.
  *
  * @since 0.1.0
  */
-public final class ClientUiRenderer {
+public final class UiRenderer {
 
     /**
      * Draws the shared background and framing panels.
@@ -21,27 +23,22 @@ public final class ClientUiRenderer {
      * @param accentPhase a small animation phase value
      */
     public void renderBackdrop(GameClient gameClient, float accentPhase) {
-        SpriteBatch batch = gameClient.spriteBatch();
-        if (batch.isDrawing()) {
-            batch.end();
-        }
         float width = gameClient.uiCamera().viewportWidth;
         float height = gameClient.uiCamera().viewportHeight;
 
         ShapeRenderer shapeRenderer = gameClient.shapeRenderer();
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(ClientUiPalette.BACKGROUND);
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(UiPalette.BACKGROUND);
         shapeRenderer.rect(0f, 0f, width, height);
 
         float glowX = width * 0.5f;
         float glowY = height * 0.52f + (float) Math.sin(accentPhase * 0.15f) * 8f;
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.GLOW_BLUE, 0.14f));
+        shapeRenderer.setColor(withAlpha(UiPalette.GLOW_BLUE, 0.14f));
         shapeRenderer.rect(glowX - 260f, glowY - 150f, 520f, 300f);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL_ALT, 0.10f));
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL_ALT, 0.10f));
         shapeRenderer.rect(0f, height - 120f, width, 120f);
         shapeRenderer.rect(0f, 0f, width, 90f);
-        shapeRenderer.end();
+        UiRenderState.endShapes(gameClient);
     }
 
     /**
@@ -54,27 +51,20 @@ public final class ClientUiRenderer {
      * @param height     panel height
      */
     public void renderPanel(GameClient gameClient, float x, float y, float width, float height) {
-        SpriteBatch batch = gameClient.spriteBatch();
-        if (batch.isDrawing()) {
-            batch.end();
-        }
         ShapeRenderer shapeRenderer = gameClient.shapeRenderer();
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL_SHADOW, 0.42f));
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL_SHADOW, 0.42f));
         shapeRenderer.rect(x + 8f, y - 8f, width, height);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL_ALT, 0.96f));
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL_ALT, 0.96f));
         shapeRenderer.rect(x, y, width, height);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL, 0.94f));
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL, 0.94f));
         shapeRenderer.rect(x + 4f, y + 4f, width - 8f, height - 8f);
-        shapeRenderer.end();
+        UiRenderState.endShapes(gameClient);
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL_BORDER, 0.55f));
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL_BORDER, 0.55f));
         shapeRenderer.rect(x, y, width, height);
-        shapeRenderer.end();
-        batch.begin();
+        UiRenderState.endShapes(gameClient);
     }
 
     /**
@@ -100,10 +90,11 @@ public final class ClientUiRenderer {
      */
     public void renderHero(GameClient gameClient, String eyebrow, String title, String subtitle) {
         UiFont f = gameClient.uiFont();
+        UiRenderState.beginText(gameClient);
         SpriteBatch batch = gameClient.spriteBatch();
-        drawText(f.small, batch, eyebrow.toUpperCase(), 96f, 642f, ClientUiPalette.TEXT_MUTED);
-        drawText(f.title, batch, title, 96f, 596f, ClientUiPalette.TEXT_PRIMARY);
-        drawText(f.body, batch, subtitle, 96f, 552f, ClientUiPalette.TEXT_MUTED);
+        drawText(f.small, batch, eyebrow.toUpperCase(), 96f, 642f, UiPalette.TEXT_MUTED);
+        drawText(f.title, batch, title, 96f, 596f, UiPalette.TEXT_PRIMARY);
+        drawText(f.body, batch, subtitle, 96f, 552f, UiPalette.TEXT_MUTED);
     }
 
     /**
@@ -119,12 +110,13 @@ public final class ClientUiRenderer {
     public void renderHeroCentered(GameClient gameClient, String eyebrow, String title, String subtitle,
                                    float centerX, float topY) {
         UiFont f = gameClient.uiFont();
+        UiRenderState.beginText(gameClient);
         SpriteBatch batch = gameClient.spriteBatch();
         if (!eyebrow.isBlank()) {
-            drawCentered(f.small, batch, eyebrow.toUpperCase(), centerX, topY, ClientUiPalette.TEXT_MUTED);
+            drawCentered(f.small, batch, eyebrow.toUpperCase(), centerX, topY, UiPalette.TEXT_MUTED);
         }
-        drawCentered(f.title, batch, title, centerX, topY - 24f, ClientUiPalette.TEXT_PRIMARY);
-        drawCentered(f.body, batch, subtitle, centerX, topY - 68f, ClientUiPalette.TEXT_MUTED);
+        drawCentered(f.title, batch, title, centerX, topY - 24f, UiPalette.TEXT_PRIMARY);
+        drawCentered(f.body, batch, subtitle, centerX, topY - 68f, UiPalette.TEXT_MUTED);
     }
 
     /**
@@ -142,13 +134,14 @@ public final class ClientUiRenderer {
         renderPanel(gameClient, x - 14f, y - 12f, 460f, 52f);
         UiFont f = gameClient.uiFont();
         SpriteBatch batch = gameClient.spriteBatch();
-        drawText(f.small, batch, label.toUpperCase(), x, y + 56f, ClientUiPalette.TEXT_MUTED);
+        UiRenderState.beginText(gameClient);
+        drawText(f.small, batch, label.toUpperCase(), x, y + 56f, UiPalette.TEXT_MUTED);
         drawText(f.body, batch,
                 value.isBlank() ? "..." : value,
                 x, y + 20f,
-                focused ? ClientUiPalette.TEXT_PRIMARY : ClientUiPalette.TEXT_ACCENT);
+                focused ? UiPalette.TEXT_PRIMARY : UiPalette.TEXT_ACCENT);
         if (focused) {
-            drawText(f.small, batch, "ACTIVE", x + 314f, y + 56f, ClientUiPalette.TEXT_SUCCESS);
+            drawText(f.small, batch, "ACTIVE", x + 314f, y + 56f, UiPalette.TEXT_SUCCESS);
         }
     }
 
@@ -165,35 +158,30 @@ public final class ClientUiRenderer {
      */
     public void renderLauncherField(GameClient gameClient, String label, String value,
                                     float x, float y, boolean focused, String iconType) {
-        SpriteBatch batch = gameClient.spriteBatch();
-        if (batch.isDrawing()) {
-            batch.end();
-        }
         ShapeRenderer shapeRenderer = gameClient.shapeRenderer();
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL_SHADOW, 0.32f));
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL_SHADOW, 0.32f));
         shapeRenderer.rect(x + 6f, y - 6f, 556f, 56f);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL_ALT, 0.94f));
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL_ALT, 0.94f));
         shapeRenderer.rect(x, y, 556f, 56f);
         if (focused) {
-            shapeRenderer.setColor(withAlpha(ClientUiPalette.GLOW_BLUE, 0.12f));
+            shapeRenderer.setColor(withAlpha(UiPalette.GLOW_BLUE, 0.12f));
             shapeRenderer.rect(x + 2f, y + 2f, 552f, 52f);
         }
-        shapeRenderer.end();
+        UiRenderState.endShapes(gameClient);
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL_BORDER, focused ? 0.42f : 0.22f));
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL_BORDER, focused ? 0.42f : 0.22f));
         shapeRenderer.rect(x, y, 556f, 56f);
-        shapeRenderer.end();
-        batch.begin();
+        UiRenderState.endShapes(gameClient);
 
         UiFont f = gameClient.uiFont();
-        drawText(f.small, batch, label.toUpperCase(), x, y + 78f, ClientUiPalette.TEXT_MUTED);
+        SpriteBatch batch = gameClient.spriteBatch();
+        UiRenderState.beginText(gameClient);
+        drawText(f.small, batch, label.toUpperCase(), x, y + 78f, UiPalette.TEXT_MUTED);
         drawFieldIcon(gameClient, x + 18f, y + 16f, iconType, focused);
         drawText(f.body, batch, value.isBlank() ? "..." : value, x + 62f, y + 34f,
-                focused ? ClientUiPalette.TEXT_PRIMARY : ClientUiPalette.TEXT_MUTED);
+                focused ? UiPalette.TEXT_PRIMARY : UiPalette.TEXT_MUTED);
     }
 
     /**
@@ -205,18 +193,13 @@ public final class ClientUiRenderer {
      * @param text badge text
      */
     public void renderStatusBadge(GameClient gameClient, float x, float y, String text) {
-        SpriteBatch batch = gameClient.spriteBatch();
-        if (batch.isDrawing()) {
-            batch.end();
-        }
         ShapeRenderer shapeRenderer = gameClient.shapeRenderer();
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.TEXT_SUCCESS, 0.96f));
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(withAlpha(UiPalette.TEXT_SUCCESS, 0.96f));
         shapeRenderer.circle(x + 6f, y - 6f, 6f, 18);
-        shapeRenderer.end();
-        batch.begin();
-        drawText(gameClient.uiFont().small, batch, text, x + 22f, y, ClientUiPalette.TEXT_SUCCESS);
+        UiRenderState.endShapes(gameClient);
+        UiRenderState.beginText(gameClient);
+        drawText(gameClient.uiFont().small, gameClient.spriteBatch(), text, x + 22f, y, UiPalette.TEXT_SUCCESS);
     }
 
     /**
@@ -232,32 +215,26 @@ public final class ClientUiRenderer {
      */
     public void renderActionButton(GameClient gameClient, String text,
                                    float x, float y, float width, float height, boolean highlighted) {
-        SpriteBatch batch = gameClient.spriteBatch();
-        if (batch.isDrawing()) {
-            batch.end();
-        }
         ShapeRenderer shapeRenderer = gameClient.shapeRenderer();
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL_SHADOW, 0.36f));
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL_SHADOW, 0.36f));
         shapeRenderer.rect(x + 6f, y - 6f, width, height);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL_ALT, 0.98f));
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL_ALT, 0.98f));
         shapeRenderer.rect(x, y, width, height);
         if (highlighted) {
-            shapeRenderer.setColor(withAlpha(ClientUiPalette.GLOW_GOLD, 0.10f));
+            shapeRenderer.setColor(withAlpha(UiPalette.GLOW_GOLD, 0.10f));
             shapeRenderer.rect(x + 2f, y + 2f, width - 4f, height - 4f);
         }
-        shapeRenderer.end();
+        UiRenderState.endShapes(gameClient);
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.setColor(withAlpha(ClientUiPalette.PANEL_BORDER, highlighted ? 0.68f : 0.28f));
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(withAlpha(UiPalette.PANEL_BORDER, highlighted ? 0.68f : 0.28f));
         shapeRenderer.rect(x, y, width, height);
-        shapeRenderer.end();
-        batch.begin();
+        UiRenderState.endShapes(gameClient);
+        UiRenderState.beginText(gameClient);
 
-        drawCentered(gameClient.uiFont().body, batch, text, x + (width * 0.5f), y + (height * 0.62f),
-                ClientUiPalette.TEXT_PRIMARY);
+        drawCentered(gameClient.uiFont().body, gameClient.spriteBatch(), text, x + (width * 0.5f), y + (height * 0.62f),
+                UiPalette.TEXT_PRIMARY);
     }
 
     /**
@@ -294,8 +271,9 @@ public final class ClientUiRenderer {
      * @param y          position y
      */
     public void renderInfo(GameClient gameClient, String text, float x, float y) {
+        UiRenderState.beginText(gameClient);
         drawText(gameClient.uiFont().small, gameClient.spriteBatch(),
-                text, x, y, ClientUiPalette.TEXT_MUTED);
+                text, x, y, UiPalette.TEXT_MUTED);
     }
 
     /**
@@ -308,6 +286,7 @@ public final class ClientUiRenderer {
      * @param color      status color
      */
     public void renderStatus(GameClient gameClient, String text, float x, float y, Color color) {
+        UiRenderState.beginText(gameClient);
         drawText(gameClient.uiFont().body, gameClient.spriteBatch(), text, x, y, color);
     }
 
@@ -324,8 +303,9 @@ public final class ClientUiRenderer {
         if (selected) {
             renderPanel(gameClient, x - 18f, y - 30f, 520f, 52f);
         }
+        UiRenderState.beginText(gameClient);
         drawText(gameClient.uiFont().body, gameClient.spriteBatch(), text, x, y,
-                selected ? ClientUiPalette.TEXT_PRIMARY : ClientUiPalette.TEXT_MUTED);
+                selected ? UiPalette.TEXT_PRIMARY : UiPalette.TEXT_MUTED);
     }
 
     // -------------------------------------------------------------------------
@@ -347,14 +327,9 @@ public final class ClientUiRenderer {
     }
 
     private void drawFieldIcon(GameClient gameClient, float x, float y, String iconType, boolean focused) {
-        SpriteBatch batch = gameClient.spriteBatch();
-        if (batch.isDrawing()) {
-            batch.end();
-        }
         ShapeRenderer shapeRenderer = gameClient.shapeRenderer();
-        shapeRenderer.setProjectionMatrix(gameClient.uiCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(withAlpha(focused ? ClientUiPalette.TEXT_PRIMARY : ClientUiPalette.TEXT_MUTED, 0.86f));
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(withAlpha(focused ? UiPalette.TEXT_PRIMARY : UiPalette.TEXT_MUTED, 0.86f));
         if ("lock".equals(iconType)) {
             shapeRenderer.rect(x + 4f, y + 2f, 18f, 16f);
             shapeRenderer.arc(x + 13f, y + 18f, 7f, 0f, 180f, 16);
@@ -364,8 +339,8 @@ public final class ClientUiRenderer {
             shapeRenderer.line(x + 5f, y + 4f, x + 8f, y + 12f);
             shapeRenderer.line(x + 21f, y + 4f, x + 18f, y + 12f);
         }
-        shapeRenderer.end();
-        batch.begin();
+        UiRenderState.endShapes(gameClient);
+        UiRenderState.beginText(gameClient);
     }
 
     private static Color withAlpha(Color color, float alpha) {

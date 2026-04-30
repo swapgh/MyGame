@@ -49,8 +49,17 @@ public final class KeyboardInput {
      *
      * @return {@code true} when attack was just pressed
      */
-    public boolean attackRequested() {
+    public boolean primaryActionRequested() {
         return justPressed(keyBindings.attack());
+    }
+
+    /**
+     * Returns whether target cycling was requested this frame.
+     *
+     * @return {@code true} when the cycle-target key was just pressed
+     */
+    public boolean cycleTargetRequested() {
+        return justPressed(keyBindings.cycleTarget());
     }
 
     /**
