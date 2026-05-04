@@ -1,6 +1,7 @@
 package com.game.server.npc.definition;
 
 import com.game.server.items.definition.DefinitionObjectReader;
+import com.game.shared.protocol.world.EntityType;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -19,6 +20,7 @@ public final class NpcDefinitionLoader {
             NpcDefinition definition = new NpcDefinition(
                     DefinitionObjectReader.requireString(object, "id"),
                     DefinitionObjectReader.requireString(object, "name"),
+                    EntityType.valueOf(DefinitionObjectReader.requireString(object, "entityType")),
                     DefinitionObjectReader.requireInt(object, "maxHealth"),
                     DefinitionObjectReader.requireInt(object, "baseDamage"),
                     DefinitionObjectReader.requireFloat(object, "attackRange"),

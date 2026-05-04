@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.game.client.app.GameClient;
 import com.game.client.controllers.auth.RegisterController;
+import com.game.client.input.SubmitKey;
 import com.game.client.input.TextInputBuffer;
 import com.game.client.ui.theme.UiPalette;
 import com.game.client.screens.UiScreen;
@@ -48,7 +49,7 @@ public final class RegisterScreen extends UiScreen {
                 screenController.showLogin();
                 return;
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            if (SubmitKey.isJustPressed()) {
                 register();
             } else if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
                 focusedField = (focusedField + 1) % 2;

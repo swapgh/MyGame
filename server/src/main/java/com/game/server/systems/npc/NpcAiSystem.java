@@ -39,6 +39,11 @@ public final class NpcAiSystem implements GameSystem {
 
         for (var entry : npcs.all()) {
             EntityId npcId = entry.getKey();
+            if (entry.getValue().entityType() != com.game.shared.protocol.world.EntityType.ENEMY
+                    && entry.getValue().entityType() != com.game.shared.protocol.world.EntityType.NPC) {
+                velocities.put(npcId, new VelocityComponent(Vec2.ZERO));
+                continue;
+            }
             AiComponent ai = aiStore.get(npcId).orElse(null);
             TransformComponent npcTransform = transforms.get(npcId).orElse(null);
             HealthComponent health = healths.get(npcId).orElse(null);
@@ -68,7 +73,7 @@ public final class NpcAiSystem implements GameSystem {
             float attackRangeSquared = stats.attackRange() * stats.attackRange();
             if (toTarget.lengthSquared() <= attackRangeSquared) {
                 velocities.put(npcId, new VelocityComponent(Vec2.ZERO));
-                attacks.put(npcId, new AttackIntentComponent(clock.tick()));
+                attacks.put(npcId, new AttackIntentComponent(clock.tick(), target.playerId()));
                 aiStates.put(npcId, new AiStateComponent(AiState.CHASE));
             } else {
                 velocities.put(
@@ -121,12 +126,12 @@ public final class NpcAiSystem implements GameSystem {
             }
 
             if (best == null || distanceSquared < best.distanceSquared()) {
-                best = new TargetPlayer(playerTransform.position(), distanceSquared);
+                best = new TargetPlayer(playerId, playerTransform.position(), distanceSquared);
             }
         }
         return best;
     }
 
-    private record TargetPlayer(Vec2 position, float distanceSquared) {
+    private record TargetPlayer(EntityId playerId, Vec2 position, float distanceSquared) {
     }
 }

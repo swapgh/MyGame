@@ -48,7 +48,7 @@ gradlew.bat build
 
 If that works but the IDE shows errors, the problem is usually IDE indexing or IDE Java configuration.
 
-## Where To Get JDK 25
+## Where To Get JDK 21
 
 You need a real JDK, not only a JRE.
 
@@ -59,13 +59,13 @@ Good places to get it:
 
 Recommended default for this repo:
 
-- install Temurin JDK 25
+- install Temurin JDK 21
 
 ## Ubuntu + VS Code Setup
 
-### 1. Install JDK 25
+### 1. Install JDK 21
 
-Install a JDK 25 distribution on your system.
+Install a JDK 21 distribution on your system.
 
 After installing, confirm:
 
@@ -74,7 +74,7 @@ java -version
 javac -version
 ```
 
-Both should report Java 25.
+Both should report Java 21.
 
 If they do not, your shell may still be pointing to another Java installation.
 
@@ -126,9 +126,9 @@ These are convenience scripts for Linux only. They are not required by the proje
 
 ## Windows + IntelliJ IDEA Setup
 
-### 1. Install JDK 25
+### 1. Install JDK 21
 
-Install JDK 25 on Windows.
+Install JDK 21 on Windows.
 
 Then verify in a terminal:
 
@@ -149,8 +149,8 @@ In IntelliJ:
 
 Check both of these:
 
-1. `Project SDK` = JDK 25
-2. `Gradle JVM` = JDK 25
+1. `Project SDK` = JDK 21
+2. `Gradle JVM` = JDK 21
 
 If one is 25 and the other is older, IntelliJ can show false errors or fail Gradle sync.
 
@@ -180,7 +180,7 @@ What stays the same:
 - Gradle files
 - module structure
 - commands and task names
-- Java requirement: JDK 25
+- Java requirement: JDK 21
 
 What changes:
 
@@ -202,12 +202,12 @@ Symptoms:
 
 Fix:
 
-1. Install JDK 25
+1. Install JDK 21
 2. Reopen terminal or IDE
 3. Re-run `java -version`
 4. Reimport the Gradle project
 
-### Case 2: Java exists, but it is not version 25
+### Case 2: Java exists, but it is not version 21
 
 Symptoms:
 
@@ -216,13 +216,13 @@ Symptoms:
 
 Fix:
 
-1. Install JDK 25
-2. Point the IDE to JDK 25
-3. Make sure terminal commands also use JDK 25
+1. Install JDK 21
+2. Point the IDE to JDK 21
+3. Make sure terminal commands also use JDK 21
 
 Important:
 
-- do not quietly change the repo from Java 25 to another version just because one machine is missing the correct JDK
+- do not quietly change the repo from Java 21 to another version just because one machine is missing the correct JDK
 - the repo should stay consistent across machines
 
 ### Case 3: IntelliJ uses the correct JDK, but terminal does not
@@ -235,9 +235,9 @@ Symptoms:
 Fix:
 
 - IntelliJ is configured separately from your shell
-- update your system Java configuration only if you also want terminal commands to use Java 25
+- update your system Java configuration only if you also want terminal commands to use Java 21
 
-### Case 4: Terminal uses Java 25, but the IDE does not
+### Case 4: Terminal uses Java 21, but the IDE does not
 
 Symptoms:
 
@@ -299,7 +299,7 @@ Fix order:
 2. Run `Java: Clean Java Language Server Workspace`
 3. Reload VS Code window
 4. Refresh Gradle project
-5. Check that VS Code is using JDK 25
+5. Check that VS Code is using JDK 21
 
 ### VS Code launches the wrong main class
 
@@ -323,7 +323,7 @@ Cause:
 Fix:
 
 1. Open Gradle settings
-2. Select a valid installed JDK 25
+2. Select a valid installed JDK 21
 3. Reimport the project
 
 ### IntelliJ shows errors after many refactors
@@ -416,7 +416,7 @@ gradlew.bat :server:runWorldServer
 
 When changing machines:
 
-1. Install JDK 25
+1. Install JDK 21
 2. Open the repo root
 3. Run the Gradle wrapper once
 4. Let the IDE import the Gradle project

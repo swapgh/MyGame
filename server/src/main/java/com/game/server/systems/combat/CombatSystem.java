@@ -4,7 +4,9 @@ import com.game.server.components.combat.AttackIntentComponent;
 import com.game.server.components.combat.CombatStateComponent;
 import com.game.server.components.combat.CombatStatsComponent;
 import com.game.server.components.combat.HealthComponent;
+import com.game.server.components.npc.NpcComponent;
 import com.game.server.components.npc.RespawnComponent;
+import com.game.server.components.world.PlayerComponent;
 import com.game.server.components.world.TransformComponent;
 import com.game.server.components.world.VelocityComponent;
 import com.game.server.ecs.component.ComponentStore;
@@ -32,9 +34,12 @@ public final class CombatSystem implements GameSystem {
         ComponentStore<HealthComponent> healths = entities.storeOf(HealthComponent.class);
         ComponentStore<RespawnComponent> respawns = entities.storeOf(RespawnComponent.class);
         ComponentStore<VelocityComponent> velocities = entities.storeOf(VelocityComponent.class);
+        ComponentStore<NpcComponent> npcs = entities.storeOf(NpcComponent.class);
+        ComponentStore<PlayerComponent> players = entities.storeOf(PlayerComponent.class);
 
         for (var entry : new ArrayList<>(attackIntents.all())) {
             EntityId attackerId = entry.getKey();
+            AttackIntentComponent attackIntent = entry.getValue();
             attackIntents.remove(attackerId);
 
             CombatStatsComponent stats = combatStats.get(attackerId).orElse(null);
@@ -56,14 +61,28 @@ public final class CombatSystem implements GameSystem {
                 continue;
             }
 
-            TargetResult targetResult = findNearestLivingTarget(
-                    attackerId,
-                    attackerTransform.position(),
-                    stats.attackRange(),
-                    transforms,
-                    healths,
-                    respawns
-            );
+            TargetResult targetResult = attackIntent.targetEntityId() != null
+                    ? findRequestedTarget(
+                            attackerId,
+                            attackIntent.targetEntityId(),
+                            attackerTransform.position(),
+                            stats.attackRange(),
+                            transforms,
+                            healths,
+                            respawns,
+                            npcs,
+                            players
+                    )
+                    : findNearestLivingTarget(
+                            attackerId,
+                            attackerTransform.position(),
+                            stats.attackRange(),
+                            transforms,
+                            healths,
+                            respawns,
+                            npcs,
+                            players
+                    );
             if (targetResult == null) {
                 continue;
             }
@@ -103,7 +122,9 @@ public final class CombatSystem implements GameSystem {
             float attackRange,
             ComponentStore<TransformComponent> transforms,
             ComponentStore<HealthComponent> healths,
-            ComponentStore<RespawnComponent> respawns
+            ComponentStore<RespawnComponent> respawns,
+            ComponentStore<NpcComponent> npcs,
+            ComponentStore<PlayerComponent> players
     ) {
         float maxDistanceSquared = attackRange * attackRange;
         return transforms.all().stream()
@@ -112,7 +133,8 @@ public final class CombatSystem implements GameSystem {
                     EntityId targetId = entry.getKey();
                     HealthComponent health = healths.get(targetId).orElse(null);
                     RespawnComponent respawn = respawns.get(targetId).orElse(null);
-                    if (health == null || respawn == null || !health.alive() || respawn.waitingForRespawn()) {
+                    if (health == null || respawn == null || !health.alive() || respawn.waitingForRespawn()
+                            || !isValidCombatTarget(targetId, npcs, players)) {
                         return null;
                     }
                     float distanceSquared = attackerPosition.subtract(entry.getValue().position()).lengthSquared();
@@ -124,6 +146,49 @@ public final class CombatSystem implements GameSystem {
                 .filter(target -> target != null)
                 .min(Comparator.comparing(TargetResult::distance))
                 .orElse(null);
+    }
+
+    private static TargetResult findRequestedTarget(
+            EntityId attackerId,
+            EntityId targetId,
+            Vec2 attackerPosition,
+            float attackRange,
+            ComponentStore<TransformComponent> transforms,
+            ComponentStore<HealthComponent> healths,
+            ComponentStore<RespawnComponent> respawns,
+            ComponentStore<NpcComponent> npcs,
+            ComponentStore<PlayerComponent> players
+    ) {
+        if (targetId.equals(attackerId)) {
+            return null;
+        }
+
+        TransformComponent targetTransform = transforms.get(targetId).orElse(null);
+        HealthComponent health = healths.get(targetId).orElse(null);
+        RespawnComponent respawn = respawns.get(targetId).orElse(null);
+        if (targetTransform == null || health == null || respawn == null || !health.alive() || respawn.waitingForRespawn()
+                || !isValidCombatTarget(targetId, npcs, players)) {
+            return null;
+        }
+
+        float distanceSquared = attackerPosition.subtract(targetTransform.position()).lengthSquared();
+        if (distanceSquared > (attackRange * attackRange)) {
+            return null;
+        }
+        return new TargetResult(targetId, health, (float) Math.sqrt(distanceSquared));
+    }
+
+    private static boolean isValidCombatTarget(
+            EntityId targetId,
+            ComponentStore<NpcComponent> npcs,
+            ComponentStore<PlayerComponent> players
+    ) {
+        if (players.has(targetId)) {
+            return true;
+        }
+        return npcs.get(targetId)
+                .map(npc -> npc.entityType() != com.game.shared.protocol.world.EntityType.VENDOR)
+                .orElse(true);
     }
 
     private record TargetResult(EntityId targetId, HealthComponent health, float distance) {

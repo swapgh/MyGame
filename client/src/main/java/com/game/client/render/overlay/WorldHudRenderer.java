@@ -2,6 +2,8 @@ package com.game.client.render.overlay;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.game.client.app.GameClient;
 import com.game.client.model.TargetSelection;
 import com.game.client.model.WorldActionContext;
@@ -20,26 +22,32 @@ import com.game.shared.protocol.world.InventoryUpdatePacket;
  * @since 0.1.0
  */
 public final class WorldHudRenderer {
-    private static final float SCREEN_MARGIN = 28f;
-    private static final float HEADER_PANEL_WIDTH = 360f;
-    private static final float HEADER_PANEL_HEIGHT = 150f;
-    private static final float TARGET_PANEL_WIDTH = 340f;
-    private static final float TARGET_PANEL_HEIGHT = 116f;
-    private static final float ACTION_PANEL_WIDTH = 420f;
-    private static final float ACTION_PANEL_HEIGHT = 86f;
-    private static final float INVENTORY_PANEL_WIDTH = 380f;
-    private static final float INVENTORY_PANEL_HEIGHT = 212f;
-    private static final float EQUIPMENT_PANEL_WIDTH = 300f;
-    private static final float EQUIPMENT_PANEL_HEIGHT = 212f;
+    private static final float SCREEN_MARGIN = 18f;
+    private static final float PANEL_GAP = 14f;
+    private static final float HEADER_PANEL_WIDTH = 300f;
+    private static final float HEADER_PANEL_HEIGHT = 122f;
+    private static final float TARGET_PANEL_WIDTH = 300f;
+    private static final float TARGET_PANEL_HEIGHT = 92f;
+    private static final float ACTION_PANEL_WIDTH = 360f;
+    private static final float ACTION_PANEL_HEIGHT = 56f;
+    private static final float INVENTORY_PANEL_WIDTH = 272f;
+    private static final float INVENTORY_PANEL_HEIGHT = 154f;
+    private static final float EQUIPMENT_PANEL_WIDTH = 272f;
+    private static final float EQUIPMENT_PANEL_HEIGHT = 112f;
 
-    private static final float PANEL_INSET_X = 20f;
-    private static final float PANEL_HEADER_Y = 28f;
-    private static final float PANEL_LINE_SPACING = 28f;
-    private static final float PANEL_STATUS_GAP = 34f;
-    private static final float INVENTORY_META_GAP = 40f;
-    private static final float INVENTORY_LIST_GAP = 80f;
-    private static final float INVENTORY_ROW_SPACING = 32f;
-    private static final float EQUIPMENT_ROW_SPACING = 32f;
+    private static final float PANEL_INSET_X = 16f;
+    private static final float PANEL_HEADER_Y = 22f;
+    private static final float PANEL_LINE_SPACING = 20f;
+    private static final float PANEL_STATUS_GAP = 24f;
+    private static final float INVENTORY_META_GAP = 28f;
+    private static final float INVENTORY_LIST_GAP = 52f;
+    private static final float INVENTORY_ROW_SPACING = 20f;
+    private static final float EQUIPMENT_ROW_SPACING = 20f;
+    private static final float PLAYER_BAR_WIDTH = 228f;
+    private static final float PLAYER_BAR_HEIGHT = 16f;
+    private static final float PLAYER_BAR_GAP = 24f;
+    private static final int MAX_INVENTORY_ROWS = 4;
+    private static final int MAX_EQUIPMENT_ROWS = 3;
 
     private static final float ENTITY_LABEL_OFFSET_X = 32f;
     private static final float ENTITY_LABEL_OFFSET_Y = 36f;
@@ -68,12 +76,12 @@ public final class WorldHudRenderer {
         UiRect headerPanel = topLeftPanel(viewportHeight, HEADER_PANEL_WIDTH, HEADER_PANEL_HEIGHT);
         UiRect targetPanel = topRightPanel(viewportWidth, viewportHeight, TARGET_PANEL_WIDTH, TARGET_PANEL_HEIGHT);
         UiRect inventoryPanel = bottomLeftPanel(INVENTORY_PANEL_WIDTH, INVENTORY_PANEL_HEIGHT);
-        UiRect equipmentPanel = bottomRightPanel(viewportWidth, EQUIPMENT_PANEL_WIDTH, EQUIPMENT_PANEL_HEIGHT);
-        UiRect actionPanel = bottomCenteredPanel(viewportWidth, ACTION_PANEL_WIDTH, ACTION_PANEL_HEIGHT, inventoryPanel.top() + 16f);
+        UiRect equipmentPanel = stackedPanelAbove(inventoryPanel, EQUIPMENT_PANEL_WIDTH, EQUIPMENT_PANEL_HEIGHT, PANEL_GAP);
+        UiRect actionPanel = bottomCenteredPanel(viewportWidth, ACTION_PANEL_WIDTH, ACTION_PANEL_HEIGHT, SCREEN_MARGIN);
+        EntitySyncState playerState = findEntity(entities, playerEntityId);
 
-        renderHeader(gameClient, characterName, headerPanel);
-        renderTarget(gameClient, frameState.currentTarget(), targetPanel);
-        renderTargetDetails(
+        renderHeader(gameClient, characterName, playerState, headerPanel);
+        renderTarget(
                 gameClient,
                 frameState.currentTarget() == null ? null : findEntity(entities, frameState.currentTarget().entityId()),
                 targetPanel
@@ -88,59 +96,92 @@ public final class WorldHudRenderer {
         );
     }
 
-    private void renderHeader(GameClient gameClient, String characterName, UiRect panel) {
+    private void renderHeader(GameClient gameClient, String characterName, EntitySyncState playerState, UiRect panel) {
         uiRenderer.renderPanel(gameClient, panel.x(), panel.y(), panel.width(), panel.height());
-        float textX = panel.x() + PANEL_INSET_X;
-        float topY = panel.top() - PANEL_HEADER_Y;
-        uiRenderer.renderStatus(gameClient, "Connected as " + characterName, textX, topY, UiPalette.TEXT_PRIMARY);
-        uiRenderer.renderInfo(gameClient, "WASD or arrows move", textX, topY - PANEL_LINE_SPACING);
-        uiRenderer.renderInfo(gameClient, "TAB cycles hostile targets", textX, topY - (PANEL_LINE_SPACING * 2f));
-        uiRenderer.renderInfo(gameClient, "E attacks or interacts", textX, topY - (PANEL_LINE_SPACING * 3f));
-        uiRenderer.renderInfo(gameClient, "F loots  1-8 equips  ESC exits", textX, topY - (PANEL_LINE_SPACING * 4f));
-    }
+        float titleY = panel.top() - 16f;
+        float barX = panel.x() + 54f;
+        float barTopY = panel.top() - 38f;
+        int currentHealth = playerState == null ? 0 : playerState.currentHealth();
+        int maxHealth = playerState == null ? 1 : Math.max(1, playerState.maxHealth());
 
-    private void renderTarget(GameClient gameClient, TargetSelection currentTarget, UiRect panel) {
-        uiRenderer.renderPanel(gameClient, panel.x(), panel.y(), panel.width(), panel.height());
-        String targetText = currentTarget == null
-                ? "Target: none"
-                : "Target: " + currentTarget.displayName();
-        uiRenderer.renderStatus(
-                gameClient,
-                targetText,
-                panel.x() + PANEL_INSET_X,
-                panel.top() - PANEL_HEADER_Y,
-                currentTarget == null ? UiPalette.TEXT_MUTED : UiPalette.TEXT_WARNING
+        UiRenderState.beginText(gameClient);
+        GlyphLayout titleLayout = new GlyphLayout(gameClient.uiFont().small, "Level 1");
+        gameClient.uiFont().small.setColor(UiPalette.TEXT_PRIMARY);
+        gameClient.uiFont().small.draw(gameClient.spriteBatch(), "Level 1", panel.x() + 10f, titleY);
+        gameClient.uiFont().small.draw(
+                gameClient.spriteBatch(),
+                characterName,
+                panel.x() + 18f + titleLayout.width,
+                titleY
         );
+
+        renderBar(gameClient, barX, barTopY, PLAYER_BAR_WIDTH, PLAYER_BAR_HEIGHT,
+                (float) currentHealth / (float) maxHealth, Color.valueOf("AA4341"),
+                "HP " + currentHealth + "/" + maxHealth);
+        renderBar(gameClient, barX, barTopY - PLAYER_BAR_GAP, PLAYER_BAR_WIDTH, PLAYER_BAR_HEIGHT,
+                0f, Color.valueOf("335A8F"), "Mana 0");
+        renderBar(gameClient, barX, barTopY - (PLAYER_BAR_GAP * 2f), PLAYER_BAR_WIDTH, PLAYER_BAR_HEIGHT,
+                0f, Color.valueOf("6C6C6C"), "XP 0/14");
+
+        gameClient.uiFont().small.setColor(Color.WHITE);
     }
 
-    private void renderTargetDetails(GameClient gameClient, EntitySyncState targetState, UiRect panel) {
+    private void renderTarget(GameClient gameClient, EntitySyncState targetState, UiRect panel) {
+        uiRenderer.renderPanel(gameClient, panel.x(), panel.y(), panel.width(), panel.height());
         if (targetState == null) {
+            UiRenderState.beginText(gameClient);
+            gameClient.uiFont().small.setColor(UiPalette.TEXT_MUTED);
+            gameClient.uiFont().small.draw(gameClient.spriteBatch(), "Target", panel.x() + 12f, panel.top() - 14f);
             uiRenderer.renderInfo(
                     gameClient,
-                    "No hostile target selected",
-                    panel.x() + PANEL_INSET_X,
-                    panel.top() - PANEL_HEADER_Y - PANEL_STATUS_GAP
+                    "No target selected",
+                    panel.x() + 56f,
+                    panel.top() - 38f
             );
+            renderBar(gameClient, panel.x() + 56f, panel.top() - 48f, 224f, PLAYER_BAR_HEIGHT,
+                    0f, Color.valueOf("AA4341"), "HP 0/0");
+            uiRenderer.renderInfo(gameClient, "TAB to cycle nearby hostiles", panel.x() + 56f, panel.y() + 20f);
+            gameClient.uiFont().small.setColor(Color.WHITE);
             return;
         }
 
-        String healthLine = targetState.alive()
-                ? "Health: " + targetState.currentHealth() + "/" + targetState.maxHealth()
-                : "Respawning in " + targetState.respawnTicksRemaining() + " ticks";
+        UiRenderState.beginText(gameClient);
+        gameClient.uiFont().small.setColor(UiPalette.TEXT_MUTED);
+        gameClient.uiFont().small.draw(gameClient.spriteBatch(), "Target", panel.x() + 12f, panel.top() - 14f);
+        gameClient.uiFont().small.draw(gameClient.spriteBatch(), "Lv. 1", panel.x() + 12f, panel.top() - 36f);
         uiRenderer.renderStatus(
                 gameClient,
-                healthLine,
-                panel.x() + PANEL_INSET_X,
-                panel.top() - PANEL_HEADER_Y - PANEL_STATUS_GAP,
-                targetState.alive() ? UiPalette.TEXT_DANGER : UiPalette.TEXT_MUTED
+                targetState.displayName(),
+                panel.x() + 56f,
+                panel.top() - 18f,
+                targetState.alive() ? UiPalette.TEXT_WARNING : UiPalette.TEXT_MUTED
         );
+        renderBar(
+                gameClient,
+                panel.x() + 56f,
+                panel.top() - 48f,
+                224f,
+                PLAYER_BAR_HEIGHT,
+                targetState.maxHealth() <= 0 ? 0f : (float) targetState.currentHealth() / (float) targetState.maxHealth(),
+                Color.valueOf("AA4341"),
+                "HP " + targetState.currentHealth() + "/" + targetState.maxHealth()
+        );
+        uiRenderer.renderInfo(
+                gameClient,
+                targetState.alive()
+                        ? "Press E to attack"
+                        : "Respawning in " + targetState.respawnTicksRemaining() + " ticks",
+                panel.x() + 56f,
+                panel.y() + 20f
+        );
+        gameClient.uiFont().small.setColor(Color.WHITE);
     }
 
     private void renderActionContext(GameClient gameClient, WorldActionContext actionContext, String interactionMessage, UiRect panel) {
         uiRenderer.renderPanel(gameClient, panel.x(), panel.y(), panel.width(), panel.height());
         float textX = panel.x() + PANEL_INSET_X;
         float topY = panel.top() - PANEL_HEADER_Y;
-        uiRenderer.renderInfo(gameClient, actionContext.label(), textX, topY);
+        uiRenderer.renderInfo(gameClient, compactActionLabel(actionContext.label()), textX, topY);
         if (interactionMessage != null && !interactionMessage.isBlank()) {
             uiRenderer.renderStatus(
                     gameClient,
@@ -200,7 +241,9 @@ public final class WorldHudRenderer {
                 inventoryTextX, inventoryMetaY);
 
         float rowY = inventoryRowY;
-        for (var item : inventoryUpdate.inventoryItems()) {
+        int visibleInventoryRows = Math.min(inventoryUpdate.inventoryItems().size(), MAX_INVENTORY_ROWS);
+        for (int index = 0; index < visibleInventoryRows; index++) {
+            var item = inventoryUpdate.inventoryItems().get(index);
             String itemLabel = (item.slotIndex() + 1) + ". "
                     + item.displayName() + " x" + item.quantity();
             if (item.equippable() && item.equipmentSlot() != null) {
@@ -213,13 +256,23 @@ public final class WorldHudRenderer {
         if (inventoryUpdate.inventoryItems().isEmpty()) {
             small.setColor(UiPalette.TEXT_MUTED);
             small.draw(gameClient.spriteBatch(), "Empty", inventoryTextX, rowY);
+        } else if (inventoryUpdate.inventoryItems().size() > MAX_INVENTORY_ROWS) {
+            small.setColor(UiPalette.TEXT_MUTED);
+            small.draw(
+                    gameClient.spriteBatch(),
+                    "+" + (inventoryUpdate.inventoryItems().size() - MAX_INVENTORY_ROWS) + " more items",
+                    inventoryTextX,
+                    rowY
+            );
         }
 
         body.setColor(UiPalette.TEXT_PRIMARY);
         body.draw(gameClient.spriteBatch(), "Equipped", equipmentTextX, equipmentTitleY);
 
         float equipmentY = equipmentRowY;
-        for (var equippedItem : inventoryUpdate.equippedItems()) {
+        int visibleEquipmentRows = Math.min(inventoryUpdate.equippedItems().size(), MAX_EQUIPMENT_ROWS);
+        for (int index = 0; index < visibleEquipmentRows; index++) {
+            var equippedItem = inventoryUpdate.equippedItems().get(index);
             small.setColor(UiPalette.TEXT_SUCCESS);
             small.draw(gameClient.spriteBatch(),
                     equippedItem.equipmentSlot().name() + ": " + equippedItem.displayName(),
@@ -230,10 +283,54 @@ public final class WorldHudRenderer {
         if (inventoryUpdate.equippedItems().isEmpty()) {
             small.setColor(UiPalette.TEXT_MUTED);
             small.draw(gameClient.spriteBatch(), "Nothing equipped", equipmentTextX, equipmentY);
+        } else if (inventoryUpdate.equippedItems().size() > MAX_EQUIPMENT_ROWS) {
+            small.setColor(UiPalette.TEXT_MUTED);
+            small.draw(
+                    gameClient.spriteBatch(),
+                    "+" + (inventoryUpdate.equippedItems().size() - MAX_EQUIPMENT_ROWS) + " more equipped",
+                    equipmentTextX,
+                    equipmentY
+            );
         }
 
         body.setColor(Color.WHITE);
         small.setColor(Color.WHITE);
+    }
+
+    private void renderBar(
+            GameClient gameClient,
+            float x,
+            float y,
+            float width,
+            float height,
+            float fillRatio,
+            Color fillColor,
+            String label
+    ) {
+        float clampedRatio = Math.max(0f, Math.min(1f, fillRatio));
+
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Filled);
+        ShapeRenderer shapeRenderer = gameClient.shapeRenderer();
+        shapeRenderer.setColor(new Color(0.05f, 0.07f, 0.10f, 0.96f));
+        shapeRenderer.rect(x, y - height, width, height);
+        shapeRenderer.setColor(fillColor);
+        shapeRenderer.rect(x + 2f, y - height + 2f, (width - 4f) * clampedRatio, height - 4f);
+        UiRenderState.endShapes(gameClient);
+
+        UiRenderState.beginShapes(gameClient, ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(new Color(UiPalette.PANEL_BORDER.r, UiPalette.PANEL_BORDER.g, UiPalette.PANEL_BORDER.b, 0.55f));
+        shapeRenderer.rect(x, y - height, width, height);
+        UiRenderState.endShapes(gameClient);
+
+        UiRenderState.beginText(gameClient);
+        GlyphLayout layout = new GlyphLayout(gameClient.uiFont().small, label);
+        gameClient.uiFont().small.setColor(UiPalette.TEXT_PRIMARY);
+        gameClient.uiFont().small.draw(
+                gameClient.spriteBatch(),
+                label,
+                x + ((width - layout.width) * 0.5f),
+                y - 2f
+        );
     }
 
     private void renderEntityLabels(GameClient gameClient,
@@ -296,5 +393,19 @@ public final class WorldHudRenderer {
 
     private static UiRect bottomCenteredPanel(float viewportWidth, float width, float height, float minimumY) {
         return new UiRect((viewportWidth - width) * 0.5f, minimumY, width, height);
+    }
+
+    private static UiRect stackedPanelAbove(UiRect anchorPanel, float width, float height, float gap) {
+        return new UiRect(anchorPanel.x(), anchorPanel.top() + gap, width, height);
+    }
+
+    private static String compactActionLabel(String label) {
+        if (label == null || label.isBlank()) {
+            return "Explore the area";
+        }
+        return label
+                .replace("interact with", "talk to")
+                .replace("attack", "attack")
+                .trim();
     }
 }

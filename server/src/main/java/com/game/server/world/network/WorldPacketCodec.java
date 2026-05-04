@@ -7,6 +7,7 @@ import com.game.shared.protocol.core.Packet;
 import com.game.shared.protocol.error.ErrorPacket;
 import com.game.shared.protocol.world.EntityMovePacket;
 import com.game.shared.protocol.world.InventoryUpdatePacket;
+import com.game.shared.protocol.world.InteractionMessagePacket;
 import com.game.shared.protocol.world.WorldSnapshotPacket;
 /**
  * Simple line-based codec for the world server, using the same pipe-delimited
@@ -49,6 +50,13 @@ public final class WorldPacketCodec {
         }
         if (packet instanceof InventoryUpdatePacket inventoryUpdate) {
             return inventoryUpdateCodec.encode(inventoryUpdate);
+        }
+        if (packet instanceof InteractionMessagePacket interactionMessage) {
+            return String.join(
+                    "|",
+                    "INTERACTION_MESSAGE",
+                    com.game.server.world.network.codec.CodecSupport.sanitize(interactionMessage.message())
+            );
         }
         throw new IllegalArgumentException("Unsupported packet type: " + packet.getClass().getName());
     }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.game.client.app.GameClient;
+import com.game.client.input.SubmitKey;
 import com.game.client.ui.render.UiRenderState;
 import com.game.client.ui.theme.UiPalette;
 import com.game.client.ui.theme.UiFont;
@@ -138,7 +139,7 @@ public class UiButton implements UiWidget {
 
     @Override
     public boolean handleKeyPressed(int keyCode) {
-        if (keyCode == com.badlogic.gdx.Input.Keys.ENTER && enabled && focused && onClick != null) {
+        if (SubmitKey.matches(keyCode) && enabled && focused && onClick != null) {
             onClick.run();
             return true;
         }

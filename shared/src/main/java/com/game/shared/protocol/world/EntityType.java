@@ -7,6 +7,8 @@ package com.game.shared.protocol.world;
  */
 public enum EntityType {
     PLAYER,
+    ENEMY,
+    VENDOR,
     NPC,
     LOOT,
     UNKNOWN

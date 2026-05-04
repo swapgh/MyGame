@@ -35,9 +35,10 @@ class DefinitionLoadersTest {
                 projectRoot.resolve(Path.of("data", "items", "item-definitions.json"))
         );
 
-        assertEquals(2, npcDefinitions.size());
+        assertEquals(3, npcDefinitions.size());
         assertTrue(npcDefinitions.containsKey("training-slime"));
-        assertEquals(2, spawnEntries.size());
+        assertTrue(npcDefinitions.containsKey("village-vendor"));
+        assertEquals(3, spawnEntries.size());
         assertEquals("training-slime", spawnEntries.get(0).npcId());
         assertEquals(List.of("slime_gel", "cloudy_core"), lootTables.get("slime-basic").drops());
         assertEquals(4, itemDefinitions.size());

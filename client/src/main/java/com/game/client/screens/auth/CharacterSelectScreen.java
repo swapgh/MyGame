@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.game.client.app.GameClient;
+import com.game.client.input.SubmitKey;
 import com.game.client.ui.theme.UiPalette;
 import com.game.client.ui.render.UiRenderState;
 import com.game.client.ui.render.UiRenderer;
@@ -65,7 +66,7 @@ public final class CharacterSelectScreen extends InputAdapter implements Screen 
     @Override
     public void show() {
         Gdx.input.setInputProcessor(this);
-        blockEnterUntilRelease = Gdx.input.isKeyPressed(Input.Keys.ENTER);
+        blockEnterUntilRelease = SubmitKey.isPressed();
     }
 
     /**
@@ -75,7 +76,7 @@ public final class CharacterSelectScreen extends InputAdapter implements Screen 
      */
     @Override
     public void render(float delta) {
-        if (blockEnterUntilRelease && !Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+        if (blockEnterUntilRelease && !SubmitKey.isPressed()) {
             blockEnterUntilRelease = false;
         }
 
@@ -92,7 +93,7 @@ public final class CharacterSelectScreen extends InputAdapter implements Screen 
                 selectedIndex = (selectedIndex + 1) % characterNames.size();
             } else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
                 selectedIndex = (selectedIndex - 1 + characterNames.size()) % characterNames.size();
-            } else if (!blockEnterUntilRelease && Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            } else if (!blockEnterUntilRelease && SubmitKey.isJustPressed()) {
                 screenController.showLoadingWorld(characterNames.get(selectedIndex));
                 return;
             }

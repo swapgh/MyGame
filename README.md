@@ -4,7 +4,7 @@ Java multiplayer RPG prototype built with Gradle, LibGDX, a shared protocol modu
 
 ## Stack
 
-- Java 25
+- Java 21
 - Gradle multi-module build
 - LibGDX desktop client
 - authoritative server simulation
@@ -30,6 +30,8 @@ game/
 └── README.md
 ```
 
+Client UI assets live under `client/src/main/resources/assets/ui/`, with room for `fonts/`, `themes/`, and later `animations/` when the client needs them.
+
 ## Commands
 
 ```bash
@@ -45,7 +47,7 @@ game/
 This repo works on Ubuntu + VS Code and Windows + IntelliJ.
 
 - Gradle is the source of truth.
-- The project expects JDK 25.
+- The project expects JDK 21.
 - Use the Gradle wrapper included in the repo instead of installing Gradle manually.
 - VS Code uses `.vscode/launch.json` as a convenience.
 - IntelliJ should open the repo as a Gradle project.
@@ -55,3 +57,4 @@ The full setup and troubleshooting guide lives in `GUIDE.md`.
 ## Structure Reference
 
 The canonical structure guide lives in `ARCHITECTURE_REFERENCE.md`.
+Detailed module baselines live in `ARCHITECTURE_CLIENT.md`, `ARCHITECTURE_SERVER.md`, and `ARCHITECTURE_SHARED.md`.

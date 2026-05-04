@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.game.client.app.GameClient;
 import com.game.client.controllers.auth.CharacterSelectController;
+import com.game.client.input.SubmitKey;
 import com.game.client.screens.ScreenController;
 import com.game.client.ui.components.UiButton;
 import com.game.client.ui.components.UiContainer;
@@ -91,7 +92,7 @@ public final class CharacterCreateScreen extends com.game.client.screens.UiScree
     @Override
     protected void update(float delta) {
         if (!busy) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            if (SubmitKey.isJustPressed()) {
                 if (!nameField.getValue().trim().isEmpty()) {
                     createCharacter();
                 }

@@ -21,6 +21,7 @@ import com.game.server.npc.definition.NpcDefinition;
 import com.game.server.npc.definition.NpcDefinitionLoader;
 import com.game.server.npc.definition.NpcSpawnEntry;
 import com.game.server.npc.definition.NpcSpawnEntryLoader;
+import com.game.server.service.VendorInteractionService;
 import com.game.server.world.inventory.InventoryService;
 import com.game.server.world.loop.WorldGameLoop;
 import com.game.server.world.factories.NpcFactory;
@@ -68,6 +69,7 @@ public final class WorldServerMain {
         Map<String, LootTableDefinition> lootTables = new LootTableLoader().load(LOOT_TABLES_PATH);
         Map<String, ItemDefinition> itemDefinitions = new ItemDefinitionLoader().load(ITEM_DEFINITIONS_PATH);
         InventoryService inventoryService = new InventoryService(itemDefinitions);
+        VendorInteractionService vendorInteractionService = new VendorInteractionService();
 
         EntityManager entityManager = new EntityManager();
         SystemRegistry systemRegistry = new SystemRegistry();
@@ -105,7 +107,8 @@ public final class WorldServerMain {
                 gameLoop,
                 packetRouter,
                 connectionManager,
-                inventoryService
+                inventoryService,
+                vendorInteractionService
         );
         WorldPacketHandlers.register(packetRouter, application);
 
@@ -138,8 +141,15 @@ public final class WorldServerMain {
         NpcFactory npcFactory = new NpcFactory();
         for (NpcSpawnEntry entry : worldContext.npcSpawnEntries()) {
             NpcDefinition definition = worldContext.npcDefinitions().get(entry.npcId());
-            LootTableDefinition lootTable = definition == null ? null : worldContext.lootTables().get(definition.lootTableId());
-            if (definition == null || lootTable == null || worldContext.world().findZone(entry.zoneId()).isEmpty()) {
+            LootTableDefinition lootTable = definition == null || definition.lootTableId().isBlank()
+                    ? null
+                    : worldContext.lootTables().get(definition.lootTableId());
+            if (definition == null || worldContext.world().findZone(entry.zoneId()).isEmpty()) {
+                continue;
+            }
+            if ((definition.entityType() == com.game.shared.protocol.world.EntityType.ENEMY
+                    || definition.entityType() == com.game.shared.protocol.world.EntityType.NPC)
+                    && lootTable == null) {
                 continue;
             }
 
@@ -162,6 +172,7 @@ public final class WorldServerMain {
      * @param packetRouter   the world packet router
      * @param connectionManager the world connection manager
      * @param inventoryService the authoritative inventory service
+     * @param vendorInteractionService vendor interaction service
      * @since 0.1.0
      */
     public record WorldApplication(
@@ -169,7 +180,8 @@ public final class WorldServerMain {
             WorldGameLoop gameLoop,
             WorldPacketRouter packetRouter,
             WorldConnectionManager connectionManager,
-            InventoryService inventoryService
+            InventoryService inventoryService,
+            VendorInteractionService vendorInteractionService
     ) {
     }
 }

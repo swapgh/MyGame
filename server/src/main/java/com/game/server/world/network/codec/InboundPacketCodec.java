@@ -8,6 +8,7 @@ import com.game.shared.protocol.world.ChatMessagePacket;
 import com.game.shared.protocol.world.EquipItemPacket;
 import com.game.shared.protocol.world.EntityMovePacket;
 import com.game.shared.protocol.world.EnterWorldPacket;
+import com.game.shared.protocol.world.InteractPacket;
 import com.game.shared.protocol.world.PickupLootPacket;
 
 /**
@@ -27,10 +28,17 @@ public final class InboundPacketCodec {
                     CodecSupport.decodeVec(CodecSupport.require(parts, 3))
             );
             case "ATTACK" -> new AttackPacket(
-                    new SharedEntityId(Long.parseLong(CodecSupport.require(parts, 1)))
+                    new SharedEntityId(Long.parseLong(CodecSupport.require(parts, 1))),
+                    parts.length > 2 && !parts[2].isBlank()
+                            ? new SharedEntityId(Long.parseLong(parts[2]))
+                            : null
             );
             case "PICKUP_LOOT" -> new PickupLootPacket(
                     new SharedEntityId(Long.parseLong(CodecSupport.require(parts, 1)))
+            );
+            case "INTERACT" -> new InteractPacket(
+                    new SharedEntityId(Long.parseLong(CodecSupport.require(parts, 1))),
+                    new SharedEntityId(Long.parseLong(CodecSupport.require(parts, 2)))
             );
             case "EQUIP_ITEM" -> new EquipItemPacket(
                     new SharedEntityId(Long.parseLong(CodecSupport.require(parts, 1))),

@@ -94,7 +94,7 @@ public final class SnapshotSystem implements GameSystem {
             return EntityType.PLAYER;
         }
         if (npcs.has(entityId)) {
-            return EntityType.NPC;
+            return npcs.get(entityId).map(NpcComponent::entityType).orElse(EntityType.NPC);
         }
         if (droppedLoot.has(entityId)) {
             return EntityType.LOOT;

@@ -45,34 +45,39 @@ public final class NpcFactory {
         EntityId entityId = entities.create();
         entities.put(entityId, new TransformComponent(spawnPosition));
         entities.put(entityId, new VelocityComponent(Vec2.ZERO));
-        entities.put(entityId, new NpcComponent(definition.id(), definition.name()));
+        entities.put(entityId, new NpcComponent(definition.id(), definition.name(), definition.entityType()));
         entities.put(entityId, new HealthComponent(definition.maxHealth(), definition.maxHealth()));
-        entities.put(
-                entityId,
-                new CombatStatsComponent(
-                        definition.baseDamage(),
-                        definition.attackRange(),
-                        definition.attackCooldownTicks()
-                )
-        );
-        entities.put(entityId, new CombatStateComponent(-100L));
         entities.put(
                 entityId,
                 new RespawnComponent(spawnPosition, spawnEntry.respawnDelayTicks(), -1L)
         );
-        entities.put(
-                entityId,
-                new AiComponent(definition.moveSpeed(), definition.aggroRange(), spawnEntry.roamRadius())
-        );
-        entities.put(entityId, new AiStateComponent(AiState.IDLE));
-        entities.put(
-                entityId,
-                new LootComponent(
-                        lootTable.id(),
-                        lootTable.drops()
-                )
-        );
-        entities.put(entityId, new LootDropStateComponent(false));
+        if (definition.entityType() == com.game.shared.protocol.world.EntityType.ENEMY
+                || definition.entityType() == com.game.shared.protocol.world.EntityType.NPC) {
+            entities.put(
+                    entityId,
+                    new CombatStatsComponent(
+                            definition.baseDamage(),
+                            definition.attackRange(),
+                            definition.attackCooldownTicks()
+                    )
+            );
+            entities.put(entityId, new CombatStateComponent(-100L));
+            entities.put(
+                    entityId,
+                    new AiComponent(definition.moveSpeed(), definition.aggroRange(), spawnEntry.roamRadius())
+            );
+            entities.put(entityId, new AiStateComponent(AiState.IDLE));
+            if (lootTable != null) {
+                entities.put(
+                        entityId,
+                        new LootComponent(
+                                lootTable.id(),
+                                lootTable.drops()
+                        )
+                );
+                entities.put(entityId, new LootDropStateComponent(false));
+            }
+        }
         return entityId;
     }
 }

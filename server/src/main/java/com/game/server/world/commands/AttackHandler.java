@@ -36,9 +36,12 @@ public final class AttackHandler implements WorldPacketHandler {
             return;
         }
 
+        EntityId targetEntityId = attackPacket.targetEntityId() == null
+                ? null
+                : new EntityId(attackPacket.targetEntityId().value());
         application.worldContext().entityManager().put(
                 entityId,
-                new AttackIntentComponent(application.gameLoop().clock().tick())
+                new AttackIntentComponent(application.gameLoop().clock().tick(), targetEntityId)
         );
     }
 }

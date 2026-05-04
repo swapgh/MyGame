@@ -2,6 +2,12 @@
 
 This is the single structure reference for the project.
 
+Detailed module guides:
+
+- `ARCHITECTURE_CLIENT.md`
+- `ARCHITECTURE_SERVER.md`
+- `ARCHITECTURE_SHARED.md`
+
 It describes:
 
 - where code should live
@@ -126,27 +132,32 @@ game/
 │   ├── app/            ClientMain, GameClient, ClientState, ClientStateMachine, ClientShutdownHook
 │   ├── screens/        Screen + auth/ + world/ + menu/
 │   ├── controllers/    auth/ + world/
-│   ├── ui/             ScreenController
-│   ├── render/         ClientUiRenderer, ClientUiPalette, UiFont + world/SceneRenderer, HudRenderer
+│   ├── ui/             core/ + layouts/ + components/ + render/ + theme/
+│   ├── render/         core/ + world/SceneRenderer + overlay/WorldHudRenderer
 │   ├── input/          InputManager, KeyBindings, KeyboardInput, MouseInput, TextInputBuffer, WorldInputFrame
 │   ├── network/        socket/ + packet/ + auth/ + world/codec/ + PingService
-│   ├── world/          sync/ + ecs/
+│   ├── service/        AuthService, WorldService, WorldActionService
+│   ├── model/          AuthenticatedSession, WorldFrameState, UI-facing state
+│   ├── world/          sync/ + ecs/ + npc/
 │   └── settings/       ClientConfig
 │
 ├── server/src/main/java/com/game/server/
 │   ├── auth/           app/ + config/ + login/ + registration/ + characters/ + sessions/ + security/ + database/ + network/
-│   ├── world/          app/ + config/ + loop/ + map/ + commands/ + factories/ + inventory/ + network/
-│   ├── ecs/            entity/ + component/ + system/ + WorldContext
+│   ├── world/          app/ + config/ + loop/ + map/ + commands/ + factories/ + inventory/ + network/ + snapshot/ + tick/
+│   ├── ecs/            entity/ + component/ + query/ + store/ + system/ + WorldContext
 │   ├── components/     world/ + combat/ + inventory/ + npc/ + loot/
 │   ├── systems/        world/ + combat/ + npc/ + loot/
 │   ├── items/          definition/
 │   ├── npc/            definition/
 │   ├── loot/           definition/
 │   ├── database/       DatabasePool, DatabaseConfig, TransactionManager
+│   ├── command/        validated server-only intents
+│   ├── service/        use-case coordination
+│   ├── security/       auth/token/password helpers
 │   └── config/         ServerConfigLoader
 │
 └── shared/src/main/java/com/game/shared/
-    ├── math/           Vec2, Vec3, Bounds, Direction
+    ├── math/           Vec2, Bounds, Direction
     ├── ids/            SharedEntityId
     ├── protocol/       core/ + auth/ + world/ + error/
     ├── time/           GameClock, TickRate
@@ -162,3 +173,34 @@ When adding a class, ask:
 3. Is this shared protocol or pure utility logic?
 
 Put it in the module that owns that answer.
+
+## Client UI Direction
+
+For LibGDX client screens, prefer this split:
+
+- `screens/` owns the screen lifecycle and delegates
+- `controllers/` owns flow and server-facing actions
+- `ui/core/` owns document rendering, shared UI orchestration, and screen composition primitives
+- `ui/layouts/` computes bounds and alignment
+- `ui/components/` owns interactive controls and reusable framed sections
+- `ui/render/` owns shared UI drawing primitives and render-state helpers
+- `ui/theme/` owns fonts, palette, and theme constants
+
+Keep it simple:
+
+- do not invent a DSL or external markup format unless the Java composition layer becomes a real bottleneck
+- favor a small document/composition layer over pushing layout, rendering, and input back into each screen
+
+## Client Resource Direction
+
+Client-owned visual resources should live under `client/src/main/resources/assets/ui/`.
+
+Suggested subfolders:
+
+- `assets/ui/fonts/`
+- `assets/ui/themes/`
+- `assets/ui/animations/`
+
+Rule:
+
+- only create new buckets when we actually have assets for them

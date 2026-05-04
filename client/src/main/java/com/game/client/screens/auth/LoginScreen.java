@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.game.client.app.GameClient;
 import com.game.client.controllers.auth.LoginController;
+import com.game.client.input.SubmitKey;
 import com.game.client.ui.theme.UiPalette;
 import com.game.client.screens.UiScreen;
 import com.game.client.screens.ScreenController;
@@ -77,7 +78,7 @@ public final class LoginScreen extends UiScreen {
     @Override
     protected void update(float delta) {
         if (!busy) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            if (SubmitKey.isJustPressed()) {
                 if (!usernameField.getValue().trim().isEmpty()) {
                     login();
                 }

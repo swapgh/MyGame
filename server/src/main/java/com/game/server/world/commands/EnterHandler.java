@@ -132,7 +132,9 @@ public final class EnterHandler implements WorldPacketHandler {
             return EntityType.PLAYER;
         }
         if (application.worldContext().entityManager().has(entityId, NpcComponent.class)) {
-            return EntityType.NPC;
+            return application.worldContext().entityManager().get(entityId, NpcComponent.class)
+                    .map(NpcComponent::entityType)
+                    .orElse(EntityType.NPC);
         }
         if (application.worldContext().entityManager().has(entityId, DroppedLootComponent.class)) {
             return EntityType.LOOT;

@@ -18,5 +18,15 @@
     "spacing": 40.0,
     "respawnDelayTicks": 180,
     "roamRadius": 140.0
+  },
+  {
+    "zoneId": 1,
+    "npcId": "village-vendor",
+    "count": 1,
+    "spawnX": 320.0,
+    "spawnY": 260.0,
+    "spacing": 0.0,
+    "respawnDelayTicks": 0,
+    "roamRadius": 0.0
   }
 ]
